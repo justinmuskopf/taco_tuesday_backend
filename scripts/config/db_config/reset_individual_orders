@@ -1,0 +1,17 @@
+DROP TABLE IF EXISTS `individual_orders`;
+CREATE TABLE `individual_orders` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `order_id` INT NOT NULL,
+    `employee_id` INT NOT NULL,
+    `pastor` INT NOT NULL DEFAULT '0',
+    `barbacoa` INT NOT NULL DEFAULT '0',
+    `beef_fajita` INT NOT NULL DEFAULT '0',
+    `chicken_fajita` INT NOT NULL DEFAULT '0',
+    `carnitas` INT NOT NULL DEFAULT '0',
+    `lengua` INT NOT NULL DEFAULT '0',
+    `cabeza` INT NOT NULL DEFAULT '0',
+    `tripa` INT NOT NULL DEFAULT '0',
+    `total_tacos` INT NOT NULL DEFAULT '0',
+    `total_cost` FLOAT NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`)
+);
