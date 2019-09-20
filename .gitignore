@@ -1,5 +1,3 @@
-/backup
-/target
-*.iml
 *mvnw*
-
+.idea/
+.mvn/
