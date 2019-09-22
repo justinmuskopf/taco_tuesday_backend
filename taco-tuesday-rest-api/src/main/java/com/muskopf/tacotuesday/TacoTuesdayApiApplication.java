@@ -1,4 +1,4 @@
-package com.muskopf.tacotuesday.service.api;
+package com.muskopf.tacotuesday;
 
 import com.muskopf.tacotuesday.config.TacoTuesdayApiConfiguration;
 import org.springframework.boot.SpringApplication;

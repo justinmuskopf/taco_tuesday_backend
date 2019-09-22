@@ -1,6 +1,6 @@
 package com.muskopf.tacotuesday.bl;
 
-import com.muskopf.tacotuesday.service.api.TacoTuesdayApiApplication;
+import com.muskopf.tacotuesday.TacoTuesdayApiApplication;
 import com.muskopf.tacotuesday.bl.repository.FullOrderRepository;
 import com.muskopf.tacotuesday.bl.repository.IndividualOrderRepository;
 import com.muskopf.tacotuesday.domain.Employee;
