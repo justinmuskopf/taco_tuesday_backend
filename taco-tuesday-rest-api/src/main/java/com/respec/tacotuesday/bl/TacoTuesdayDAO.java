@@ -20,4 +20,5 @@ public interface TacoTuesdayDAO {
     List<FullOrder> retrieveAllFullOrders();
     List<FullOrder> retrieveAllFullOrdersContainingEmployeeId(Integer employeeId);
     Employee createEmployee(String firstName, String lastName, String nickName);
+    Employee createEmployee(Employee employee);
 }

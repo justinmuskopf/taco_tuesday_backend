@@ -1,6 +1,7 @@
 package com.respec.tacotuesday.service.api;
 
 import com.respec.tacotuesday.bl.TacoTuesdayDAO;
+import com.respec.tacotuesday.bl.proc.ApiKeyValidator;
 import com.respec.tacotuesday.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +18,13 @@ public class TacoTuesdayApiRestController {
     private Logger logger = LoggerFactory.getLogger(TacoTuesdayApiRestController.class);
     private TacoPriceList tacoPriceList;
     private TacoTuesdayDAO tacoTuesdayDAO;
+    private ApiKeyValidator apiKeyValidator;
 
     @Autowired
-    public TacoTuesdayApiRestController(TacoPriceList tacoPriceList, TacoTuesdayDAO tacoTuesdayDAO) {
+    public TacoTuesdayApiRestController(TacoPriceList tacoPriceList, TacoTuesdayDAO tacoTuesdayDAO, ApiKeyValidator apiKeyValidator) {
         this.tacoPriceList = tacoPriceList;
         this.tacoTuesdayDAO = tacoTuesdayDAO;
+        this.apiKeyValidator = apiKeyValidator;
     }
 
     @RequestMapping(value = "/orders/full/{orderId}", method = RequestMethod.GET)
@@ -66,14 +69,19 @@ public class TacoTuesdayApiRestController {
 
     @RequestMapping(value = "/orders/full", method = RequestMethod.POST)
     public ResponseEntity<FullOrder> createFullOrder(@RequestParam(name = "apiKey") String apiKey, @RequestBody FullOrder order) {
-        logger.info("Validating request, provided API Key: {}", apiKey);
+        if (apiKeyValidator.isInvalidApiKey(apiKey)) {
+            throw new UnrecognizedApiKeyException(apiKey);
+        }
+
         return new ResponseEntity<>(tacoTuesdayDAO.createFullOrder(order), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/employees", method = RequestMethod.POST)
     public ResponseEntity<Employee> createEmployee(@RequestParam(name = "apiKey") String apiKey, @RequestBody Employee employee) {
-        logger.info("Creating employee, provided API Key: {}", apiKey);
-        return new ResponseEntity<>(tacoTuesdayDAO.createEmployee(employee.getFirstName(), employee.getLastName(), employee.getNickName()), HttpStatus.CREATED);
-    }
+        if (apiKeyValidator.isInvalidApiKey(apiKey)) {
+            throw new UnrecognizedApiKeyException(apiKey);
+        }
 
+        return new ResponseEntity<>(tacoTuesdayDAO.createEmployee(employee, HttpStatus.CREATED);
+    }W
 }

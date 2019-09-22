@@ -8,9 +8,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootApplication
 @EnableConfigurationProperties(TacoTuesdayApiConfiguration.class)
 public class TacoTuesdayApiApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(TacoTuesdayApiApplication.class, args);
 	}
-
 }
