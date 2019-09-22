@@ -1,5 +1,7 @@
 package com.respec.tacotuesday.bl;
 
+import com.respec.tacotuesday.domain.ApiKey;
+import com.respec.tacotuesday.domain.Employee;
 import com.respec.tacotuesday.domain.FullOrder;
 import com.respec.tacotuesday.domain.IndividualOrder;
 import org.springframework.stereotype.Component;
@@ -7,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public interface OrderDAO {
+public interface TacoTuesdayDAO {
     IndividualOrder updateIndividualOrder(IndividualOrder order);
     IndividualOrder retrieveIndividualOrder(Integer id);
     List<IndividualOrder> retrieveAllIndividualOrders();
@@ -17,4 +19,5 @@ public interface OrderDAO {
     FullOrder createFullOrder(FullOrder order);
     List<FullOrder> retrieveAllFullOrders();
     List<FullOrder> retrieveAllFullOrdersContainingEmployeeId(Integer employeeId);
+    Employee createEmployee(String firstName, String lastName, String nickName);
 }
