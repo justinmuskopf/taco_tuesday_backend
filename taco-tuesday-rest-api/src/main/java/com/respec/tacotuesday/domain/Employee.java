@@ -1,9 +1,12 @@
 package com.respec.tacotuesday.domain;
 
+import com.respec.tacotuesday.bl.proc.ApiKeyGenerator;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Entity
 @Table(name = "employee")
@@ -18,9 +21,21 @@ public class Employee {
     private String lastName;
     @Column
     private String nickName;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "api_key_id", referencedColumnName = "id")
+    private ApiKey apiKey;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.PERSIST)
     private List<IndividualOrder> orders;
+
+    @PrePersist
+    public void ensureApiKeyIsPopulated() {
+        if (!isNull(this.apiKey)) {
+            return;
+        }
+
+        this.apiKey = ApiKeyGenerator.generateForEmployee(this);
+    }
 
     public String getFirstName() {
         return firstName;
@@ -44,6 +59,14 @@ public class Employee {
         return this;
     }
 
+    public String getFullName() {
+        if (isNull(firstName) || isNull(lastName)) {
+            return null;
+        }
+
+        return firstName + " " + lastName;
+    }
+
     public String getNickName() { return nickName; }
     public void setNickName(String nickName) { this.nickName = nickName; }
     public Employee nickName(String nickName) {
@@ -58,12 +81,8 @@ public class Employee {
         this.id = id;
     }
 
-    public List<IndividualOrder> getOrders() {
-        return orders;
-    }
-    public void setOrders(List<IndividualOrder> orders) {
-        this.orders = orders;
-    }
+    public List<IndividualOrder> getOrders() { return orders; }
+    public void setOrders(List<IndividualOrder> orders) { this.orders = orders; }
     public Employee orders(List<IndividualOrder> orders) {
         this.orders = orders;
         return this;
