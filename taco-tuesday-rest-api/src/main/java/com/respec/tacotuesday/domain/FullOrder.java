@@ -2,6 +2,7 @@ package com.respec.tacotuesday.domain;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class FullOrder extends Order {
@@ -10,14 +11,14 @@ public class FullOrder extends Order {
     Integer fullOrderId;
 
     @OneToMany(mappedBy = "fullOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<IndividualOrder> individualOrders;
+    private Set<IndividualOrder> individualOrders;
 
     public Integer getFullOrderId() { return fullOrderId; }
     public void setFullOrderId(Integer fullOrderId) { this.fullOrderId = fullOrderId; }
 
-    public List<IndividualOrder> getIndividualOrders() { return individualOrders; }
-    public void setIndividualOrders(List<IndividualOrder> individualOrders) { this.individualOrders = individualOrders; }
-    public FullOrder individualOrders(List<IndividualOrder> individualOrders) {
+    public Set<IndividualOrder> getIndividualOrders() { return individualOrders; }
+    public void setIndividualOrders(Set<IndividualOrder> individualOrders) { this.individualOrders = individualOrders; }
+    public FullOrder individualOrders(Set<IndividualOrder> individualOrders) {
         this.individualOrders = individualOrders;
         return this;
     }

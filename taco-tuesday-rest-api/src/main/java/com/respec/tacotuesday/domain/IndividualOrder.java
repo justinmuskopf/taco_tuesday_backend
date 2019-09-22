@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 public class IndividualOrder extends Order {
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)//fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_full_order_id", referencedColumnName = "id")
     private FullOrder fullOrder;
 
