@@ -17,25 +17,25 @@ public abstract class Order {
     @Column
     private Float total;
 
-    @Column
+    @Column()
     private Instant createdAt;
 
     @Column
-    private Integer barbacoa;
+    private Integer barbacoa = 0;
     @Column
-    private Integer beefFajita;
+    private Integer beefFajita = 0;
     @Column
-    private Integer cabeza;
+    private Integer cabeza = 0;
     @Column
-    private Integer carnitas;
+    private Integer carnitas = 0;
     @Column
-    private Integer chickenFajita;
+    private Integer chickenFajita = 0;
     @Column
-    private Integer lengua;
+    private Integer lengua = 0;
     @Column
-    private Integer pastor;
+    private Integer pastor = 0;
     @Column
-    private Integer tripa;
+    private Integer tripa = 0;
 
     public Order() {
         this.createdAt = Instant.now();
