@@ -1,10 +1,7 @@
 package com.respec.tacotuesday.service.api;
 
-import com.respec.tacotuesday.bl.OrderDAO;
-import com.respec.tacotuesday.domain.FullOrder;
-import com.respec.tacotuesday.domain.IndividualOrder;
-import com.respec.tacotuesday.domain.Order;
-import com.respec.tacotuesday.domain.TacoPriceList;
+import com.respec.tacotuesday.bl.TacoTuesdayDAO;
+import com.respec.tacotuesday.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,32 +16,32 @@ import java.util.List;
 public class TacoTuesdayApiRestController {
     private Logger logger = LoggerFactory.getLogger(TacoTuesdayApiRestController.class);
     private TacoPriceList tacoPriceList;
-    private OrderDAO orderDAO;
+    private TacoTuesdayDAO tacoTuesdayDAO;
 
     @Autowired
-    public TacoTuesdayApiRestController(TacoPriceList tacoPriceList, OrderDAO orderDAO) {
+    public TacoTuesdayApiRestController(TacoPriceList tacoPriceList, TacoTuesdayDAO tacoTuesdayDAO) {
         this.tacoPriceList = tacoPriceList;
-        this.orderDAO = orderDAO;
+        this.tacoTuesdayDAO = tacoTuesdayDAO;
     }
 
     @RequestMapping(value = "/orders/full/{orderId}", method = RequestMethod.GET)
     public ResponseEntity<FullOrder> getFullOrderByOrderId(@PathVariable Integer orderId) {
-        return new ResponseEntity<>(orderDAO.retrieveFullOrder(orderId), HttpStatus.OK);
+        return new ResponseEntity<>(tacoTuesdayDAO.retrieveFullOrder(orderId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/orders/individual/{orderId}", method = RequestMethod.GET)
     public ResponseEntity<IndividualOrder> getIndividualOrderByOrderId(@PathVariable Integer orderId) {
-        return new ResponseEntity<>(orderDAO.retrieveIndividualOrder(orderId), HttpStatus.OK);
+        return new ResponseEntity<>(tacoTuesdayDAO.retrieveIndividualOrder(orderId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/orders/full", method = RequestMethod.GET)
     public ResponseEntity<List<FullOrder>> getAllFullOrders() {
-        return new ResponseEntity<>(orderDAO.retrieveAllFullOrders(), HttpStatus.OK);
+        return new ResponseEntity<>(tacoTuesdayDAO.retrieveAllFullOrders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/orders/individual", method = RequestMethod.GET)
     public ResponseEntity<List<IndividualOrder>> getAllIndividualOrders() {
-        return new ResponseEntity<>(orderDAO.retrieveAllIndividualOrders(), HttpStatus.OK);
+        return new ResponseEntity<>(tacoTuesdayDAO.retrieveAllIndividualOrders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/orders/individual/{employeeId}", method = RequestMethod.GET)
@@ -70,7 +67,13 @@ public class TacoTuesdayApiRestController {
     @RequestMapping(value = "/orders/full", method = RequestMethod.POST)
     public ResponseEntity<FullOrder> createFullOrder(@RequestParam(name = "apiKey") String apiKey, @RequestBody FullOrder order) {
         logger.info("Validating request, provided API Key: {}", apiKey);
-        return new ResponseEntity<>(orderDAO.createFullOrder(order), HttpStatus.CREATED);
+        return new ResponseEntity<>(tacoTuesdayDAO.createFullOrder(order), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/employees", method = RequestMethod.POST)
+    public ResponseEntity<Employee> createEmployee(@RequestParam(name = "apiKey") String apiKey, @RequestBody Employee employee) {
+        logger.info("Creating employee, provided API Key: {}", apiKey);
+        return new ResponseEntity<>(tacoTuesdayDAO.createEmployee(employee.getFirstName(), employee.getLastName(), employee.getNickName()), HttpStatus.CREATED);
     }
 
 }

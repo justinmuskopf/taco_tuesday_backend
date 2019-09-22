@@ -1,12 +1,12 @@
 package com.respec.tacotuesday;
 
-import com.respec.tacotuesday.config.TacoTuesdayConfiguration;
+import com.respec.tacotuesday.config.TacoTuesdayApiConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(TacoTuesdayConfiguration.class)
+@EnableConfigurationProperties(TacoTuesdayApiConfiguration.class)
 public class TacoTuesdayApiApplication {
 
 	public static void main(String[] args) {

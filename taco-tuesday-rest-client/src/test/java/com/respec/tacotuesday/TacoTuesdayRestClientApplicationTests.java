@@ -1,4 +1,4 @@
-package com.respec.tacotuesday.tacotuesdayrestclient;
+package com.respec.tacotuesday;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

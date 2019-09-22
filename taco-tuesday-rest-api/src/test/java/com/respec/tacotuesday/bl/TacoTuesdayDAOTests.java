@@ -9,26 +9,21 @@ import com.respec.tacotuesday.domain.IndividualOrder;
 import com.respec.tacotuesday.domain.Order;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TacoTuesdayApiApplication.class)
-public class OrderDAOTests {
+public class TacoTuesdayDAOTests {
     @Autowired
-    OrderDAO orderDAO;
+    TacoTuesdayDAO tacoTuesdayDAO;
 
     @Autowired
     IndividualOrderRepository individualOrderRepository;
@@ -65,8 +60,8 @@ public class OrderDAOTests {
                 .tripa(randomCount());
     }
 
-    private List<IndividualOrder> generateIndividualOrderList(int n) {
-        List<IndividualOrder> individualOrders = new ArrayList<>();
+    private Set<IndividualOrder> generateIndividualOrderList(int n) {
+        Set<IndividualOrder> individualOrders = new HashSet<>();
         IntStream.range(0, NUM_TEST_ORDERS).forEach(i -> {
             individualOrders.add(generateIndividualOrder());
         });
@@ -74,12 +69,12 @@ public class OrderDAOTests {
         return individualOrders;
     }
 
-    public Integer getTacoSum(List<IndividualOrder> list, Function<FullOrder, Integer> function) {
+    public Integer getTacoSum(Set<IndividualOrder> list, Function<FullOrder, Integer> function) {
         return list.stream().mapToInt(Order::getBarbacoa).sum();
     }
 
     private FullOrder generateFullOrder() {
-        List<IndividualOrder> individualOrders = generateIndividualOrderList(NUM_TEST_ORDERS);
+        Set<IndividualOrder> individualOrders = generateIndividualOrderList(NUM_TEST_ORDERS);
         FullOrder order = (FullOrder) new FullOrder()
                 .barbacoa(getTacoSum(individualOrders, Order::getBarbacoa))
                 .beefFajita(getTacoSum(individualOrders, Order::getBeefFajita))
@@ -108,12 +103,12 @@ public class OrderDAOTests {
 
     @Test
     public void test_retrieveAllIndividualOrders() {
-        List<IndividualOrder> individualOrders = generateIndividualOrderList(NUM_TEST_ORDERS);
+        Set<IndividualOrder> individualOrders = generateIndividualOrderList(NUM_TEST_ORDERS);
 
         List<IndividualOrder> savedOrders = individualOrderRepository.saveAll(individualOrders);
         assertThat(savedOrders.equals(individualOrders));
 
-        List<IndividualOrder> retrievedOrders = orderDAO.retrieveAllIndividualOrders();
+        List<IndividualOrder> retrievedOrders = tacoTuesdayDAO.retrieveAllIndividualOrders();
         assertThat(retrievedOrders.equals(individualOrders));
     }
 
@@ -124,8 +119,9 @@ public class OrderDAOTests {
         List<FullOrder> savedOrders = fullOrderRepository.saveAll(fullOrders);
         assertThat(savedOrders).isEqualTo(fullOrders);
 
-        List<FullOrder> retrievedOrders = orderDAO.retrieveAllFullOrders();
+        List<FullOrder> retrievedOrders = tacoTuesdayDAO.retrieveAllFullOrders();
         assertThat(retrievedOrders).isEqualTo(fullOrders);
+
     }
 
     @Test
