@@ -10,6 +10,7 @@ I'll get back to you on that.
 ### Stack
 The Taco Tuesday API (gosh that's long) utilizes the following super-neat technologies:
 - [Spring Boot](https://spring.io/projects/spring-boot)
+  - [JPA Repositories](https://docs.spring.io/spring-data/jpa/docs/1.5.0.RELEASE/reference/html/jpa.repositories.html)
 - [Maria DB](https://mariadb.org/)
 - [The H2 Database Engine](https://www.h2database.com/)
 - [Swagger 2](https://spring.io/projects/spring-boot)
