@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "taco-tuesday")
-public class TacoTuesdayConfiguration {
+public class TacoTuesdayApiConfiguration {
     //@NotNull
     private Float barbacoaPrice;
     //@NotNull
