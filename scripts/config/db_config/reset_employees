@@ -1,6 +1,0 @@
-DROP TABLE IF EXISTS `employees`;
-CREATE TABLE `employees` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `name` TINYTEXT NOT NULL,
-    PRIMARY KEY (`id`)
-);
