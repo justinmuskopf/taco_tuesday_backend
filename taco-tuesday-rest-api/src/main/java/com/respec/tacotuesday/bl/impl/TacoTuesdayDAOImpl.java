@@ -114,6 +114,11 @@ public class TacoTuesdayDAOImpl implements TacoTuesdayDAO {
     }
 
     @Override
+    public Employee createEmployee(Employee employee) {
+        return createEmployee(employee.getFirstName(), employee.getLastName(), employee.getNickName());
+    }
+
+    @Override
     public Employee createEmployee(String firstName, String lastName, String nickName) {
         if (isNull(firstName) || isNull(lastName)) {
             throw new IllegalArgumentException("Both first name and last name are required when creating an employee!");
