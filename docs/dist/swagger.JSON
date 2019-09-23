@@ -1,0 +1,837 @@
+// 20190923123022
+// http://localhost:8080/v2/api-docs
+
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Api Documentation",
+    "version": "1.0",
+    "title": "Api Documentation",
+    "termsOfService": "urn:tos",
+    "contact": {
+      
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "taco-tuesday-api-rest-controller",
+      "description": "Taco Tuesday Api Rest Controller"
+    }
+  ],
+  "paths": {
+    "/taco-tuesday/v1/employees": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getAllEmployees",
+        "operationId": "getAllEmployeesUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "query",
+            "description": "apiKey",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Employee"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "createEmployee",
+        "operationId": "createEmployeeUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "query",
+            "description": "apiKey",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "employee",
+            "description": "employee",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Employee"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Employee"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/orders/full": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getAllFullOrders",
+        "operationId": "getAllFullOrdersUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FullOrder"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "createFullOrder",
+        "operationId": "createFullOrderUsingPOST",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "query",
+            "description": "apiKey",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "order",
+            "description": "order",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FullOrder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FullOrder"
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/orders/full/{employeeId}": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getAllFullOrdersWithEmployeeId",
+        "operationId": "getAllFullOrdersWithEmployeeIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "description": "employeeId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FullOrder"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/orders/full/{orderId}": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getFullOrderByOrderId",
+        "operationId": "getFullOrderByOrderIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "orderId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/FullOrder"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/orders/individual": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getAllIndividualOrders",
+        "operationId": "getAllIndividualOrdersUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IndividualOrder"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/orders/individual/{employeeId}": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getAllIndiviudalOrdersWithEmployeeId",
+        "operationId": "getAllIndiviudalOrdersWithEmployeeIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "description": "employeeId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/IndividualOrder"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/orders/individual/{orderId}": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getIndividualOrderByOrderId",
+        "operationId": "getIndividualOrderByOrderIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "orderId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/IndividualOrder"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/orders/{employeeId}": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getAllOrdersByEmployeeId",
+        "operationId": "getAllOrdersByEmployeeIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "description": "employeeId",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Order"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/taco-tuesday/v1/tacos": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-rest-controller"
+        ],
+        "summary": "getTacoPrices",
+        "operationId": "getTacoPricesUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Taco"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "definitions": {
+    "BarbacoaTaco": {
+      "title": "BarbacoaTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "BarbacoaTaco"
+        }
+      ]
+    },
+    "BeefFajitaTaco": {
+      "title": "BeefFajitaTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "BeefFajitaTaco"
+        }
+      ]
+    },
+    "CabezaTaco": {
+      "title": "CabezaTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "CabezaTaco"
+        }
+      ]
+    },
+    "CarnitasTaco": {
+      "title": "CarnitasTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "CarnitasTaco"
+        }
+      ]
+    },
+    "ChickenFajitaTaco": {
+      "title": "ChickenFajitaTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "ChickenFajitaTaco"
+        }
+      ]
+    },
+    "Employee": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "nickName": {
+          "type": "string"
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IndividualOrder"
+          }
+        }
+      },
+      "title": "Employee"
+    },
+    "FullOrder": {
+      "type": "object",
+      "properties": {
+        "barbacoa": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "beefFajita": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cabeza": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "carnitas": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chickenFajita": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fullOrderId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "individualOrders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IndividualOrder"
+          }
+        },
+        "lengua": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pastor": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total": {
+          "type": "number",
+          "format": "float"
+        },
+        "tripa": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "FullOrder"
+    },
+    "IndividualOrder": {
+      "type": "object",
+      "properties": {
+        "barbacoa": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "beefFajita": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cabeza": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "carnitas": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chickenFajita": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "employee": {
+          "$ref": "#/definitions/Employee"
+        },
+        "employeeId": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fullOrder": {
+          "$ref": "#/definitions/FullOrder"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lengua": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pastor": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total": {
+          "type": "number",
+          "format": "float"
+        },
+        "tripa": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "IndividualOrder"
+    },
+    "LenguaTaco": {
+      "title": "LenguaTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "LenguaTaco"
+        }
+      ]
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "barbacoa": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "beefFajita": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cabeza": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "carnitas": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "chickenFajita": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lengua": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pastor": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total": {
+          "type": "number",
+          "format": "float"
+        },
+        "tripa": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "Order"
+    },
+    "PastorTaco": {
+      "title": "PastorTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "PastorTaco"
+        }
+      ]
+    },
+    "Taco": {
+      "type": "object",
+      "properties": {
+        "price": {
+          "type": "number",
+          "format": "float"
+        }
+      },
+      "title": "Taco"
+    },
+    "TripaTaco": {
+      "title": "TripaTaco",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Taco"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "price": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "title": "TripaTaco"
+        }
+      ]
+    }
+  }
+}
