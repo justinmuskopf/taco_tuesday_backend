@@ -33,10 +33,8 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Taco Tuesday REST API")
                 .description("A REST API that provides taco stats!")
-                //.termsOfServiceUrl("http://hantsy.blogspot.com")
-                //.contact("Hantsy Bai")
                 .license("Apache License Version 2.0")
-                .licenseUrl("https://github.com/springfox/springfox/blob/master/LICENSE")
+                .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
                 .version("2.0")
                 .build();
     }
