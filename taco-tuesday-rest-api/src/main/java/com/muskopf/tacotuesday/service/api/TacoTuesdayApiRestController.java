@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping(value = "/taco-tuesday/v1")
 public class TacoTuesdayApiRestController {
     private Logger logger = LoggerFactory.getLogger(TacoTuesdayApiRestController.class);
@@ -63,8 +64,8 @@ public class TacoTuesdayApiRestController {
     }
 
     @RequestMapping(value = "/tacos", method = RequestMethod.GET)
-    public ResponseEntity<TacoPriceList> getTacoPrices() {
-        return new ResponseEntity<>(tacoPriceList, HttpStatus.OK);
+    public ResponseEntity<List<Taco>> getTacoPrices() {
+        return new ResponseEntity<>(tacoPriceList.getPriceList(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/orders/full", method = RequestMethod.POST)

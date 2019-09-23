@@ -3,6 +3,9 @@ package com.muskopf.tacotuesday.domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class TacoPriceList {
     private BarbacoaTaco barbacoaTaco;
@@ -96,5 +99,19 @@ public class TacoPriceList {
 
     public void setTripaTaco(TripaTaco tripaTaco) {
         this.tripaTaco = tripaTaco;
+    }
+
+    public List<Taco> getPriceList() {
+        List<Taco> tacos =  new ArrayList<>();
+        tacos.add(barbacoaTaco);
+        tacos.add(beefFajitaTaco);
+        tacos.add(cabezaTaco);
+        tacos.add(carnitasTaco);
+        tacos.add(chickenFajitaTaco);
+        tacos.add(lenguaTaco);
+        tacos.add(pastorTaco);
+        tacos.add(tripaTaco);
+
+        return tacos;
     }
 }
