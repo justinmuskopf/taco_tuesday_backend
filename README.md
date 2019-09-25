@@ -16,6 +16,9 @@ The Taco Tuesday API (gosh that's long) utilizes the following super-neat techno
 - [Swagger 2](https://spring.io/projects/spring-boot)
 - [Maven](https://maven.apache.org/)
 
+### API Description
+The currently supported endpoints are defined [here](https://www.justinmuskopf.com/taco_tuesday_backend)!
+
 ### Contribution & Timeline
 Crazy enough to care about something so silly?
 Feel free to check out the project's progression on its [Kanban](https://trello.com/b/eS2IHPfc/taco-tuesday-api) over at Trello.
