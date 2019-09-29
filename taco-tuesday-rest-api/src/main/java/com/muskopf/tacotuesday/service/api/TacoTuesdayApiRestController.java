@@ -49,18 +49,14 @@ public class TacoTuesdayApiRestController {
     }
 
     @RequestMapping(value = "/orders/individual/{employeeId}", method = RequestMethod.GET)
-    public ResponseEntity<List<IndividualOrder>> getAllIndiviudalOrdersWithEmployeeId(@PathVariable Integer employeeId) {
-        return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<List<IndividualOrder>> getAllIndiviudalOrdersWithEmployeeId(@PathVariable Integer employeeId)
+    {
+        return new ResponseEntity<>(tacoTuesdayDAO.retrieveAllIndividualOrdersContainingEmployeeId(employeeId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/orders/full/{employeeId}", method = RequestMethod.GET)
     public ResponseEntity<List<FullOrder>> getAllFullOrdersWithEmployeeId(@PathVariable Integer employeeId) {
-        return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    @RequestMapping(value = "/orders/{employeeId}", method = RequestMethod.GET)
-    public ResponseEntity<List<Order>> getAllOrdersByEmployeeId(@PathVariable Integer employeeId) {
-        return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(tacoTuesdayDAO.retrieveAllFullOrdersContainingEmployeeId(employeeId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/tacos", method = RequestMethod.GET)
