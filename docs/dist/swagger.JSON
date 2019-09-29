@@ -13,7 +13,7 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0"
     }
   },
-  "host": "localhost:8080",
+  "host": "localhost:7430",
   "basePath": "/",
   "tags": [
     {
@@ -400,49 +400,6 @@
         "deprecated": false
       }
     },
-    "/taco-tuesday/v1/orders/{employeeId}": {
-      "get": {
-        "tags": [
-          "taco-tuesday-api-rest-controller"
-        ],
-        "summary": "getAllOrdersByEmployeeId",
-        "operationId": "getAllOrdersByEmployeeIdUsingGET",
-        "produces": [
-          "*/*"
-        ],
-        "parameters": [
-          {
-            "name": "employeeId",
-            "in": "path",
-            "description": "employeeId",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Order"
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        },
-        "deprecated": false
-      }
-    },
     "/taco-tuesday/v1/tacos": {
       "get": {
         "tags": [
@@ -478,96 +435,6 @@
     }
   },
   "definitions": {
-    "BarbacoaTaco": {
-      "title": "BarbacoaTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "BarbacoaTaco"
-        }
-      ]
-    },
-    "BeefFajitaTaco": {
-      "title": "BeefFajitaTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "BeefFajitaTaco"
-        }
-      ]
-    },
-    "CabezaTaco": {
-      "title": "CabezaTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "CabezaTaco"
-        }
-      ]
-    },
-    "CarnitasTaco": {
-      "title": "CarnitasTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "CarnitasTaco"
-        }
-      ]
-    },
-    "ChickenFajitaTaco": {
-      "title": "ChickenFajitaTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "ChickenFajitaTaco"
-        }
-      ]
-    },
     "Employee": {
       "type": "object",
       "properties": {
@@ -716,119 +583,28 @@
       },
       "title": "IndividualOrder"
     },
-    "LenguaTaco": {
-      "title": "LenguaTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "LenguaTaco"
-        }
-      ]
-    },
-    "Order": {
-      "type": "object",
-      "properties": {
-        "barbacoa": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "beefFajita": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "cabeza": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "carnitas": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "chickenFajita": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "lengua": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "pastor": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "total": {
-          "type": "number",
-          "format": "float"
-        },
-        "tripa": {
-          "type": "integer",
-          "format": "int32"
-        }
-      },
-      "title": "Order"
-    },
-    "PastorTaco": {
-      "title": "PastorTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "PastorTaco"
-        }
-      ]
-    },
     "Taco": {
       "type": "object",
       "properties": {
         "price": {
           "type": "number",
           "format": "float"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BARBACOA",
+            "BEEF_FAJITA",
+            "CABEZA",
+            "CARNITAS",
+            "CHICKEN_FAJITA",
+            "LENGUA",
+            "PASTOR",
+            "TRIPA"
+          ]
         }
       },
       "title": "Taco"
-    },
-    "TripaTaco": {
-      "title": "TripaTaco",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Taco"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "price": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          "title": "TripaTaco"
-        }
-      ]
     }
   }
 }
