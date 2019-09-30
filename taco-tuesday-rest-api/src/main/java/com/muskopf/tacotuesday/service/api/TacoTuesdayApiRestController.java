@@ -1,11 +1,16 @@
 package com.muskopf.tacotuesday.service.api;
 
+import com.muskopf.mailgun.emailsender.EmailSender;
+import com.muskopf.mailgun.emailsender.proc.EmailBuilder;
 import com.muskopf.tacotuesday.bl.TacoTuesdayDAO;
 import com.muskopf.tacotuesday.bl.proc.ApiKeyValidator;
+import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
 import com.muskopf.tacotuesday.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +25,23 @@ public class TacoTuesdayApiRestController {
     private TacoPriceList tacoPriceList;
     private TacoTuesdayDAO tacoTuesdayDAO;
     private ApiKeyValidator apiKeyValidator;
+    private TacoEmailer emailer;
+
+    @EventListener
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        emailer.sendStartupEmail();
+    }
 
     @Autowired
-    public TacoTuesdayApiRestController(TacoPriceList tacoPriceList, TacoTuesdayDAO tacoTuesdayDAO, ApiKeyValidator apiKeyValidator) {
+    public TacoTuesdayApiRestController(TacoPriceList tacoPriceList,
+                                        TacoTuesdayDAO tacoTuesdayDAO,
+                                        ApiKeyValidator apiKeyValidator,
+                                        TacoEmailer emailer)
+    {
         this.tacoPriceList = tacoPriceList;
         this.tacoTuesdayDAO = tacoTuesdayDAO;
         this.apiKeyValidator = apiKeyValidator;
+        this.emailer = emailer;
     }
 
     @RequestMapping(value = "/orders/full/{orderId}", method = RequestMethod.GET)
