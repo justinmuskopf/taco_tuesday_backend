@@ -1,4 +1,4 @@
-package com.muskopf.tacotuesday.service.api;
+package com.muskopf.tacotuesday.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,4 +1,4 @@
-package com.muskopf.tacotuesday.service.api;
+package com.muskopf.tacotuesday.api;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

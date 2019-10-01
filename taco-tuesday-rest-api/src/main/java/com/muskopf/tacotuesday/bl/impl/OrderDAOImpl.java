@@ -1,42 +1,27 @@
 package com.muskopf.tacotuesday.bl.impl;
 
-import com.muskopf.tacotuesday.bl.repository.EmployeeRepository;
+import com.muskopf.tacotuesday.bl.OrderDAO;
 import com.muskopf.tacotuesday.bl.repository.FullOrderRepository;
 import com.muskopf.tacotuesday.bl.repository.IndividualOrderRepository;
-import com.muskopf.tacotuesday.bl.TacoTuesdayDAO;
-import com.muskopf.tacotuesday.bl.repository.ApiKeyRepository;
-import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityExistsException;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
-
 @Component
-@Transactional
-public class TacoTuesdayDAOImpl implements TacoTuesdayDAO {
-    private EmployeeRepository employeeRepository;
+public class OrderDAOImpl implements OrderDAO {
     private FullOrderRepository fullOrderRepository;
     private IndividualOrderRepository individualOrderRepository;
-    private ApiKeyRepository apiKeyRepository;
 
     @Autowired
-    public TacoTuesdayDAOImpl(EmployeeRepository employeeRepository,
-                              FullOrderRepository fullOrderRepository,
-                              IndividualOrderRepository individualOrderRepository,
-                              ApiKeyRepository apiKeyRepository)
+    public OrderDAOImpl(FullOrderRepository fullOrderRepository, IndividualOrderRepository individualOrderRepository)
     {
-        this.employeeRepository = employeeRepository;
         this.fullOrderRepository = fullOrderRepository;
         this.individualOrderRepository = individualOrderRepository;
-        this.apiKeyRepository = apiKeyRepository;
     }
 
     private FullOrder getFullOrderIfPresent(Integer id) {
@@ -115,39 +100,5 @@ public class TacoTuesdayDAOImpl implements TacoTuesdayDAO {
                 .stream()
                 .map(IndividualOrder::getFullOrder)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public Employee createEmployee(Employee employee) {
-        return createEmployee(employee.getFirstName(), employee.getLastName(), employee.getNickName());
-    }
-
-    @Override
-    public Employee createEmployee(String firstName, String lastName, String nickName) {
-        if (isNull(firstName) || isNull(lastName)) {
-            throw new IllegalArgumentException("Both first name and last name are required when creating an employee!");
-        }
-
-        boolean employeeAlreadyExists = employeeRepository.existsEmployeeByFirstNameAndLastName(firstName, lastName);
-        if (employeeAlreadyExists) {
-            throw new EntityExistsException("The requested employee already exists!");
-        }
-
-        Employee employee = new Employee()
-                .firstName(firstName)
-                .lastName(lastName)
-                .nickName(nickName);
-
-        return employeeRepository.save(employee);
-    }
-
-    @Override
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
-    }
-
-    @Override
-    public boolean apiKeyExists(String apiKey) {
-        return apiKeyRepository.existsByKey(apiKey);
     }
 }

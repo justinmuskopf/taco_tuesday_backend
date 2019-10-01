@@ -1,7 +1,5 @@
 package com.muskopf.tacotuesday.config;
 
-import com.google.common.base.Predicate;
-import com.muskopf.tacotuesday.service.api.TacoTuesdayApiRestController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -14,7 +12,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 import static com.google.common.base.Predicates.or;
-import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 @EnableSwagger2
@@ -24,7 +21,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.muskopf.tacotuesday.service.api"))
+                .apis(RequestHandlerSelectors.basePackage("com.muskopf.tacotuesday.api"))
                 .paths(PathSelectors.any())
                 .build();
     }
