@@ -1,6 +1,6 @@
 package com.muskopf.tacotuesday.bl.proc;
 
-import com.muskopf.tacotuesday.bl.TacoTuesdayDAO;
+import com.muskopf.tacotuesday.bl.EmployeeDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApiKeyValidator {
     private Logger logger = LoggerFactory.getLogger(ApiKeyValidator.class);
-    private TacoTuesdayDAO dao;
+    private EmployeeDAO dao;
 
     @Autowired
-    public ApiKeyValidator(TacoTuesdayDAO dao) {
+    public ApiKeyValidator(EmployeeDAO dao) {
         this.dao = dao;
     }
 
