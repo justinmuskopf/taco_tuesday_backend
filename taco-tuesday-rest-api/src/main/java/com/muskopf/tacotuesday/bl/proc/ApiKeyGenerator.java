@@ -9,14 +9,7 @@ import static java.util.Objects.isNull;
 
 public class ApiKeyGenerator {
     private static String getRandomKeyString(Employee employee) {
-        String employeeFullName = employee.getFullName();
-        if (isNull(employeeFullName)) {
-            throw new IllegalArgumentException("No API Key for Employee ID " + employee.getId() + " was generated! (No Full Name)");
-        }
-
-        UUID randomKey = UUID.nameUUIDFromBytes(employeeFullName.getBytes());
-
-        return randomKey.toString();
+        return UUID.randomUUID().toString();
     }
 
     public static ApiKey generateForEmployee(Employee employee) {
