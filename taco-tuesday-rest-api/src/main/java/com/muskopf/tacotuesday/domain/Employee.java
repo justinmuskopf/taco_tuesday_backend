@@ -20,6 +20,8 @@ public class Employee {
     private String lastName;
     @Column
     private String nickName;
+    @Column
+    private String slackId;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "api_key_id", referencedColumnName = "id")
@@ -87,4 +89,7 @@ public class Employee {
         this.orders = orders;
         return this;
     }
+
+    public String getSlackId() { return slackId; }
+    public void setSlackId() { this.slackId = slackId; }
 }
