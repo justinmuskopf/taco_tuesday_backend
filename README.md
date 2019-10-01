@@ -21,7 +21,7 @@ The currently supported endpoints are defined [here](https://www.justinmuskopf.c
 
 ### Contribution & Timeline
 Crazy enough to care about something so silly?
-Feel free to check out the project's progression on its [Kanban](https://trello.com/b/eS2IHPfc/taco-tuesday-api) over at Trello.
+Feel free to check out the project's progression on its [Kanban](https://github.com/justinmuskopf/taco_tuesday_backend/projects/1)!
 
 ### Building & Deploying
 Maybe one day!
