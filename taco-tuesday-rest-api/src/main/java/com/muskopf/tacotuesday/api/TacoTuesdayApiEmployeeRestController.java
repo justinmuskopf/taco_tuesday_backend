@@ -48,4 +48,15 @@ public class TacoTuesdayApiEmployeeRestController {
 
         return new ResponseEntity<>(employeeDAO.getAllEmployees(), HttpStatus.OK);
     }
+
+    @GetMapping("/{slackId}")
+    public ResponseEntity<Employee> getEmployeeBySlackId(@RequestParam(name = "apiKey") String apiKey,
+                                                         @PathVariable(name = "slackId") String slackId)
+    {
+        if (apiKeyValidator.isInvalidApiKey(apiKey)) {
+            throw new UnrecognizedApiKeyException(apiKey);
+        }
+
+        return new ResponseEntity<>(employeeDAO.getEmployeeBySlackId(slackId), HttpStatus.OK);
+    }
 }
