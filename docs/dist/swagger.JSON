@@ -124,6 +124,52 @@
         "deprecated": false
       }
     },
+    "/taco-tuesday/v1/employees/{slackId}": {
+      "get": {
+        "tags": [
+          "taco-tuesday-api-employee-rest-controller"
+        ],
+        "summary": "getEmployeeBySlackId",
+        "operationId": "getEmployeeBySlackIdUsingGET",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "query",
+            "description": "apiKey",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "slackId",
+            "in": "path",
+            "description": "slackId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Employee"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
     "/taco-tuesday/v1/orders/full": {
       "get": {
         "tags": [
@@ -381,6 +427,9 @@
           "items": {
             "$ref": "#/definitions/IndividualOrder"
           }
+        },
+        "slackId": {
+          "type": "string"
         }
       },
       "title": "Employee"
