@@ -92,4 +92,8 @@ public class Employee {
 
     public String getSlackId() { return slackId; }
     public void setSlackId() { this.slackId = slackId; }
+    public Employee slackId(String slackId) {
+        this.slackId = slackId;
+        return this;
+    }
 }
