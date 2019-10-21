@@ -29,8 +29,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         return createEmployee(
                 employee.getFirstName(),
                 employee.getLastName(),
-                employee.getNickName(),
-                employee.getSlackId()
+                employee.getSlackId(),
+                employee.getNickName()
         );
     }
 
