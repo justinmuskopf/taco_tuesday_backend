@@ -13,7 +13,7 @@ import javax.persistence.*;
         property = "id"
 )
 public class IndividualOrder extends Order {
-    @ManyToOne(fetch = FetchType.LAZY)//fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_full_order_id", referencedColumnName = "id")
     @JsonBackReference
     private FullOrder fullOrder;
