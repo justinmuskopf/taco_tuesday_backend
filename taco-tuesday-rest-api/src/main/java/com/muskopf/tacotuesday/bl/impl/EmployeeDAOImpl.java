@@ -36,7 +36,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public Employee getEmployeeBySlackId(String slackId) {
-        return employeeRepository.findEmployeeBySlackId(slackId);
+        return employeeRepository.findBySlackId(slackId);
     }
 
     @Override

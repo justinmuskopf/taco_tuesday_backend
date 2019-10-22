@@ -3,10 +3,9 @@ package com.muskopf.tacotuesday.config;
 import com.muskopf.mailgun.emailsender.config.EmailSenderConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-//import java.math.Float;
-
-
+@EnableJpaRepositories
 @ConfigurationProperties(prefix = "taco-tuesday")
 @Import(EmailSenderConfiguration.class)
 public class TacoTuesdayApiConfiguration {

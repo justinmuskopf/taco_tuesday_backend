@@ -1,25 +1,32 @@
 package com.muskopf.tacotuesday.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class IndividualOrder extends Order {
-    @ManyToOne(cascade = CascadeType.ALL)//fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_full_order_id", referencedColumnName = "id")
+    @JsonBackReference
     private FullOrder fullOrder;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "fk_employee_id", referencedColumnName = "id")
     private Employee employee;
-
-    private Integer employeeId;
 
     public Employee getEmployee() {
         return employee;
     }
     public void setEmployee(Employee employee) {
         this.employee = employee;
-        this.employeeId = employee.getId();
     }
     public IndividualOrder employee(Employee employee) {
         setEmployee(employee);
@@ -32,7 +39,4 @@ public class IndividualOrder extends Order {
         this.fullOrder = fullOrder;
         return this;
     }
-
-    public Integer getEmployeeId() { return employeeId; }
-    public void setEmployeeId(Integer employeeId) { this.employeeId = employeeId; }
 }

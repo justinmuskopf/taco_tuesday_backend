@@ -10,5 +10,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     boolean existsEmployeeByFirstNameAndLastName(String firstName, String lastName);
     boolean existsEmployeeBySlackId(String slackId);
 
-    Employee findEmployeeBySlackId(String slackId);
+    Employee findBySlackId(String slackId);
 }

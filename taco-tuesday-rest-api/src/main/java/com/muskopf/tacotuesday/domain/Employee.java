@@ -1,8 +1,13 @@
 package com.muskopf.tacotuesday.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muskopf.tacotuesday.bl.proc.ApiKeyGenerator;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.criterion.Distinct;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -14,20 +19,24 @@ public class Employee {
     @GeneratedValue
     private Integer id;
 
-    @Column
+    @CreationTimestamp
+    private Instant createdAt;
+
+    @Column(nullable = false)
     private String firstName;
-    @Column
+    @Column(nullable = false)
     private String lastName;
+    @Column(unique = true, nullable = false)
+    private String slackId;
     @Column
     private String nickName;
-    @Column
-    private String slackId;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "api_key_id", referencedColumnName = "id")
     private ApiKey apiKey;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<IndividualOrder> orders;
 
     @PrePersist
