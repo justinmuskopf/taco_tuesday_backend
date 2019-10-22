@@ -1,6 +1,7 @@
 package com.muskopf.tacotuesday.bl.impl;
 
 import com.muskopf.tacotuesday.bl.OrderDAO;
+import com.muskopf.tacotuesday.bl.repository.EmployeeRepository;
 import com.muskopf.tacotuesday.bl.repository.FullOrderRepository;
 import com.muskopf.tacotuesday.bl.repository.IndividualOrderRepository;
 import com.muskopf.tacotuesday.domain.FullOrder;
@@ -8,20 +9,26 @@ import com.muskopf.tacotuesday.domain.IndividualOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class OrderDAOImpl implements OrderDAO {
     private FullOrderRepository fullOrderRepository;
     private IndividualOrderRepository individualOrderRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
-    public OrderDAOImpl(FullOrderRepository fullOrderRepository, IndividualOrderRepository individualOrderRepository)
+    public OrderDAOImpl(FullOrderRepository fullOrderRepository,
+                        IndividualOrderRepository individualOrderRepository,
+                        EmployeeRepository employeeRepository)
     {
         this.fullOrderRepository = fullOrderRepository;
         this.individualOrderRepository = individualOrderRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     private FullOrder getFullOrderIfPresent(Integer id) {
@@ -86,7 +93,14 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public FullOrder createFullOrder(FullOrder order) {
-        return fullOrderRepository.save(order);
+
+
+        FullOrder savedOrder = fullOrderRepository.save(order);
+        //List<IndividualOrder> individualOrders = new ArrayList<>(savedOrder.getIndividualOrders());
+//.forEach(o -> o.setFullOrder(savedOrder));
+
+        //individualOrderRepository.saveAll(individualOrders);
+        return savedOrder;
     }
 
     @Override
