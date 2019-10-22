@@ -10,12 +10,15 @@
 	</parent>
 	<groupId>com.muskopf.tacotuesday</groupId>
 	<artifactId>taco-tuesday-rest-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>{api.version}-SNAPSHOT</version>
 	<name>Taco Tuesday REST API</name>
 	<description>A REST API that provides statistics about tacos ordered on Tuesdays.</description>
 
 	<properties>
 		<java.version>1.8</java.version>
+		<api.version>0.0.1</api.version>
+		<ttapi.swaggerdir>${project.basedir}\..\docs\dist</ttapi.swaggerdir>
+		<ttapi.swaggerfile>swagger</ttapi.swaggerfile>
 	</properties>
 
 	<dependencies>
@@ -68,10 +71,72 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- https://mvnrepository.com/artifact/com.github.kongchen/swagger-maven-plugin -->
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>3.1.8</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<apiSources>
+						<apiSource>
+							<springmvc>true</springmvc>
+							<locations>
+								<location>com.muskopf.tacotuesday.api.TacoTuesdayApiEmployeeRestController</location>
+								<location>com.muskopf.tacotuesday.api.TacoTuesdayApiOrderRestController</location>
+								<location>com.muskopf.tacotuesday.api.TacoTuesdayApiTacoRestController</location>
+							</locations>
+							<schemes>
+								<scheme>http</scheme>
+							</schemes>
+							<host>api.tacotuesdayapi.com:7430</host>
+							<info>
+								<title>Taco Tuesday API</title>
+								<description>
+									Creates, Retrieves, and Updates Taco Orders!
+								</description>
+								<contact>
+									<email>api@tacotuesdayapi.com</email>
+									<name>Justin Muskopf</name>
+									<url>https://justinmuskopf.com</url>
+								</contact>
+								<version>${api.version}</version>
+							</info>
+							<swaggerDirectory>${ttapi.swaggerdir}</swaggerDirectory>
+							<swaggerFileName>${ttapi.swaggerfile}</swaggerFileName>
+							<outputFormats>json</outputFormats>
+						</apiSource>
+					</apiSources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.swagger</groupId>
+				<artifactId>swaggerhub-maven-plugin</artifactId>
+				<version>1.0.7</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<api>TacoTuesdayAPI</api>
+							<owner>Taco-Tuesday</owner>
+							<version>${api.version}</version>
+							<uploadType>inputFile</uploadType>
+							<inputFile>${ttapi.swaggerdir}\${ttapi.swaggerfile}.json</inputFile>
+							<format>json</format>
+							<token>${env.SWAGGERHUB_TOKEN}</token>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
