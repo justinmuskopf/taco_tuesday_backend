@@ -9,15 +9,17 @@ I'll get back to you on that.
 
 ### Stack
 The Taco Tuesday API (gosh that's long) utilizes the following super-neat technologies:
+- [Java 8](https://www.java.com/en/download/faq/java8.xml)
 - [Spring Boot](https://spring.io/projects/spring-boot)
   - [JPA Repositories](https://docs.spring.io/spring-data/jpa/docs/1.5.0.RELEASE/reference/html/jpa.repositories.html)
 - [Maria DB](https://mariadb.org/)
 - [The H2 Database Engine](https://www.h2database.com/)
 - [Swagger 2](https://spring.io/projects/spring-boot)
 - [Maven](https://maven.apache.org/)
+- [Mailgun](https://www.mailgun.com/)
 
 ### API Description
-The currently supported endpoints are defined [here](https://www.justinmuskopf.com/taco_tuesday_backend)!
+The currently supported endpoints are defined [here](docs.tacotuesdayapi.com)!
 
 ### Contribution & Timeline
 Crazy enough to care about something so silly?
