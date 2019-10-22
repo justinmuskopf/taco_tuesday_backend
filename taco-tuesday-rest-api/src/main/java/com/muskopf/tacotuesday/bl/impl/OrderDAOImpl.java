@@ -19,16 +19,13 @@ import java.util.stream.Collectors;
 public class OrderDAOImpl implements OrderDAO {
     private FullOrderRepository fullOrderRepository;
     private IndividualOrderRepository individualOrderRepository;
-    private EmployeeRepository employeeRepository;
 
     @Autowired
     public OrderDAOImpl(FullOrderRepository fullOrderRepository,
-                        IndividualOrderRepository individualOrderRepository,
-                        EmployeeRepository employeeRepository)
+                        IndividualOrderRepository individualOrderRepository)
     {
         this.fullOrderRepository = fullOrderRepository;
         this.individualOrderRepository = individualOrderRepository;
-        this.employeeRepository = employeeRepository;
     }
 
     private FullOrder getFullOrderIfPresent(Integer id) {
