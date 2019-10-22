@@ -19,7 +19,7 @@ The Taco Tuesday API (gosh that's long) utilizes the following super-neat techno
 - [Mailgun](https://www.mailgun.com/)
 
 ### API Description
-The currently supported endpoints are defined [here](docs.tacotuesdayapi.com)!
+The currently supported endpoints are defined [here](https://app.swaggerhub.com/apis/Taco-Tuesday/TacoTuesdayAPI)!
 
 ### Contribution & Timeline
 Crazy enough to care about something so silly?
