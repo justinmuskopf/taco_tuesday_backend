@@ -93,13 +93,14 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public FullOrder createFullOrder(FullOrder order) {
-
-
         FullOrder savedOrder = fullOrderRepository.save(order);
-        //List<IndividualOrder> individualOrders = new ArrayList<>(savedOrder.getIndividualOrders());
-//.forEach(o -> o.setFullOrder(savedOrder));
+        individualOrderRepository.saveAll(order.getIndividualOrders());
 
-        //individualOrderRepository.saveAll(individualOrders);
+        Set<IndividualOrder> individualOrders = savedOrder.getIndividualOrders();
+        individualOrders.forEach(o -> o.setFullOrder(savedOrder));
+
+        individualOrderRepository.saveAll(individualOrders);
+
         return savedOrder;
     }
 
