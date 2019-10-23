@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface EmployeeDAO {
     // Employees
-    Employee createEmployee(String firstName, String lastName, String nickName, String slackId);
+	Employee createEmployee(String fullName, String nickName, String slackId);
     Employee createEmployee(Employee employee);
     Employee getEmployeeBySlackId(String slackId);
     List<Employee> getAllEmployees();

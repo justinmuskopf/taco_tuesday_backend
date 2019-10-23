@@ -42,8 +42,7 @@
 //
 //    private Employee generateEmployee() {
 //        return new Employee()
-//                .firstName(randomId())
-//                .lastName(randomId())
+//                .fullName(randomId())
 //                .nickName(randomId());
 //    }
 //

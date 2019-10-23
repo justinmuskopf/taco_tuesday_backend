@@ -23,9 +23,7 @@ public class Employee {
     private Instant createdAt;
 
     @Column(nullable = false)
-    private String firstName;
-    @Column(nullable = false)
-    private String lastName;
+    private String fullName;
     @Column(unique = true, nullable = false)
     private String slackId;
     @Column
@@ -48,34 +46,15 @@ public class Employee {
         this.apiKey = ApiKeyGenerator.generateForEmployee(this);
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    public Employee firstName(String firstName) {
-        this.firstName = firstName;
-        return this;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    public Employee lastName(String lastName) {
-        this.lastName = lastName;
-        return this;
-    }
-
     public String getFullName() {
-        if (isNull(firstName) || isNull(lastName)) {
-            return null;
-        }
-
-        return firstName + " " + lastName;
+        return fullName;
+    }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+    public Employee fullName(String fullName) {
+        this.fullName = fullName;
+        return this;
     }
 
     public String getNickName() { return nickName; }
