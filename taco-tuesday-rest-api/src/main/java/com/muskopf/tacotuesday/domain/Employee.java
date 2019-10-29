@@ -3,8 +3,6 @@ package com.muskopf.tacotuesday.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muskopf.tacotuesday.bl.proc.ApiKeyGenerator;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.criterion.Distinct;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -21,7 +19,6 @@ public class Employee {
 
     @CreationTimestamp
     private Instant createdAt;
-
     @Column(nullable = false)
     private String fullName;
     @Column(unique = true, nullable = false)
@@ -46,12 +43,8 @@ public class Employee {
         this.apiKey = ApiKeyGenerator.generateForEmployee(this);
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
     public Employee fullName(String fullName) {
         this.fullName = fullName;
         return this;
