@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.muskopf.tacotuesday</groupId>
 	<artifactId>taco-tuesday-rest-api</artifactId>
-	<version>{api.version}-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>Taco Tuesday REST API</name>
 	<description>A REST API that provides statistics about tacos ordered on Tuesdays.</description>
 

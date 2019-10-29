@@ -210,17 +210,11 @@
         "lastName" : {
           "type" : "string"
         },
-        "nickName" : {
-          "type" : "string"
-        },
         "slackId" : {
           "type" : "string"
         },
-        "orders" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/IndividualOrder"
-          }
+        "nickName" : {
+          "type" : "string"
         },
         "fullName" : {
           "type" : "string"
@@ -271,10 +265,6 @@
           "format" : "int32"
         },
         "tripa" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
-        "fullOrderId" : {
           "type" : "integer",
           "format" : "int32"
         },
@@ -339,10 +329,6 @@
         },
         "employee" : {
           "$ref" : "#/definitions/Employee"
-        },
-        "employeeId" : {
-          "type" : "integer",
-          "format" : "int32"
         }
       }
     },
