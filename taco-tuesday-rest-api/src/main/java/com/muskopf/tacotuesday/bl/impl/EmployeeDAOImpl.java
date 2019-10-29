@@ -27,8 +27,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     @Override
     public Employee createEmployee(Employee employee) {
         return createEmployee(
-                employee.getFirstName(),
-                employee.getLastName(),
+                employee.getFullName(),
                 employee.getSlackId(),
                 employee.getNickName()
         );
@@ -40,20 +39,19 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
-    public Employee createEmployee(String firstName, String lastName, String slackId, String nickName) {
-        if (isNull(firstName) || isNull(lastName) || isNull(slackId)) {
-            throw new IllegalArgumentException("First name, last name, and Slack ID are required when creating an employee!");
+    public Employee createEmployee(String fullName, String slackId, String nickName) {
+        if (isNull(fullName) || isNull(slackId)) {
+            throw new IllegalArgumentException("Full Name and Slack ID are required when creating an employee!");
         }
 
-        boolean employeeAlreadyExists = employeeRepository.existsEmployeeByFirstNameAndLastName(firstName, lastName);
+        boolean employeeAlreadyExists = employeeRepository.existsEmployeeByFullName(fullName);
         employeeAlreadyExists |= employeeRepository.existsEmployeeBySlackId(slackId);
         if (employeeAlreadyExists) {
             throw new EntityExistsException("The requested employee already exists!");
         }
 
         Employee employee = new Employee()
-                .firstName(firstName)
-                .lastName(lastName)
+                .fullName(fullName)
                 .nickName(nickName)
                 .slackId(slackId);
 
