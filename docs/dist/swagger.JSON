@@ -351,6 +351,9 @@
         "type" : {
           "type" : "string",
           "enum" : [ "BARBACOA", "BEEF_FAJITA", "CABEZA", "CARNITAS", "CHICKEN_FAJITA", "LENGUA", "PASTOR", "TRIPA" ]
+        },
+        "name" : {
+          "type" : "string"
         }
       }
     }
