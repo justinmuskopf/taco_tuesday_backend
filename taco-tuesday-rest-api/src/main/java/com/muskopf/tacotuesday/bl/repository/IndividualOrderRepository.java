@@ -9,4 +9,5 @@ import java.util.List;
 @Transactional
 public interface IndividualOrderRepository extends JpaRepository<IndividualOrder, Integer> {
     List<IndividualOrder> findByEmployeeId(Integer employeeId);
+    List<IndividualOrder> findByEmployeeSlackId(String slackId);
 }

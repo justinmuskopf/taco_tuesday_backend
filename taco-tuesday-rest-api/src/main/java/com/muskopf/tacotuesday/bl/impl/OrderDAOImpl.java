@@ -1,15 +1,15 @@
 package com.muskopf.tacotuesday.bl.impl;
 
 import com.muskopf.tacotuesday.bl.OrderDAO;
-import com.muskopf.tacotuesday.bl.repository.EmployeeRepository;
 import com.muskopf.tacotuesday.bl.repository.FullOrderRepository;
 import com.muskopf.tacotuesday.bl.repository.IndividualOrderRepository;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -79,8 +79,8 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public List<IndividualOrder> retrieveAllIndividualOrdersContainingEmployeeId(Integer employeeId) {
-        return individualOrderRepository.findByEmployeeId(employeeId);
+    public List<IndividualOrder> retrieveIndividualOrdersBySlackId(String slackId) {
+        return individualOrderRepository.findByEmployeeSlackId(slackId);
     }
 
     @Override
@@ -107,10 +107,13 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public List<FullOrder> retrieveAllFullOrdersContainingEmployeeId(Integer employeeId) {
-        return retrieveAllIndividualOrdersContainingEmployeeId(employeeId)
+    @Transactional
+    public List<FullOrder> retrieveFullOrdersBySlackId(String slackId) {
+        List<IndividualOrder> individualOrders = retrieveIndividualOrdersBySlackId(slackId);
+
+        return individualOrders
                 .stream()
-                .map(IndividualOrder::getFullOrder)
+                .map(o -> (FullOrder) Hibernate.unproxy(o.getFullOrder()))
                 .collect(Collectors.toList());
     }
 }
