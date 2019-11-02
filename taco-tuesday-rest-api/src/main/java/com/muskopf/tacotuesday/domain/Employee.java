@@ -21,15 +21,20 @@ public class Employee {
     @Column(updatable = false)
     @CreationTimestamp
     private Instant createdAt;
+    
     @Column
     @UpdateTimestamp
     private Instant updatedAt;
+    
     @Column(nullable = false)
     private String fullName;
+    
     @Column(unique = true, nullable = false)
     private String slackId;
+    
     @Column
     private String nickName;
+    
     @Column(nullable = false)
     private boolean admin = false;
 
