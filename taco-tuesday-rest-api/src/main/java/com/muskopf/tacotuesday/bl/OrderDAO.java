@@ -10,12 +10,12 @@ public interface OrderDAO {
     IndividualOrder updateIndividualOrder(IndividualOrder order);
     IndividualOrder retrieveIndividualOrder(Integer id);
     List<IndividualOrder> retrieveAllIndividualOrders();
-    List<IndividualOrder> retrieveAllIndividualOrdersContainingEmployeeId(Integer employeeId);
+    List<IndividualOrder> retrieveIndividualOrdersBySlackId(String slackId);
 
     // Full Orders
     FullOrder updateFullOrder(FullOrder order);
     FullOrder retrieveFullOrder(Integer id);
     FullOrder createFullOrder(FullOrder order);
     List<FullOrder> retrieveAllFullOrders();
-    List<FullOrder> retrieveAllFullOrdersContainingEmployeeId(Integer employeeId);
+    List<FullOrder> retrieveFullOrdersBySlackId(String slackId);
 }

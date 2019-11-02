@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 @RestController
 @RequestMapping(value = "/taco-tuesday/v1/orders")
 public class TacoTuesdayApiOrderRestController {
@@ -32,7 +35,11 @@ public class TacoTuesdayApiOrderRestController {
     }
 
     @GetMapping(value = "/individual")
-    public ResponseEntity<List<IndividualOrder>> getAllIndividualOrders() {
+    public ResponseEntity<List<IndividualOrder>> getAllIndividualOrders(@RequestHeader(name = "slackId", required = false) String slackId) {
+        if (!isEmpty(slackId)) {
+            return new ResponseEntity<>(orderDAO.retrieveIndividualOrdersBySlackId(slackId), HttpStatus.OK);
+        }
+
         return new ResponseEntity<>(orderDAO.retrieveAllIndividualOrders(), HttpStatus.OK);
     }
 
@@ -42,7 +49,11 @@ public class TacoTuesdayApiOrderRestController {
     }
 
     @GetMapping(value = "/full")
-    public ResponseEntity<List<FullOrder>> getAllFullOrders() {
+    public ResponseEntity<List<FullOrder>> getAllFullOrders(@RequestHeader(name = "slackId", required = false) String slackId) {
+        if (!isNull(slackId)) {
+            return new ResponseEntity<>(orderDAO.retrieveFullOrdersBySlackId(slackId), HttpStatus.OK);
+        }
+
         return new ResponseEntity<>(orderDAO.retrieveAllFullOrders(), HttpStatus.OK);
     }
 

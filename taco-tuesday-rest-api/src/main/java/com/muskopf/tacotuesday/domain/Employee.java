@@ -1,6 +1,8 @@
 package com.muskopf.tacotuesday.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.muskopf.tacotuesday.bl.proc.ApiKeyGenerator;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,6 +15,10 @@ import static java.util.Objects.isNull;
 
 @Entity
 @Table(name = "employee")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Employee {
     @Id
     @GeneratedValue
@@ -40,6 +46,7 @@ public class Employee {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "api_key_id", referencedColumnName = "id")
+    @JsonIgnore
     private ApiKey apiKey;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
