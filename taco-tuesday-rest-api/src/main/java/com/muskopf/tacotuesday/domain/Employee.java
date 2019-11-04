@@ -97,4 +97,9 @@ public class Employee {
         this.orders = orders;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return fullName + " (" + slackId + ")";
+    }
 }
