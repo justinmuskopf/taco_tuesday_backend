@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 
 @Component
@@ -50,29 +52,47 @@ public class TacoEmailer {
                 .build();
     }
 
-    public void sendStartupEmail() {
-        if (!shouldSendEmail("startup")) {
+    private void sendEmail(String topic, String subject, String body) {
+        if (!shouldSendEmail(topic)) {
             return;
         }
 
-        Email email = getEmail(
-                "Startup",
-                "The TacoTuesday API service has started!"
-        );
+        Email email = getEmail(subject, body);
 
         emailSender.sendEmail(email);
     }
 
+    public void sendStartupEmail() {
+        sendEmail("startup", "Startup", "The TacoTuesday API service has started!");
+    }
+
     public void sendOrderSubmittedEmail(FullOrder fullOrder) {
-        if (!shouldSendEmail("order submission")) {
-            return;
+        sendEmail("order submission",
+                "New Order Submitted!",
+                "The following Full Order has been submitted:\n" + fullOrder);
+    }
+
+    public void sendExceptionEmail(Exception e) {
+        String sep = System.lineSeparator();
+
+        StringWriter sWriter = new StringWriter();
+        PrintWriter pWriter = new PrintWriter(sWriter);
+        e.printStackTrace(pWriter);
+
+        StringBuilder stackTrace = new StringBuilder();
+        for (String line : sWriter.toString().split("\n")) {
+            stackTrace.append("\t\t").append(line);
         }
 
-        Email email = getEmail(
-                "New Order Submitted!",
-                "The following Full Order has been submitted:\n" + fullOrder
-        );
+        StringBuilder sb = new StringBuilder();
+        sb.append("The following exception has occurred:").append(sep);
+        sb.append("\tType: ").append(e.getClass().getSimpleName()).append(sep);
+        sb.append("\tCause: ").append(e.getCause()).append(sep);
+        sb.append("\tMessage: ").append(e.getMessage()).append(sep);
+        sb.append("\tStacktrace:").append(sep).append(stackTrace.toString());
 
-        emailSender.sendEmail(email);
+        sendEmail("exception",
+                "An Exception has Occurred!",
+                sb.toString());
     }
 }
