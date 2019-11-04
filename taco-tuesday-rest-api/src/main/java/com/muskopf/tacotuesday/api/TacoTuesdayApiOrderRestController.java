@@ -63,7 +63,10 @@ public class TacoTuesdayApiOrderRestController {
             throw new UnrecognizedApiKeyException(apiKey);
         }
 
-        return new ResponseEntity<>(orderDAO.createFullOrder(order), HttpStatus.CREATED);
+        FullOrder created = orderDAO.createFullOrder(order);
+        emailer.sendOrderSubmittedEmail(created);
+
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/full/{orderId}")
