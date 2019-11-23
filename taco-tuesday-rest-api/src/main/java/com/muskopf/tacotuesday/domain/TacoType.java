@@ -1,14 +1,14 @@
 package com.muskopf.tacotuesday.domain;
 
 public enum TacoType {
-    BARBACOA("Barbacoa"),
-    BEEF_FAJITA("Beef Fajita"),
-    CABEZA("Cabeza"),
-    CARNITAS("Carnitas"),
-    CHICKEN_FAJITA("Chicken Fajita"),
-    LENGUA("Lengua"),
-    PASTOR("Pastor"),
-    TRIPA("Tripa");
+    barbacoa("Barbacoa"),
+    beefFajita("Beef Fajita"),
+    cabeza("Cabeza"),
+    carnitas("Carnitas"),
+    chickenFajita("Chicken Fajita"),
+    lengua("Lengua"),
+    pastor("Pastor"),
+    tripa("Tripa");
 
     private String prettyName;
     TacoType(String prettyName) {

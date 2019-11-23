@@ -14,14 +14,14 @@ public class TacoPriceList {
     @Autowired
     public TacoPriceList(TacoTuesdayApiConfiguration config)
     {
-        tacos.add(new Taco(TacoType.BARBACOA, config.getBarbacoaPrice()));
-        tacos.add(new Taco(TacoType.BEEF_FAJITA, config.getBeefFajitaPrice()));
-        tacos.add(new Taco(TacoType.CABEZA, config.getCabezaPrice()));
-        tacos.add(new Taco(TacoType.CARNITAS, config.getCarnitasPrice()));
-        tacos.add(new Taco(TacoType.CHICKEN_FAJITA, config.getChickenFajitaPrice()));
-        tacos.add(new Taco(TacoType.LENGUA, config.getLenguaPrice()));
-        tacos.add(new Taco(TacoType.PASTOR, config.getPastorPrice()));
-        tacos.add(new Taco(TacoType.TRIPA, config.getTripaPrice()));
+        tacos.add(new Taco(TacoType.barbacoa, config.getBarbacoaPrice()));
+        tacos.add(new Taco(TacoType.beefFajita, config.getBeefFajitaPrice()));
+        tacos.add(new Taco(TacoType.cabeza, config.getCabezaPrice()));
+        tacos.add(new Taco(TacoType.carnitas, config.getCarnitasPrice()));
+        tacos.add(new Taco(TacoType.chickenFajita, config.getChickenFajitaPrice()));
+        tacos.add(new Taco(TacoType.lengua, config.getLenguaPrice()));
+        tacos.add(new Taco(TacoType.pastor, config.getPastorPrice()));
+        tacos.add(new Taco(TacoType.tripa, config.getTripaPrice()));
     }
 
     public List<Taco> getPriceList() {
