@@ -81,6 +81,30 @@
             }
           }
         }
+      },
+      "patch" : {
+        "operationId" : "updateEmployeeBySlackId",
+        "parameters" : [ {
+          "name" : "apiKey",
+          "in" : "query",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/Employee"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Employee"
+            }
+          }
+        }
       }
     },
     "/taco-tuesday/v1/orders/full" : {
