@@ -45,7 +45,6 @@ public class IndividualOrder extends Order {
         String sep = System.lineSeparator();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("------------------------").append(sep);
         sb.append("EMPLOYEE ORDER: ").append(employee).append(sep);
         sb.append(super.toString());
 
