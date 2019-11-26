@@ -33,7 +33,8 @@ public class TacoTuesdayApiEmployeeRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestParam(name = "apiKey") @NotEmpty String apiKey, @RequestBody @NotEmpty Employee employee) {
+    public ResponseEntity<Employee> createEmployee(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
+                                                   @RequestBody @NotEmpty Employee employee) {
         if (apiKeyValidator.isInvalidApiKey(apiKey)) {
             throw new UnrecognizedApiKeyException(apiKey);
         }
@@ -59,5 +60,16 @@ public class TacoTuesdayApiEmployeeRestController {
         }
 
         return new ResponseEntity<>(employeeDAO.getEmployeeBySlackId(slackId), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{slackId}")
+    public ResponseEntity<Employee> updateEmployeeBySlackId(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
+                                                            @RequestBody @NotEmpty Employee employee)
+    {
+        if (apiKeyValidator.isInvalidApiKey(apiKey)) {
+            throw new UnrecognizedApiKeyException(apiKey);
+        }
+
+        return new ResponseEntity<>(employeeDAO.updateEmployee(employee), HttpStatus.OK);
     }
 }
