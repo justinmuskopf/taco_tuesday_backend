@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityExistsException;
+import javax.validation.ValidationException;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static reactor.util.StringUtils.isEmpty;
 
 @Component
 public class EmployeeDAOImpl implements EmployeeDAO {
@@ -34,6 +36,24 @@ public class EmployeeDAOImpl implements EmployeeDAO {
                 employee.getNickName(),
                 employee.isAdmin()
         );
+    }
+
+    @Override
+    public Employee updateEmployee(Employee employee) {
+        String slackId = employee.getSlackId();
+        if (isEmpty(slackId)) {
+            throw new ValidationException("No Slack ID provided for employee!");
+        }
+
+        Employee existingEmployee = employeeRepository.findBySlackId(slackId);
+        if (existingEmployee == null) {
+            throw new ValidationException("No existing employee with Slack ID " + slackId + "!");
+        }
+
+        existingEmployee.merge(employee);
+        existingEmployee = employeeRepository.save(existingEmployee);
+
+        return existingEmployee;
     }
 
     @Override

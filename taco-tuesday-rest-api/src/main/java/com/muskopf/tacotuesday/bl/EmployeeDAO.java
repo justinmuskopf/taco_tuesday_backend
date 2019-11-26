@@ -11,6 +11,7 @@ public interface EmployeeDAO {
     Employee createEmployee(String fullName, String slackId, boolean isAdmin);
     Employee createEmployee(String fullName, String slackId);
     Employee createEmployee(Employee employee);
+    Employee updateEmployee(Employee employee);
 
     Employee getEmployeeBySlackId(String slackId);
     Employee registerEmployeeApiKey(Employee employee);

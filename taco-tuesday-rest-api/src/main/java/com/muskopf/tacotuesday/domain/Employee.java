@@ -12,7 +12,8 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
-import static java.util.Objects.isNull;
+import static reactor.util.StringUtils.isEmpty;
+
 
 @Entity
 @Table(name = "employee")
@@ -93,6 +94,23 @@ public class Employee {
     public Employee orders(List<IndividualOrder> orders) {
         this.orders = orders;
         return this;
+    }
+
+    public void merge(Employee employee) {
+        String fullName = employee.getFullName();
+        if (!isEmpty(fullName)) {
+            this.fullName = fullName;
+        }
+
+        String nickName = employee.getNickName();
+        if (!isEmpty(nickName)) {
+            this.nickName = nickName;
+        }
+
+        boolean isAdmin = employee.isAdmin();
+        if (this.admin != isAdmin) {
+            this.admin = isAdmin;
+        }
     }
 
     @Override
