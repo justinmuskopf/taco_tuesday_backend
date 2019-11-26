@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RestController
@@ -32,7 +33,7 @@ public class TacoTuesdayApiEmployeeRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestParam(name = "apiKey") String apiKey, @RequestBody Employee employee) {
+    public ResponseEntity<Employee> createEmployee(@RequestParam(name = "apiKey") @NotEmpty String apiKey, @RequestBody @NotEmpty Employee employee) {
         if (apiKeyValidator.isInvalidApiKey(apiKey)) {
             throw new UnrecognizedApiKeyException(apiKey);
         }
@@ -41,7 +42,7 @@ public class TacoTuesdayApiEmployeeRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(name = "apiKey") String apiKey) {
+    public ResponseEntity<List<Employee>> getAllEmployees(@RequestParam(name = "apiKey") @NotEmpty String apiKey) {
         if (apiKeyValidator.isInvalidApiKey(apiKey)) {
             throw new UnrecognizedApiKeyException(apiKey);
         }
@@ -50,8 +51,8 @@ public class TacoTuesdayApiEmployeeRestController {
     }
 
     @GetMapping("/{slackId}")
-    public ResponseEntity<Employee> getEmployeeBySlackId(@RequestParam(name = "apiKey") String apiKey,
-                                                         @PathVariable(name = "slackId") String slackId)
+    public ResponseEntity<Employee> getEmployeeBySlackId(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
+                                                         @PathVariable(name = "slackId") @NotEmpty String slackId)
     {
         if (apiKeyValidator.isInvalidApiKey(apiKey)) {
             throw new UnrecognizedApiKeyException(apiKey);
