@@ -10,7 +10,7 @@ import java.time.Instant;
 public abstract class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    protected Integer id;
 
     @Column
     private Float total;
@@ -165,5 +165,25 @@ public abstract class Order {
         this.lengua = newOrder.lengua != null ? newOrder.lengua : lengua;
         this.pastor = newOrder.pastor != null ? newOrder.pastor : pastor;
         this.tripa = newOrder.tripa != null ? newOrder.tripa : tripa;
+    }
+
+    @Override
+    public String toString() {
+        String sep = System.lineSeparator();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("------------------------").append(sep);
+        sb.append("  Barbacoa: ").append(barbacoa).append(sep);
+        sb.append("  Beef Fajita: ").append(beefFajita).append(sep);
+        sb.append("  Cabeza: ").append(cabeza).append(sep);
+        sb.append("  Carnitas: ").append(carnitas).append(sep);
+        sb.append("  Chicken Fajita: ").append(chickenFajita).append(sep);
+        sb.append("  Lengua: ").append(lengua).append(sep);
+        sb.append("  Pastor/Trompo: ").append(pastor).append(sep);
+        sb.append("  Tripa: ").append(tripa).append(sep);
+        sb.append("  TOTAL: $").append(total).append(sep);
+        sb.append("------------------------").append(sep);
+
+        return sb.toString();
     }
 }

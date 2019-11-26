@@ -1,6 +1,7 @@
 package com.muskopf.tacotuesday.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.muskopf.tacotuesday.bl.proc.ApiKeyGenerator;
@@ -15,10 +16,6 @@ import static java.util.Objects.isNull;
 
 @Entity
 @Table(name = "employee")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 public class Employee {
     @Id
     @GeneratedValue
@@ -96,5 +93,10 @@ public class Employee {
     public Employee orders(List<IndividualOrder> orders) {
         this.orders = orders;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return fullName + " (" + slackId + ")";
     }
 }

@@ -39,4 +39,15 @@ public class IndividualOrder extends Order {
         this.fullOrder = fullOrder;
         return this;
     }
+
+    @Override
+    public String toString() {
+        String sep = System.lineSeparator();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("EMPLOYEE ORDER: ").append(employee).append(sep);
+        sb.append(super.toString());
+
+        return sb.toString();
+    }
 }

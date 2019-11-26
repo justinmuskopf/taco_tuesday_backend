@@ -24,4 +24,23 @@ public class FullOrder extends Order {
         this.individualOrders = individualOrders;
         return this;
     }
+
+    @Override
+    public String toString() {
+        String sep = System.lineSeparator();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("FULL ORDER #").append(id).append(":").append(sep);
+        sb.append(super.toString());
+        sb.append(sep).append(sep);
+
+        sb.append("INDIVIDUAL ORDERS:").append(sep);
+
+        int orderNum = 1;
+        for (IndividualOrder order : individualOrders) {
+            sb.append("#").append(orderNum++).append(". ").append(order.toString());
+        }
+
+        return sb.toString();
+    }
 }

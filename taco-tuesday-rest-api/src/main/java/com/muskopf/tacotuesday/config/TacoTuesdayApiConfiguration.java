@@ -26,10 +26,11 @@ public class TacoTuesdayApiConfiguration {
     //@NotNull
     private Float tripaPrice;
 
+    private boolean sendEmails = true;
+
     public Float getBarbacoaPrice() {
         return barbacoaPrice;
     }
-
     public void setBarbacoaPrice(Float barbacoaPrice) {
         this.barbacoaPrice = barbacoaPrice;
     }
@@ -37,7 +38,6 @@ public class TacoTuesdayApiConfiguration {
     public Float getBeefFajitaPrice() {
         return beefFajitaPrice;
     }
-
     public void setBeefFajitaPrice(Float beefFajitaPrice) {
         this.beefFajitaPrice = beefFajitaPrice;
     }
@@ -45,7 +45,6 @@ public class TacoTuesdayApiConfiguration {
     public Float getCabezaPrice() {
         return cabezaPrice;
     }
-
     public void setCabezaPrice(Float cabezaPrice) {
         this.cabezaPrice = cabezaPrice;
     }
@@ -53,7 +52,6 @@ public class TacoTuesdayApiConfiguration {
     public Float getCarnitasPrice() {
         return carnitasPrice;
     }
-
     public void setCarnitasPrice(Float carnitasPrice) {
         this.carnitasPrice = carnitasPrice;
     }
@@ -61,7 +59,6 @@ public class TacoTuesdayApiConfiguration {
     public Float getChickenFajitaPrice() {
         return chickenFajitaPrice;
     }
-
     public void setChickenFajitaPrice(Float chickenFajitaPrice) {
         this.chickenFajitaPrice = chickenFajitaPrice;
     }
@@ -69,7 +66,6 @@ public class TacoTuesdayApiConfiguration {
     public Float getLenguaPrice() {
         return lenguaPrice;
     }
-
     public void setLenguaPrice(Float lenguaPrice) {
         this.lenguaPrice = lenguaPrice;
     }
@@ -77,7 +73,6 @@ public class TacoTuesdayApiConfiguration {
     public Float getPastorPrice() {
         return pastorPrice;
     }
-
     public void setPastorPrice(Float pastorPrice) {
         this.pastorPrice = pastorPrice;
     }
@@ -85,8 +80,11 @@ public class TacoTuesdayApiConfiguration {
     public Float getTripaPrice() {
         return tripaPrice;
     }
-
     public void setTripaPrice(Float tripaPrice) {
         this.tripaPrice = tripaPrice;
     }
+
+    public boolean getSendEmails() { return sendEmails; }
+    public boolean shouldSendEmails() { return sendEmails; }
+    public void setSendEmails(boolean sendEmails) { this.sendEmails = sendEmails; }
 }
