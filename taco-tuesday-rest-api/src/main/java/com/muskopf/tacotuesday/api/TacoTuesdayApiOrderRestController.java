@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -44,7 +45,7 @@ public class TacoTuesdayApiOrderRestController {
     }
 
     @GetMapping(value = "/individual/{orderId}")
-    public ResponseEntity<IndividualOrder> getIndividualOrderByOrderId(@PathVariable Integer orderId) {
+    public ResponseEntity<IndividualOrder> getIndividualOrderByOrderId(@PathVariable @NotEmpty Integer orderId) {
         return new ResponseEntity<>(orderDAO.retrieveIndividualOrder(orderId), HttpStatus.OK);
     }
 
@@ -58,7 +59,9 @@ public class TacoTuesdayApiOrderRestController {
     }
 
     @PostMapping(value = "/full")
-    public ResponseEntity<FullOrder> createFullOrder(@RequestParam(name = "apiKey") String apiKey, @RequestBody FullOrder order) {
+    public ResponseEntity<FullOrder> createFullOrder(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
+                                                     @RequestBody @NotEmpty FullOrder order)
+    {
         if (apiKeyValidator.isInvalidApiKey(apiKey)) {
             throw new UnrecognizedApiKeyException(apiKey);
         }
@@ -70,7 +73,7 @@ public class TacoTuesdayApiOrderRestController {
     }
 
     @GetMapping(value = "/full/{orderId}")
-    public ResponseEntity<FullOrder> getFullOrderByOrderId(@PathVariable Integer orderId) {
+    public ResponseEntity<FullOrder> getFullOrderByOrderId(@PathVariable @NotEmpty Integer orderId) {
         return new ResponseEntity<>(orderDAO.retrieveFullOrder(orderId), HttpStatus.OK);
     }
 }
