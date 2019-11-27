@@ -11,4 +11,7 @@ import lombok.EqualsAndHashCode;
 public class IndividualOrderResource extends OrderResource {
     @JsonProperty
     EmployeeResource employee;
+
+    @JsonProperty
+    int fullOrderId;
 }
