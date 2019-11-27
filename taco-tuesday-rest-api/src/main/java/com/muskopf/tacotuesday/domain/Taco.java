@@ -5,6 +5,9 @@ public class Taco {
     private TacoType type;
     private String name;
 
+    // Appease the gods
+    public Taco() {}
+
     public Taco(TacoType type, Float price) {
         this.type = type;
         this.price = price;

@@ -13,6 +13,8 @@ public interface EmployeeDAO {
     Employee createEmployee(Employee employee);
     Employee updateEmployee(Employee employee);
 
+    List<Employee> updateEmployees(List<Employee> employees);
+
     Employee getEmployeeBySlackId(String slackId);
     Employee registerEmployeeApiKey(Employee employee);
     List<Employee> getAllEmployees();

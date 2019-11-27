@@ -1,7 +1,9 @@
 package com.muskopf.tacotuesday.api;
 
 import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
+import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
 import com.muskopf.tacotuesday.domain.*;
+import com.muskopf.tacotuesday.resource.TacoResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.List;
 public class TacoTuesdayApiTacoRestController {
     private Logger logger = LoggerFactory.getLogger(TacoTuesdayApiTacoRestController.class);
     private TacoPriceList tacoPriceList;
+    private TacoTuesdayResourceMapper mapper;
     private TacoEmailer emailer;
 
     @Autowired
@@ -25,7 +28,9 @@ public class TacoTuesdayApiTacoRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Taco>> getTacoPrices() {
-        return new ResponseEntity<>(tacoPriceList.getPriceList(), HttpStatus.OK);
+    public ResponseEntity<List<TacoResource>> getTacoPrices() {
+        List<Taco> tacos = tacoPriceList.getPriceList();
+
+        return new ResponseEntity<>(mapper.mapToTacoResources(tacos), HttpStatus.OK);
     }
 }

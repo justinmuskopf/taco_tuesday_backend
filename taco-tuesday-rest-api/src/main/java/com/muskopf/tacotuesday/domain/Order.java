@@ -4,8 +4,6 @@ import javax.persistence.*;
 //import java.math.Float;
 import java.time.Instant;
 
-//@Entity
-//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @MappedSuperclass
 public abstract class Order {
     @Id

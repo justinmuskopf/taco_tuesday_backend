@@ -11,7 +11,11 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static reactor.util.StringUtils.isEmpty;
@@ -54,6 +58,21 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         existingEmployee = employeeRepository.save(existingEmployee);
 
         return existingEmployee;
+    }
+
+    @Override
+    public List<Employee> updateEmployees(List<Employee> employees) {
+        Map<String, Employee> employeesBySlackId = new HashMap<>();
+        employees.forEach(e -> employeesBySlackId.put(e.getSlackId(), e));
+
+        List<Employee> existingEmployees = employeeRepository.findBySlackIdIn(employeesBySlackId.keySet());
+        for (Employee employee : existingEmployees) {
+            employee.merge(employeesBySlackId.get(employee.getSlackId()));
+        }
+
+        existingEmployees = employeeRepository.saveAll(existingEmployees);
+
+        return existingEmployees;
     }
 
     @Override

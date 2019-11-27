@@ -66,7 +66,7 @@ public class Employee {
     }
 
     public String getSlackId() { return slackId; }
-    public void setSlackId() { this.slackId = slackId; }
+    public void setSlackId(String slackId) { this.slackId = slackId; }
     public Employee slackId(String slackId) {
         this.slackId = slackId;
         return this;
@@ -98,12 +98,12 @@ public class Employee {
 
     public void merge(Employee employee) {
         String fullName = employee.getFullName();
-        if (!isEmpty(fullName)) {
+        if (!isEmpty(fullName) && !fullName.equals(this.fullName)) {
             this.fullName = fullName;
         }
 
         String nickName = employee.getNickName();
-        if (!isEmpty(nickName)) {
+        if (!isEmpty(nickName) && !nickName.equals(this.nickName)) {
             this.nickName = nickName;
         }
 
