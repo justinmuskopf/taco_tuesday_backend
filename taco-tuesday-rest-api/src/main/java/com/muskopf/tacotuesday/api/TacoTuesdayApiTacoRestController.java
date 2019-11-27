@@ -25,8 +25,9 @@ public class TacoTuesdayApiTacoRestController {
     private TacoEmailer emailer;
 
     @Autowired
-    public TacoTuesdayApiTacoRestController(TacoPriceList tacoPriceList, TacoEmailer emailer) {
+    public TacoTuesdayApiTacoRestController(TacoPriceList tacoPriceList, TacoTuesdayResourceMapper mapper, TacoEmailer emailer) {
         this.tacoPriceList = tacoPriceList;
+        this.mapper = mapper;
         this.emailer = emailer;
     }
 
