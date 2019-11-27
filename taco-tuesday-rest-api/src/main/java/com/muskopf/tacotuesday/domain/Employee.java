@@ -1,10 +1,8 @@
 package com.muskopf.tacotuesday.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.muskopf.tacotuesday.bl.proc.ApiKeyGenerator;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,9 +12,10 @@ import java.util.List;
 
 import static reactor.util.StringUtils.isEmpty;
 
-
+@Data
 @Entity
 @Table(name = "employee")
+@EqualsAndHashCode(exclude = "apiKey")
 public class Employee {
     @Id
     @GeneratedValue
@@ -25,20 +24,20 @@ public class Employee {
     @Column(updatable = false)
     @CreationTimestamp
     private Instant createdAt;
-    
+
     @Column
     @UpdateTimestamp
     private Instant updatedAt;
-    
+
     @Column(nullable = false)
     private String fullName;
-    
+
     @Column(unique = true, nullable = false)
     private String slackId;
-    
+
     @Column
     private String nickName;
-    
+
     @Column(nullable = false)
     private boolean admin = false;
 
@@ -51,59 +50,14 @@ public class Employee {
     @JsonIgnore
     private List<IndividualOrder> orders;
 
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
-    public Employee fullName(String fullName) {
-        this.fullName = fullName;
-        return this;
-    }
-
-    public String getSlackId() { return slackId; }
-    public void setSlackId() { this.slackId = slackId; }
-    public Employee slackId(String slackId) {
-        this.slackId = slackId;
-        return this;
-    }
-
-    public String getNickName() { return nickName; }
-    public void setNickName(String nickName) { this.nickName = nickName; }
-    public Employee nickName(String nickName) {
-        this.nickName = nickName;
-        return this;
-    }
-
-    public boolean isAdmin() { return admin; }
-    public void setAdmin(boolean admin) { this.admin = admin; }
-    public Employee admin(boolean admin) {
-        this.admin = admin;
-        return this;
-    }
-
-    public ApiKey getApiKey() { return apiKey; }
-    public void setApiKey(ApiKey apiKey) { this.apiKey = apiKey; }
-
-    public List<IndividualOrder> getOrders() { return orders; }
-    public void setOrders(List<IndividualOrder> orders) { this.orders = orders; }
-    public Employee orders(List<IndividualOrder> orders) {
-        this.orders = orders;
-        return this;
-    }
-
     public void merge(Employee employee) {
         String fullName = employee.getFullName();
-        if (!isEmpty(fullName)) {
+        if (!isEmpty(fullName) && !fullName.equals(this.fullName)) {
             this.fullName = fullName;
         }
 
         String nickName = employee.getNickName();
-        if (!isEmpty(nickName)) {
+        if (!isEmpty(nickName) && !nickName.equals(this.nickName)) {
             this.nickName = nickName;
         }
 

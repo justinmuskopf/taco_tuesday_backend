@@ -28,7 +28,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/Employee"
+                "$ref" : "#/definitions/EmployeeResource"
               }
             }
           }
@@ -46,14 +46,44 @@
           "name" : "body",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/Employee"
+            "$ref" : "#/definitions/EmployeeResource"
           }
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/Employee"
+              "$ref" : "#/definitions/EmployeeResource"
+            }
+          }
+        }
+      },
+      "patch" : {
+        "operationId" : "updateEmployees",
+        "parameters" : [ {
+          "name" : "apiKey",
+          "in" : "query",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/definitions/EmployeeResource"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/EmployeeResource"
+              }
             }
           }
         }
@@ -77,16 +107,21 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/Employee"
+              "$ref" : "#/definitions/EmployeeResource"
             }
           }
         }
       },
       "patch" : {
-        "operationId" : "updateEmployeeBySlackId",
+        "operationId" : "updateEmployee",
         "parameters" : [ {
           "name" : "apiKey",
           "in" : "query",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "slackId",
+          "in" : "path",
           "required" : true,
           "type" : "string"
         }, {
@@ -94,14 +129,14 @@
           "name" : "body",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/Employee"
+            "$ref" : "#/definitions/EmployeeResource"
           }
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/Employee"
+              "$ref" : "#/definitions/EmployeeResource"
             }
           }
         }
@@ -122,7 +157,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/FullOrder"
+                "$ref" : "#/definitions/FullOrderResource"
               }
             }
           }
@@ -140,14 +175,14 @@
           "name" : "body",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/FullOrder"
+            "$ref" : "#/definitions/FullOrderResource"
           }
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/FullOrder"
+              "$ref" : "#/definitions/FullOrderResource"
             }
           }
         }
@@ -167,7 +202,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/FullOrder"
+              "$ref" : "#/definitions/FullOrderResource"
             }
           }
         }
@@ -188,7 +223,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/IndividualOrder"
+                "$ref" : "#/definitions/IndividualOrderResource"
               }
             }
           }
@@ -209,7 +244,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/IndividualOrder"
+              "$ref" : "#/definitions/IndividualOrderResource"
             }
           }
         }
@@ -224,7 +259,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/Taco"
+                "$ref" : "#/definitions/TacoResource"
               }
             }
           }
@@ -233,7 +268,7 @@
     }
   },
   "definitions" : {
-    "Employee" : {
+    "EmployeeResource" : {
       "type" : "object",
       "properties" : {
         "id" : {
@@ -243,10 +278,10 @@
         "fullName" : {
           "type" : "string"
         },
-        "slackId" : {
+        "nickName" : {
           "type" : "string"
         },
-        "nickName" : {
+        "slackId" : {
           "type" : "string"
         },
         "admin" : {
@@ -254,7 +289,7 @@
         }
       }
     },
-    "FullOrder" : {
+    "FullOrderResource" : {
       "type" : "object",
       "properties" : {
         "id" : {
@@ -303,14 +338,13 @@
         },
         "individualOrders" : {
           "type" : "array",
-          "uniqueItems" : true,
           "items" : {
-            "$ref" : "#/definitions/IndividualOrder"
+            "$ref" : "#/definitions/IndividualOrderResource"
           }
         }
       }
     },
-    "IndividualOrder" : {
+    "IndividualOrderResource" : {
       "type" : "object",
       "properties" : {
         "id" : {
@@ -357,27 +391,23 @@
           "type" : "integer",
           "format" : "int32"
         },
-        "fullOrder" : {
-          "$ref" : "#/definitions/FullOrder"
-        },
         "employee" : {
-          "$ref" : "#/definitions/Employee"
+          "$ref" : "#/definitions/EmployeeResource"
         }
       }
     },
-    "Taco" : {
+    "TacoResource" : {
       "type" : "object",
       "properties" : {
-        "price" : {
-          "type" : "number",
-          "format" : "float"
-        },
         "type" : {
-          "type" : "string",
-          "enum" : [ "barbacoa", "beefFajita", "cabeza", "carnitas", "chickenFajita", "lengua", "pastor", "tripa" ]
+          "type" : "string"
         },
         "name" : {
           "type" : "string"
+        },
+        "price" : {
+          "type" : "number",
+          "format" : "float"
         }
       }
     }

@@ -28,5 +28,7 @@ public class ApiKeyValidator {
         return keyIsValid;
     }
 
-    public boolean isInvalidApiKey(String apiKey) { return !isValidApiKey(apiKey); }
+    public boolean isInvalidApiKey(String apiKey) {
+        return !isValidApiKey(apiKey);
+    }
 }

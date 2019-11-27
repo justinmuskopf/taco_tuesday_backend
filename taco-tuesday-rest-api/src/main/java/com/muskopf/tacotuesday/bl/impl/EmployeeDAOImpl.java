@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.ValidationException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.isNull;
 import static reactor.util.StringUtils.isEmpty;
@@ -22,8 +24,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     private ApiKeyRepository apiKeyRepository;
 
     @Autowired
-    public EmployeeDAOImpl(EmployeeRepository employeeRepository, ApiKeyRepository apiKeyRepository)
-    {
+    public EmployeeDAOImpl(EmployeeRepository employeeRepository, ApiKeyRepository apiKeyRepository) {
         this.employeeRepository = employeeRepository;
         this.apiKeyRepository = apiKeyRepository;
     }
@@ -54,6 +55,21 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         existingEmployee = employeeRepository.save(existingEmployee);
 
         return existingEmployee;
+    }
+
+    @Override
+    public List<Employee> updateEmployees(List<Employee> employees) {
+        Map<String, Employee> employeesBySlackId = new HashMap<>();
+        employees.forEach(e -> employeesBySlackId.put(e.getSlackId(), e));
+
+        List<Employee> existingEmployees = employeeRepository.findBySlackIdIn(employeesBySlackId.keySet());
+        for (Employee employee : existingEmployees) {
+            employee.merge(employeesBySlackId.get(employee.getSlackId()));
+        }
+
+        existingEmployees = employeeRepository.saveAll(existingEmployees);
+
+        return existingEmployees;
     }
 
     @Override
@@ -91,11 +107,11 @@ public class EmployeeDAOImpl implements EmployeeDAO {
             throw new EntityExistsException("The requested employee already exists!");
         }
 
-        Employee employee = new Employee()
-                .fullName(fullName)
-                .nickName(nickName)
-                .slackId(slackId)
-                .admin(isAdmin);
+        Employee employee = new Employee();
+        employee.setFullName(fullName);
+        employee.setNickName(nickName);
+        employee.setSlackId(slackId);
+        employee.setAdmin(isAdmin);
 
         registerEmployeeApiKey(employee);
 
