@@ -2,6 +2,7 @@ package com.muskopf.tacotuesday.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +15,7 @@ import static reactor.util.StringUtils.isEmpty;
 @Data
 @Entity
 @Table(name = "employee")
+@EqualsAndHashCode(exclude = "apiKey")
 public class Employee {
     @Id
     @GeneratedValue

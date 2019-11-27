@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "fullOrder")
 public class IndividualOrder extends Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_full_order_id", referencedColumnName = "id")
