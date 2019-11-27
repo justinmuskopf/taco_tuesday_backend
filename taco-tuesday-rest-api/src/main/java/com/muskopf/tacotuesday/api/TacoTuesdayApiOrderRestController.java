@@ -4,7 +4,8 @@ import com.muskopf.tacotuesday.bl.OrderDAO;
 import com.muskopf.tacotuesday.bl.proc.ApiKeyValidator;
 import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
 import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
-import com.muskopf.tacotuesday.domain.*;
+import com.muskopf.tacotuesday.domain.FullOrder;
+import com.muskopf.tacotuesday.domain.IndividualOrder;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
 import org.slf4j.Logger;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
-import static java.util.Objects.isNull;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @RestController

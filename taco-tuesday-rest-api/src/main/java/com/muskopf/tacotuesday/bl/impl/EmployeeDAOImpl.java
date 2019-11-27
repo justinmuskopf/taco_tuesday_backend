@@ -11,11 +11,9 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.ValidationException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static reactor.util.StringUtils.isEmpty;
@@ -26,8 +24,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     private ApiKeyRepository apiKeyRepository;
 
     @Autowired
-    public EmployeeDAOImpl(EmployeeRepository employeeRepository, ApiKeyRepository apiKeyRepository)
-    {
+    public EmployeeDAOImpl(EmployeeRepository employeeRepository, ApiKeyRepository apiKeyRepository) {
         this.employeeRepository = employeeRepository;
         this.apiKeyRepository = apiKeyRepository;
     }
@@ -110,11 +107,11 @@ public class EmployeeDAOImpl implements EmployeeDAO {
             throw new EntityExistsException("The requested employee already exists!");
         }
 
-        Employee employee = new Employee()
-                .fullName(fullName)
-                .nickName(nickName)
-                .slackId(slackId)
-                .admin(isAdmin);
+        Employee employee = new Employee();
+        employee.setFullName(fullName);
+        employee.setNickName(nickName);
+        employee.setSlackId(slackId);
+        employee.setAdmin(isAdmin);
 
         registerEmployeeApiKey(employee);
 

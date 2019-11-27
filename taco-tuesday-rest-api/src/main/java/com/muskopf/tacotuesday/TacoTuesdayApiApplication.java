@@ -12,26 +12,26 @@ import org.springframework.context.event.EventListener;
 
 @SpringBootApplication
 @EnableConfigurationProperties({
-		TacoTuesdayApiConfiguration.class
+        TacoTuesdayApiConfiguration.class
 })
 @ComponentScan(basePackages = {
-		"com.muskopf.tacotuesday",
-		"com.muskopf.mailgun.emailsender",
+        "com.muskopf.tacotuesday",
+        "com.muskopf.mailgun.emailsender",
 })
 public class TacoTuesdayApiApplication {
-	private TacoEmailer tacoEmailer;
+    private TacoEmailer tacoEmailer;
 
-	@Autowired
-	public TacoTuesdayApiApplication(TacoEmailer tacoEmailer) {
-		this.tacoEmailer = tacoEmailer;
-	}
+    @Autowired
+    public TacoTuesdayApiApplication(TacoEmailer tacoEmailer) {
+        this.tacoEmailer = tacoEmailer;
+    }
 
-	@EventListener
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		tacoEmailer.sendStartupEmail();
-	}
+    @EventListener
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        tacoEmailer.sendStartupEmail();
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(TacoTuesdayApiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(TacoTuesdayApiApplication.class, args);
+    }
 }

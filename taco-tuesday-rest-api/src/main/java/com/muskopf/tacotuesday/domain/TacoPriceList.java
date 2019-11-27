@@ -1,19 +1,20 @@
 package com.muskopf.tacotuesday.domain;
 
 import com.muskopf.tacotuesday.config.TacoTuesdayApiConfiguration;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Component
 public class TacoPriceList {
     private List<Taco> tacos = new ArrayList<>();
 
     @Autowired
-    public TacoPriceList(TacoTuesdayApiConfiguration config)
-    {
+    public TacoPriceList(TacoTuesdayApiConfiguration config) {
         tacos.add(new Taco(TacoType.barbacoa, config.getBarbacoaPrice()));
         tacos.add(new Taco(TacoType.beefFajita, config.getBeefFajitaPrice()));
         tacos.add(new Taco(TacoType.cabeza, config.getCabezaPrice()));

@@ -4,7 +4,7 @@ import com.muskopf.tacotuesday.bl.EmployeeDAO;
 import com.muskopf.tacotuesday.bl.proc.ApiKeyValidator;
 import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
 import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
-import com.muskopf.tacotuesday.domain.*;
+import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class TacoTuesdayApiEmployeeRestController {
 
     @GetMapping("/{slackId}")
     public ResponseEntity<EmployeeResource> getEmployeeBySlackId(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
-                                                         @PathVariable(name = "slackId") @NotEmpty String slackId)
+                                                                 @PathVariable(name = "slackId") @NotEmpty String slackId)
     {
         validateApiKey(apiKey);
 
@@ -74,8 +74,8 @@ public class TacoTuesdayApiEmployeeRestController {
 
     @PatchMapping("/{slackId}")
     public ResponseEntity<EmployeeResource> updateEmployee(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
-                                                   @PathVariable(name = "slackId") @NotEmpty String slackId,
-                                                   @RequestBody @NotEmpty EmployeeResource employeeResource)
+                                                           @PathVariable(name = "slackId") @NotEmpty String slackId,
+                                                           @RequestBody @NotEmpty EmployeeResource employeeResource)
     {
         validateApiKey(apiKey);
 

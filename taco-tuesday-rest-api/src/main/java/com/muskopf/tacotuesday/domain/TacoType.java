@@ -11,6 +11,7 @@ public enum TacoType {
     tripa("Tripa");
 
     private String prettyName;
+
     TacoType(String prettyName) {
         this.prettyName = prettyName;
     }

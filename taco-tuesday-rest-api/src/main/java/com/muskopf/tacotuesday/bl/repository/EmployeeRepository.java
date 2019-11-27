@@ -12,8 +12,10 @@ import java.util.Set;
 @Transactional
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     boolean existsEmployeeByFullName(String firstName);
+
     boolean existsEmployeeBySlackId(String slackId);
 
     Employee findBySlackId(String slackId);
+
     List<Employee> findBySlackIdIn(Set<String> slackIds);
 }
