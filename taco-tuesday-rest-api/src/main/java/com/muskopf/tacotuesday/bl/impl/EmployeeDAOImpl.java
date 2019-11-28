@@ -8,6 +8,7 @@ import com.muskopf.tacotuesday.domain.ApiKey;
 import com.muskopf.tacotuesday.domain.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.ValidationException;
@@ -18,7 +19,7 @@ import java.util.Map;
 import static java.util.Objects.isNull;
 import static reactor.util.StringUtils.isEmpty;
 
-@Component
+@Service
 public class EmployeeDAOImpl implements EmployeeDAO {
     private EmployeeRepository employeeRepository;
     private ApiKeyRepository apiKeyRepository;

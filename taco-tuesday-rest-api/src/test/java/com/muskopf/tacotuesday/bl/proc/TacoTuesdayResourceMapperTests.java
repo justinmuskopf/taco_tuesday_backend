@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;  // main one
-import static org.assertj.core.api.Assertions.in;
 
 @RunWith(SpringRunner.class)
 @ComponentScan(basePackages = {
