@@ -3,17 +3,14 @@ package com.muskopf.tacotuesday;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.muskopf.tacotuesday.bl.repository.ApiKeyRepository;
 import com.muskopf.tacotuesday.bl.repository.EmployeeRepository;
 import com.muskopf.tacotuesday.bl.repository.FullOrderRepository;
 import com.muskopf.tacotuesday.bl.repository.IndividualOrderRepository;
 import com.muskopf.tacotuesday.domain.*;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
@@ -22,8 +19,10 @@ import java.util.*;
 
 @Component
 @ActiveProfiles("test")
-@EnableAutoConfiguration
+//@EnableAutoConfiguration
 public class TacoTuesdayTestHelper {
+    public static final String TT_API_BASE_URL = "/taco-tuesday/v1";
+
     private ObjectMapper objectMapper;
     private TypeFactory typeFactory;
     private Random random = new Random();
@@ -31,6 +30,7 @@ public class TacoTuesdayTestHelper {
     private FullOrderRepository fullOrderRepository;
     private IndividualOrderRepository individualOrderRepository;
     private EmployeeRepository employeeRepository;
+    private ApiKeyRepository apiKeyRepository;
 
     private List<Taco> tacos;
     private List<Employee> loadedEmployees;
@@ -39,9 +39,12 @@ public class TacoTuesdayTestHelper {
 
     private boolean databaseInitialized = false;
 
+    private ApiKey apiKey = new ApiKey();
+
     @Autowired
     public TacoTuesdayTestHelper(TacoPriceList priceList, ObjectMapper objectMapper, FullOrderRepository fullOrderRepository,
-                                 IndividualOrderRepository individualOrderRepository, EmployeeRepository employeeRepository)
+                                 IndividualOrderRepository individualOrderRepository, EmployeeRepository employeeRepository,
+                                 ApiKeyRepository apiKeyRepository)
     {
         this.tacos = priceList.getPriceList();
         this.objectMapper = objectMapper;
@@ -49,6 +52,14 @@ public class TacoTuesdayTestHelper {
         this.fullOrderRepository = fullOrderRepository;
         this.individualOrderRepository = individualOrderRepository;
         this.employeeRepository = employeeRepository;
+
+        this.apiKeyRepository = apiKeyRepository;
+
+    }
+
+    public void persistMockApiKey(String apiKeyString) {
+        apiKey.setKey(apiKeyString);
+        apiKey = apiKeyRepository.save(apiKey);
     }
 
     public void initializeDatabase() {
@@ -84,6 +95,10 @@ public class TacoTuesdayTestHelper {
             return loadedEmployees.get(randomIndex(loadedEmployees));
 
         return loadObject(Employee.class);
+    }
+
+    public List<Employee> getLoadedEmployees() {
+        return loadedEmployees;
     }
 
     public IndividualOrder createIndividualOrder() {

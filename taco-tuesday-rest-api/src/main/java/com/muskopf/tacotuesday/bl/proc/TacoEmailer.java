@@ -3,7 +3,7 @@ package com.muskopf.tacotuesday.bl.proc;
 import com.muskopf.mailgun.emailsender.EmailSender;
 import com.muskopf.mailgun.emailsender.domain.Email;
 import com.muskopf.mailgun.emailsender.proc.EmailBuilder;
-import com.muskopf.tacotuesday.config.TacoTuesdayApiConfiguration;
+import com.muskopf.tacotuesday.config.TacoTuesdayApiProperties;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +25,10 @@ public class TacoEmailer {
     private boolean sendEmails;
 
     @Autowired
-    public TacoEmailer(EmailBuilder emailBuilder, EmailSender emailSender, TacoTuesdayApiConfiguration configuration) {
+    public TacoEmailer(EmailBuilder emailBuilder, EmailSender emailSender, TacoTuesdayApiProperties properties) {
         this.emailBuilder = emailBuilder;
         this.emailSender = emailSender;
-        this.sendEmails = configuration.shouldSendEmails();
+        this.sendEmails = properties.isEmailEnabled();
     }
 
     @EventListener
