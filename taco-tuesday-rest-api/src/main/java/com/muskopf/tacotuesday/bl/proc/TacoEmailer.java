@@ -8,6 +8,8 @@ import com.muskopf.tacotuesday.domain.FullOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
@@ -27,6 +29,11 @@ public class TacoEmailer {
         this.emailBuilder = emailBuilder;
         this.emailSender = emailSender;
         this.sendEmails = configuration.shouldSendEmails();
+    }
+
+    @EventListener
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        sendStartupEmail();
     }
 
     private static String getEmailHeader() {

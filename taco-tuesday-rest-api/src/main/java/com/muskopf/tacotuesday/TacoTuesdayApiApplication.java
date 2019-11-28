@@ -7,8 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 
 @SpringBootApplication
 @EnableConfigurationProperties({
@@ -19,18 +17,6 @@ import org.springframework.context.event.EventListener;
         "com.muskopf.mailgun.emailsender",
 })
 public class TacoTuesdayApiApplication {
-    private TacoEmailer tacoEmailer;
-
-    @Autowired
-    public TacoTuesdayApiApplication(TacoEmailer tacoEmailer) {
-        this.tacoEmailer = tacoEmailer;
-    }
-
-    @EventListener
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        tacoEmailer.sendStartupEmail();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(TacoTuesdayApiApplication.class, args);
     }

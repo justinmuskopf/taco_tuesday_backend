@@ -1,0 +1,18 @@
+{
+  "total":3.25,
+  "createdAt":"2019-11-26T17:57:04Z",
+  "barbacoa":2,
+  "beefFajita":0,
+  "cabeza":0,
+  "carnitas":0,
+  "chickenFajita":0,
+  "lengua":0,
+  "pastor":0,
+  "tripa":0,
+  "employee":{
+    "fullName":"Joan Lasseter",
+    "nickName":"Joan",
+    "admin":false,
+    "slackId":"UN2RWUWYX"
+  }
+}

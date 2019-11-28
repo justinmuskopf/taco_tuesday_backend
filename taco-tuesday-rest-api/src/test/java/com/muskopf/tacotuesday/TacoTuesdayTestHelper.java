@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
@@ -36,6 +37,8 @@ public class TacoTuesdayTestHelper {
     private List<IndividualOrder> loadedIndividualOrders;
     private List<FullOrder> loadedFullOrders;
 
+    private boolean databaseInitialized = false;
+
     @Autowired
     public TacoTuesdayTestHelper(TacoPriceList priceList, ObjectMapper objectMapper, FullOrderRepository fullOrderRepository,
                                  IndividualOrderRepository individualOrderRepository, EmployeeRepository employeeRepository)
@@ -48,18 +51,17 @@ public class TacoTuesdayTestHelper {
         this.employeeRepository = employeeRepository;
     }
 
-    @Profile("test")
     public void initializeDatabase() {
         // Load all employees from JSON
-        List<Employee> employees = loadObjects(Employee.class);
+        List<Employee> employees = Arrays.asList(loadObjects(Employee.class));
         loadedEmployees = employeeRepository.saveAll(employees);
 
         // Slack ID --> Employee
         Map<String, Employee> employeesBySlackId = new HashMap<>();
         loadedEmployees.forEach(e -> employeesBySlackId.put(e.getSlackId(), e));
 
-        // Load all FullOrders from JSON and properly set employees
-        List<FullOrder> fullOrders = loadObjects(FullOrder.class);
+        // Load all FullOrders from JSON and set their employees to persisted ones
+        List<FullOrder> fullOrders = Arrays.asList(loadObjects(FullOrder.class));
         for (FullOrder fo : fullOrders) {
             for (IndividualOrder io : fo.getIndividualOrders()) {
                 Employee employee = employeesBySlackId.get(io.getEmployee().getSlackId());
@@ -73,18 +75,37 @@ public class TacoTuesdayTestHelper {
 
         loadedFullOrders = fullOrderRepository.saveAll(fullOrders);
         loadedIndividualOrders = individualOrderRepository.findAll();
+
+        databaseInitialized = true;
+    }
+
+    public Employee createEmployee() {
+        if (databaseInitialized)
+            return loadedEmployees.get(randomIndex(loadedEmployees));
+
+        return loadObject(Employee.class);
     }
 
     public IndividualOrder createIndividualOrder() {
-        return loadedIndividualOrders.get(random.nextInt(loadedIndividualOrders.size()));
+        if (databaseInitialized)
+            return loadedIndividualOrders.get(randomIndex(loadedIndividualOrders));
+
+        return loadObject(IndividualOrder.class);
     }
 
     public FullOrder createFullOrder() {
-        return loadedFullOrders.get(random.nextInt(loadedFullOrders.size()));
+        if (databaseInitialized)
+            return loadedFullOrders.get(randomIndex(loadedFullOrders));
+
+        return loadObject(FullOrder.class);
+    }
+
+    public List<Taco> createTacos() {
+        return tacos;
     }
 
     /**
-     * A wrapper of the {@link #load(String, Class, boolean)} method that returns a singular object
+     * A wrapper of the {@link #load(String, JavaType)} method that returns a singular object
      *
      * @param filename The filename containing the JSON to load
      * @param objectClass The class of the object to be loaded
@@ -92,7 +113,7 @@ public class TacoTuesdayTestHelper {
      * @return The loaded object
      */
     private <T> T loadObject(String filename, Class<T> objectClass) {
-        return load(filename, objectClass, false);
+        return load(filename, typeFactory.constructType(objectClass));
     }
 
     /**
@@ -115,8 +136,8 @@ public class TacoTuesdayTestHelper {
      *
      * @return A list of the loaded objects
      */
-    private <T> List<T> loadObjects(String filename, Class<T> objectClass) {
-        return Arrays.asList(load(filename, objectClass, true));
+    private <T> T[] loadObjects(String filename, Class<T> objectClass) {
+        return load(filename, typeFactory.constructArrayType(objectClass));
     }
 
     /**
@@ -127,7 +148,7 @@ public class TacoTuesdayTestHelper {
      *
      * @return A list of the loaded objects
      */
-    private <T> List<T> loadObjects(Class<T> objectClass) {
+    private <T> T[] loadObjects(Class<T> objectClass) {
         return loadObjects(objectClass.getSimpleName() + "s.json", objectClass);
     }
 
@@ -135,15 +156,11 @@ public class TacoTuesdayTestHelper {
      * Loads object(s) of type {@code objectClass} from JSON stored in the file referenced by {@code filename}
      *
      * @param filename The filename containing the JSON to load
-     * @param objectClass The class of the object(s) to be loaded
-     * @param loadMultiple If this method should load the file as an array
      *
      * @return The loaded object(s)
      */
-    private <T> T load(String filename, Class<T> objectClass, boolean loadMultiple) {
-        JavaType javaType = loadMultiple ? typeFactory.constructType(objectClass) : typeFactory.constructArrayType(objectClass);
-
-        ClassPathResource resource = new ClassPathResource(filename);
+    private <T> T load(String filename, JavaType javaType) {
+        ClassPathResource resource = new ClassPathResource("json/" + filename);
         if (!resource.exists()) {
             throw new RuntimeException("No class path resource found for " + filename);
         }
@@ -154,5 +171,9 @@ public class TacoTuesdayTestHelper {
         } catch (IOException e) {
             throw new RuntimeException("InputStream error: " + resource.getFilename() + ", " + e.getMessage());
         }
+    }
+
+    private int randomIndex(List<? extends Object> list) {
+        return random.nextInt(list.size());
     }
 }
