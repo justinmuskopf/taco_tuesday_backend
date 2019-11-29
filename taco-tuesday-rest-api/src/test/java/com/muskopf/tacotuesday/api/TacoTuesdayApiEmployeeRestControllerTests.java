@@ -101,7 +101,8 @@ public class TacoTuesdayApiEmployeeRestControllerTests {
         persistedEmployees.forEach(e -> {
 
 
-            assertThat(employees).contains(e)
+
+            assertThat(employees).contains(e);
         });
     }
 

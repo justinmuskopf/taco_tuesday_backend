@@ -15,7 +15,11 @@ import static reactor.util.StringUtils.isEmpty;
 @Data
 @Entity
 @Table(name = "employee")
-@EqualsAndHashCode(exclude = "apiKey")
+@EqualsAndHashCode(exclude = {
+        "apiKey",
+        "createdAt",
+        "updatedAt"
+})
 public class Employee {
     @Id
     @GeneratedValue
@@ -69,6 +73,6 @@ public class Employee {
 
     @Override
     public String toString() {
-        return fullName + " (" + slackId + ")";
+        return "#" + id + ". " + fullName + " / " + slackId + "(nn: " + nickName + ", admin: " + admin + ")";
     }
 }
