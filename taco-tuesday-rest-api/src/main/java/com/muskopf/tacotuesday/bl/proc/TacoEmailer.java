@@ -3,11 +3,13 @@ package com.muskopf.tacotuesday.bl.proc;
 import com.muskopf.mailgun.emailsender.EmailSender;
 import com.muskopf.mailgun.emailsender.domain.Email;
 import com.muskopf.mailgun.emailsender.proc.EmailBuilder;
-import com.muskopf.tacotuesday.config.TacoTuesdayApiConfiguration;
+import com.muskopf.tacotuesday.config.TacoTuesdayApiProperties;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
@@ -23,10 +25,15 @@ public class TacoEmailer {
     private boolean sendEmails;
 
     @Autowired
-    public TacoEmailer(EmailBuilder emailBuilder, EmailSender emailSender, TacoTuesdayApiConfiguration configuration) {
+    public TacoEmailer(EmailBuilder emailBuilder, EmailSender emailSender, TacoTuesdayApiProperties properties) {
         this.emailBuilder = emailBuilder;
         this.emailSender = emailSender;
-        this.sendEmails = configuration.shouldSendEmails();
+        this.sendEmails = properties.isEmailEnabled();
+    }
+
+    @EventListener
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        sendStartupEmail();
     }
 
     private static String getEmailHeader() {

@@ -2,11 +2,15 @@ package com.muskopf.tacotuesday.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.lang.Nullable;
+import org.springframework.validation.annotation.Validated;
 
 @Data
+@Validated
 public class EmployeeResource {
+    @Nullable
     @JsonProperty
-    private int id;
+    private Integer id;
 
     @JsonProperty
     private String fullName;

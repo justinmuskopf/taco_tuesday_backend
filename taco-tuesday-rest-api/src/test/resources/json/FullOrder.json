@@ -1,0 +1,150 @@
+{
+  "total": 54.93,
+  "createdAt": "2019-11-26T17:57:04Z",
+  "barbacoa": 13,
+  "beefFajita": 4,
+  "cabeza": 0,
+  "carnitas": 3,
+  "chickenFajita": 0,
+  "lengua": 0,
+  "pastor": 15,
+  "tripa": 2,
+  "individualOrders": [
+    {
+      "total": 3.25,
+      "barbacoa": 2,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 0,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Joan Lasseter",
+        "nickName": "Joan",
+        "admin": false,
+        "slackId": "UN2RWUWYX"
+      }
+    },
+    {
+      "total": 6.5,
+      "barbacoa": 0,
+      "beefFajita": 4,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 0,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Gabriella Spell",
+        "nickName": "Gabriella",
+        "admin": false,
+        "slackId": "UHWF1HRVW"
+      }
+    },
+    {
+      "total": 3.79,
+      "barbacoa": 0,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 3,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Berenice Bolinger",
+        "nickName": "Berenice",
+        "admin": false,
+        "slackId": "UQJ9RHIWS"
+      }
+    },
+    {
+      "total": 9.28,
+      "barbacoa": 2,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 2,
+      "tripa": 2,
+      "employee": {
+        "fullName": "Sophia Vanwinkle",
+        "nickName": "Sophia",
+        "admin": false,
+        "slackId": "UKTS700SJ"
+      }
+    },
+    {
+      "total": 5.05,
+      "barbacoa": 0,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 4,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Yuko Choi",
+        "nickName": "Yuko",
+        "admin": false,
+        "slackId": "U1YUWUWHQ"
+      }
+    },
+    {
+      "total": 8.3,
+      "barbacoa": 1,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 1,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 4,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Ute Crisp",
+        "nickName": "Ute",
+        "admin": false,
+        "slackId": "UTG4MLQ1F"
+      }
+    },
+    {
+      "total": 9.02,
+      "barbacoa": 4,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 2,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Asia Retana",
+        "nickName": "Asia",
+        "admin": false,
+        "slackId": "UF1FVJOIK"
+      }
+    },
+    {
+      "total": 9.74,
+      "barbacoa": 4,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 2,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 0,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Caroline Ketterman",
+        "nickName": "Caroline",
+        "admin": false,
+        "slackId": "UBVQIWOW6"
+      }
+    }
+  ]
+}

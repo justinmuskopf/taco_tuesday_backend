@@ -393,6 +393,10 @@
         },
         "employee" : {
           "$ref" : "#/definitions/EmployeeResource"
+        },
+        "fullOrderId" : {
+          "type" : "integer",
+          "format" : "int32"
         }
       }
     },

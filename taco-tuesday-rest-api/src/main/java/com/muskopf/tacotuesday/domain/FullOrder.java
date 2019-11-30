@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Data
 @Entity
-@EqualsAndHashCode(callSuper = true, exclude = "individualOrders")
+@EqualsAndHashCode(callSuper = true)
 public class FullOrder extends Order {
     @OneToMany(mappedBy = "fullOrder", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JsonManagedReference
