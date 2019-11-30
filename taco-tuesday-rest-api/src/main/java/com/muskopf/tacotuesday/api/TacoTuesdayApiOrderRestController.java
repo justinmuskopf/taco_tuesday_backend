@@ -80,6 +80,7 @@ public class TacoTuesdayApiOrderRestController {
 
     @GetMapping(value = "/full/{orderId}")
     public ResponseEntity<FullOrderResource> getFullOrderByOrderId(@PathVariable @NotEmpty Integer orderId) {
+        logger.info("Getting FullOrder by ID: " + orderId);
         FullOrder order = orderDAO.retrieveFullOrder(orderId);
 
         return new ResponseEntity<>(mapper.map(order), HttpStatus.OK);

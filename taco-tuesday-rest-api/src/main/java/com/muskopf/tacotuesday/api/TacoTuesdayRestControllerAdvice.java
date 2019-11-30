@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -27,6 +28,14 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
                                                                   WebRequest request)
     {
         return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnrecognizedApiKeyException.class)
+    public ResponseEntity<Object> handleUnrecognizedApiKeyException(UnrecognizedApiKeyException e, WebRequest r) {
+        tacoEmailer.sendExceptionEmail(e);
+
+        return new TacoTuesdayExceptionResponseEntity("Invalid API key!", HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
