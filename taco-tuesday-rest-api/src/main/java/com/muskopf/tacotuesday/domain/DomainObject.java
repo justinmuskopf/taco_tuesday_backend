@@ -27,23 +27,4 @@ public class DomainObject {
     @Column
     @UpdateTimestamp
     protected Instant updatedAt;
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (o == this ) {
-//            return true;
-//        }
-//
-//        if (!(o instanceof DomainObject)) {
-//            return false;
-//        }
-//
-//        DomainObject other = (DomainObject) o;
-//        return id.equals(other.getId()) &&
-//                createdAt.equals(other.getCreatedAt()) &&
-//                updatedAt.equals(other.getUpdatedAt());
-//    }
-//
-//    @Override
-//    public
 }
