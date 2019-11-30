@@ -23,5 +23,5 @@ public class TacoTuesdayApiProperties {
 
     private Float tripaPrice;
 
-    private boolean emailEnabled;
+    private boolean emailEnabled = true;
 }
