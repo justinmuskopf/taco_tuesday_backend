@@ -68,6 +68,9 @@ public class TacoTuesdayApiEmployeeRestController {
         validateApiKey(apiKey);
 
         Employee employee = employeeDAO.getEmployeeBySlackId(slackId);
+        if (employee == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         return new ResponseEntity<>(mapper.map(employee), HttpStatus.OK);
     }
@@ -84,6 +87,11 @@ public class TacoTuesdayApiEmployeeRestController {
         }
 
         Employee employee = mapper.map(employeeResource);
+        if (!employeeDAO.employeeExists(slackId)) {
+            return new TacoTuesdayExceptionResponseEntity("No employee with the Slack ID " + slackId + " exists!", HttpStatus.FORBIDDEN);
+        }
+        
+
         employee = employeeDAO.updateEmployee(employee);
 
         return new ResponseEntity<>(mapper.map(employee), HttpStatus.OK);
