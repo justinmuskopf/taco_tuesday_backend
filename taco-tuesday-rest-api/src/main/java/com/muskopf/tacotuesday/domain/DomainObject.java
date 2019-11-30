@@ -1,6 +1,7 @@
 package com.muskopf.tacotuesday.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,32 +14,36 @@ import java.time.Instant;
 
 @Data
 @MappedSuperclass
+@EqualsAndHashCode
 public class DomainObject {
     @Id
     @GeneratedValue
-    private Integer id;
+    protected Integer id;
 
     @Column(updatable = false)
     @CreationTimestamp
-    private Instant createdAt;
+    protected Instant createdAt;
 
     @Column
     @UpdateTimestamp
-    private Instant updatedAt;
+    protected Instant updatedAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this ) {
-            return true;
-        }
-
-        if (!(o instanceof DomainObject)) {
-            return false;
-        }
-
-        DomainObject other = (DomainObject) o;
-        return id.equals(other.getId()) &&
-                createdAt.equals(other.getCreatedAt()) &&
-                updatedAt.equals(other.getUpdatedAt());
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (o == this ) {
+//            return true;
+//        }
+//
+//        if (!(o instanceof DomainObject)) {
+//            return false;
+//        }
+//
+//        DomainObject other = (DomainObject) o;
+//        return id.equals(other.getId()) &&
+//                createdAt.equals(other.getCreatedAt()) &&
+//                updatedAt.equals(other.getUpdatedAt());
+//    }
+//
+//    @Override
+//    public
 }

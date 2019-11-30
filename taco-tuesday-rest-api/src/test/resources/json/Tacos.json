@@ -1,0 +1,42 @@
+[
+  {
+    "type": "barbacoa",
+    "name": "Barbacoa",
+    "price": 1.5
+  },
+  {
+    "type": "beefFajita",
+    "name": "Beef Fajita",
+    "price": 1.5
+  },
+  {
+    "type": "cabeza",
+    "name": "Cabeza",
+    "price": 1.5
+  },
+  {
+    "type": "carnitas",
+    "name": "Carnitas",
+    "price": 1.5
+  },
+  {
+    "type": "chickenFajita",
+    "name": "Chicken Fajita",
+    "price": 1.5
+  },
+  {
+    "type": "lengua",
+    "name": "Lengua",
+    "price": 1.5
+  },
+  {
+    "type": "pastor",
+    "name": "Pastor",
+    "price": 1.5
+  },
+  {
+    "type": "tripa",
+    "name": "Tripa",
+    "price": 1.62
+  }
+]

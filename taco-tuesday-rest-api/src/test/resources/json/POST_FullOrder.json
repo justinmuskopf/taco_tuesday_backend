@@ -1,0 +1,64 @@
+{
+  "total": 100,
+  "barbacoa": 13,
+  "beefFajita": 4,
+  "cabeza": 0,
+  "carnitas": 3,
+  "chickenFajita": 0,
+  "lengua": 0,
+  "pastor": 15,
+  "tripa": 2,
+  "individualOrders": [
+    {
+      "total": 3.25,
+      "barbacoa": 1,
+      "beefFajita": 3,
+      "cabeza": 4,
+      "carnitas": 5,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 0,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Joan Lasseter",
+        "nickName": "Joan",
+        "admin": false,
+        "slackId": "UN2RWUWYX"
+      }
+    },
+    {
+      "total": 6.5,
+      "barbacoa": 0,
+      "beefFajita": 4,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 0,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Gabriella Spell",
+        "nickName": "Gabriella",
+        "admin": false,
+        "slackId": "UHWF1HRVW"
+      }
+    },
+    {
+      "total": 3.79,
+      "barbacoa": 0,
+      "beefFajita": 0,
+      "cabeza": 0,
+      "carnitas": 0,
+      "chickenFajita": 0,
+      "lengua": 0,
+      "pastor": 3,
+      "tripa": 0,
+      "employee": {
+        "fullName": "Berenice Bolinger",
+        "nickName": "Berenice",
+        "admin": false,
+        "slackId": "UQJ9RHIWS"
+      }
+    }
+  ]
+}

@@ -15,24 +15,8 @@ import static reactor.util.StringUtils.isEmpty;
 @Data
 @Entity
 @Table(name = "employee")
-@EqualsAndHashCode(exclude = {
-        "apiKey",
-        "createdAt",
-        "updatedAt"
-})
-public class Employee {
-    @Id
-    @GeneratedValue
-    private Integer id;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private Instant createdAt;
-
-    @Column
-    @UpdateTimestamp
-    private Instant updatedAt;
-
+@EqualsAndHashCode(callSuper = true)
+public class Employee extends DomainObject {
     @Column(nullable = false)
     private String fullName;
 

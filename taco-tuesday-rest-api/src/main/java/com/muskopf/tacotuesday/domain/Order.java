@@ -1,22 +1,17 @@
 package com.muskopf.tacotuesday.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.Instant;
 
 @Data
 @MappedSuperclass
-public abstract class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
-
+@EqualsAndHashCode(callSuper = true)
+public abstract class Order extends DomainObject {
     @Column
     private Float total;
-
-    @Column()
-    private Instant createdAt;
 
     @Column
     private Integer barbacoa = 0;
@@ -34,10 +29,6 @@ public abstract class Order {
     private Integer pastor = 0;
     @Column
     private Integer tripa = 0;
-
-    public Order() {
-        this.createdAt = Instant.now();
-    }
 
     public void merge(Order newOrder) {
         this.barbacoa = newOrder.barbacoa != null ? newOrder.barbacoa : barbacoa;

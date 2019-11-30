@@ -13,5 +13,5 @@ public class IndividualOrderResource extends OrderResource {
     EmployeeResource employee;
 
     @JsonProperty
-    int fullOrderId;
+    Integer fullOrderId;
 }

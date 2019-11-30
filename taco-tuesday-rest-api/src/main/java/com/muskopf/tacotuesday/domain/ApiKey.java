@@ -14,12 +14,8 @@ import javax.persistence.*;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
-@EqualsAndHashCode(exclude = "employee")
-public class ApiKey {
-    @Id
-    @GeneratedValue
-    private Integer id;
-
+@EqualsAndHashCode(callSuper = true, exclude = "employee")
+public class ApiKey extends DomainObject{
     @OneToOne(mappedBy = "apiKey")
     @JsonIgnore
     private Employee employee;

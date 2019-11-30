@@ -1,32 +1,31 @@
 package com.muskopf.tacotuesday.bl.proc;
 
-import com.muskopf.tacotuesday.TacoTuesdayTestHelper;
+import com.muskopf.tacotuesday.TacoTuesdayPersistenceInitializer;
 import com.muskopf.tacotuesday.config.TacoTuesdayApiConfiguration;
-import com.muskopf.tacotuesday.domain.*;
+import com.muskopf.tacotuesday.domain.Employee;
+import com.muskopf.tacotuesday.domain.FullOrder;
+import com.muskopf.tacotuesday.domain.IndividualOrder;
+import com.muskopf.tacotuesday.domain.Taco;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
 import com.muskopf.tacotuesday.resource.TacoResource;
-import com.sun.media.sound.SoftTuning;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;  // main one
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@ComponentScan(basePackages = {
-        "com.muskopf.tacotuesday"
-})
-@SpringBootTest
+@AutoConfigureMockMvc
+@SpringBootTest(classes = {TacoTuesdayApiConfiguration.class})
 public class TacoTuesdayResourceMapperTests {
     @MockBean
     private TacoEmailer tacoEmailer;
@@ -34,7 +33,7 @@ public class TacoTuesdayResourceMapperTests {
     @Autowired
     private TacoTuesdayResourceMapper mapper;
     @Autowired
-    private TacoTuesdayTestHelper testHelper;
+    private TacoTuesdayPersistenceInitializer testHelper;
 
     /**
      * Test mapping of Employee --> EmployeeResource --> Employee
@@ -88,7 +87,7 @@ public class TacoTuesdayResourceMapperTests {
      */
     @Test
     public void test_TacoMapping() {
-        List<Taco> tacos = testHelper.createTacos();
+        List<Taco> tacos = testHelper.loadObjects(Taco.class);
         List<TacoResource> resources = mapper.mapToTacoResources(tacos);
         List<Taco> mappedBack = resources.stream().map(r -> mapper.map(r)).collect(Collectors.toList());
 

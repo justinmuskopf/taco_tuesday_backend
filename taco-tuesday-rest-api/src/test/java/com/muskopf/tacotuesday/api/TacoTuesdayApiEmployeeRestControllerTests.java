@@ -1,123 +1,147 @@
 package com.muskopf.tacotuesday.api;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.muskopf.tacotuesday.TacoTuesdayTestHelper;
 import com.muskopf.tacotuesday.bl.EmployeeDAO;
-import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
-import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
-import com.muskopf.tacotuesday.config.TacoTuesdayApiConfiguration;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static com.muskopf.tacotuesday.TacoTuesdayTestHelper.TT_API_BASE_URL;
+import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.CREATED;
+import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.OK;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest(classes = {
-        TacoTuesdayApiEmployeeRestController.class,
-        TacoTuesdayApiConfiguration.class
-})
-@ComponentScan(basePackages = "com.muskopf.tacotuesday")
-public class TacoTuesdayApiEmployeeRestControllerTests {
-    @MockBean
-    private TacoEmailer tacoEmailer;
-
-    @Autowired
-    private TacoTuesdayTestHelper testHelper;
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private TacoTuesdayResourceMapper mapper;
-    @Autowired
-    private ObjectMapper objectMapper;
+public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRestControllerTester {
     @Autowired
     private EmployeeDAO employeeDAO;
 
-    private static final String apiKey = UUID.randomUUID().toString();
+    private static final String EMPLOYEE_ENDPOINT = "/employees";
 
-    @Before
-    public void setup() {
-        testHelper.persistMockApiKey(apiKey);
-    }
-
+    /**
+     * Test the happy path of the POST /employees endpoint
+     */
     @Test
-    @Transactional
-    public void test_createEmployee() throws Exception {
-        Employee employee = testHelper.createEmployee();
+    public void test_createEmployee() {
+        // Create new employee to persist
+        Employee employee = persistenceHelper.loadObject("POST_Employees.json", Employee.class);
+
+        // Map into resource
         EmployeeResource resource = mapper.map(employee);
 
-        String resourceJson = objectMapper.writerFor(EmployeeResource.class).writeValueAsString(resource);
+        // Perform POST /employees
+        EmployeeResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, CREATED, resource, EmployeeResource.class);
 
-        MvcResult result = mockMvc.perform(post(TT_API_BASE_URL + "/employees")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(resourceJson)
-                .param("apiKey", apiKey))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andReturn();
+        // ID was set
+        assertThat(responseObject.getId()).isNotNull();
+        // Assert Employee matches original
+        assertThat(responseObject).usingRecursiveComparison().ignoringFields("id").isEqualTo(resource);
 
-        EmployeeResource responseObject = objectMapper.readerFor(EmployeeResource.class).readValue(result.getResponse().getContentAsString());
-        Employee returnedEmployee = mapper.map(responseObject);
-
-        assertThat(returnedEmployee).usingRecursiveComparison().ignoringFields("id").isEqualTo(employee);
-        assertThat(returnedEmployee.getId()).isNotNull();
-
-        Employee persistedEmployee = employeeDAO.getEmployeeBySlackId(returnedEmployee.getSlackId());
-        assertThat(returnedEmployee).usingRecursiveComparison().ignoringActualNullFields().isEqualTo(persistedEmployee);
+        // Get persisted Employee and assert it is correct
+        Employee persistedEmployee = employeeDAO.getEmployeeBySlackId(employee.getSlackId());
+        assertThat(employee).usingRecursiveComparison().ignoringActualNullFields().isEqualTo(persistedEmployee);
     }
 
+    /**
+     * Test the happy path of the GET /employees endpoint
+     */
     @Test
     public void test_getAllEmployees() {
-        testHelper.initializeDatabase();
-        List<Employee> employees = testHelper.getLoadedEmployees();
-        List<Employee> persistedEmployees = employeeDAO.getAllEmployees();
+        // Create employees in DB and map them into resources
+        persistenceHelper.initializeDatabase();
+        List<EmployeeResource> expectedResources = persistenceHelper.getPersistedEmployees()
+                .stream()
+                .map(e -> mapper.map(e))
+                .collect(Collectors.toList());
 
-        persistedEmployees.forEach(e -> {
+        // Get employees from API, read into list
+        List<EmployeeResource> responseObject = Arrays.asList(apiHelper.GET(EMPLOYEE_ENDPOINT, OK, true,
+                EmployeeResource[].class));
 
-
-
-            assertThat(employees).contains(e);
-        });
+        // Assert that every employee persisted by testHelper was returned from API
+        expectedResources.forEach(e -> assertThat(responseObject).contains(e));
     }
 
+    /**
+     * Test the happy path of the GET /employees/{slackId} endpoint
+     */
     @Test
     public void test_getEmployeeBySlackId() {
+        // Create employees in DB
+        persistenceHelper.initializeDatabase();
+        // Get a persisted employee and its resource equivalent
+        Employee employee = persistenceHelper.createEmployee();
+        EmployeeResource expectedResource = mapper.map(employee);
 
+        // GET the Employee from API by Slack ID
+        EmployeeResource responseObject = apiHelper.GET(formEndpoint(employee.getSlackId()), OK,
+                true, EmployeeResource.class);
+
+        // Assert that the returned resource is what was expected
+        assertThat(expectedResource).usingRecursiveComparison().isEqualTo(responseObject);
     }
 
+    /**
+     * Test the happy path of the PATCH /employees/{slackId} endpoint
+     */
     @Test
     public void test_updateEmployee() {
+        // Create employees in DB
+        persistenceHelper.initializeDatabase();
+        // Get a persisted employee and set a random nickName
+        Employee employee = persistenceHelper.createEmployee();
+        employee.setNickName(UUID.randomUUID().toString());
 
+        // Map into resource
+        EmployeeResource expectedResource = mapper.map(employee);
+
+        // Perform PATH on /employees/{employee.slackId}
+        EmployeeResource responseObject = apiHelper.PATCH(formEndpoint(employee.getSlackId()), OK,
+                expectedResource, EmployeeResource.class);
+
+        // Assert that the returned resource is what was expected
+        assertThat(expectedResource).usingRecursiveComparison().isEqualTo(responseObject);
     }
 
+    /**
+     * Test the happy path of the PATCH /employees endpoint
+     */
     @Test
     public void test_updateEmployees() {
+        // Create employees in DB
+        persistenceHelper.initializeDatabase();
+        // Get persisted employees and set random nickNames
+        List<Employee> employees = persistenceHelper.getPersistedEmployees();
+        employees.forEach(e -> e.setNickName(UUID.randomUUID().toString()));
 
+        // Convert employees to resources
+        List<EmployeeResource> expectedResources = employees.stream().map(e -> mapper.map(e)).collect(Collectors.toList());
+
+        // Perform PATCH on /employees
+        List<EmployeeResource> responseObject = Arrays.asList(apiHelper.PATCH(EMPLOYEE_ENDPOINT, OK,
+                expectedResources, EmployeeResource[].class));
+
+        // Assert that all expected resources came back
+        expectedResources.forEach(r -> assertThat(responseObject).contains(r));
+
+        // Assert that all updates were properly persisted in DB
+        expectedResources.forEach(r ->
+                assertThat(mapper.map(employeeDAO.getEmployeeBySlackId(r.getSlackId())))
+                        .usingRecursiveComparison()
+                        .isEqualTo(r)
+        );
+    }
+
+    /**
+     * Form an endpoint URI based off of the {@code EMPLOYEE_ENDPOINT}
+     *
+     * @param path The path to append to the base endpoint
+     * @return The formed URI
+     */
+    private String formEndpoint(String path) {
+        return EMPLOYEE_ENDPOINT + "/" + path;
     }
 }
