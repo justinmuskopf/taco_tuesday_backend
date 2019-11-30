@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @EnableConfigurationProperties
 @Import(TacoTuesdayApiConfiguration.class)
-//@EnableConfigurationProperties(TacoTues// dayApiConfiguration.class)
 public class TacoTuesdayApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(TacoTuesdayApiApplication.class, args);
