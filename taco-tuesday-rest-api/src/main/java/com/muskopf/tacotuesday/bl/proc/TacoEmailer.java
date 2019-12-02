@@ -5,8 +5,7 @@ import com.muskopf.mailgun.emailsender.domain.Email;
 import com.muskopf.mailgun.emailsender.proc.EmailBuilder;
 import com.muskopf.tacotuesday.config.TacoTuesdayApiProperties;
 import com.muskopf.tacotuesday.domain.FullOrder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -16,12 +15,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 
+@Slf4j
 @Component
 public class TacoEmailer {
     private static final String TT_API_HEADER = "[Taco Tuesday API @ %s]: ";
     private EmailBuilder emailBuilder;
     private EmailSender emailSender;
-    private Logger logger = LoggerFactory.getLogger(TacoEmailer.class);
     private boolean sendEmails;
 
     @Autowired
@@ -40,16 +39,6 @@ public class TacoEmailer {
         return String.format(TT_API_HEADER, LocalDateTime.now().toString());
     }
 
-    private boolean shouldSendEmail(String topic) {
-        if (!sendEmails) {
-            logger.info("Not sending " + topic + " email (Disabled by configuration properties)!");
-        } else {
-            logger.info("Sending " + topic + " email!");
-        }
-
-        return sendEmails;
-    }
-
     private Email getEmail(String subject, String body) {
         return emailBuilder.builder()
                 .useDefaultRecipients()
@@ -60,12 +49,15 @@ public class TacoEmailer {
     }
 
     private void sendEmail(String topic, String subject, String body) {
-        if (!shouldSendEmail(topic)) {
+        Email email = getEmail(subject, body);
+
+        if (!sendEmails) {
+            log.info("Not sending " + topic + " Email (Disabled by configuration properties):\n" + email.toString());
+
             return;
         }
 
-        Email email = getEmail(subject, body);
-
+        log.info("Sending " + topic + " email!");
         emailSender.sendEmail(email);
     }
 

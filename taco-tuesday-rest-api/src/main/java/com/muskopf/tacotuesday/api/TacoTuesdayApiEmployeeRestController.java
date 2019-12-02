@@ -1,50 +1,49 @@
 package com.muskopf.tacotuesday.api;
 
+import com.muskopf.tacotuesday.api.validator.ApiKey;
+import com.muskopf.tacotuesday.api.validator.SlackId;
 import com.muskopf.tacotuesday.bl.EmployeeDAO;
-import com.muskopf.tacotuesday.bl.proc.ApiKeyValidator;
 import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
 import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
+@Slf4j
+@Validated
 @RestController
 @RequestMapping(value = "/taco-tuesday/v1/employees")
 public class TacoTuesdayApiEmployeeRestController {
-    private Logger logger = LoggerFactory.getLogger(TacoTuesdayApiEmployeeRestController.class);
     private EmployeeDAO employeeDAO;
-    private ApiKeyValidator apiKeyValidator;
     private TacoTuesdayResourceMapper mapper;
     private TacoEmailer emailer;
 
     @Autowired
     public TacoTuesdayApiEmployeeRestController(EmployeeDAO employeeDAO,
-                                                ApiKeyValidator apiKeyValidator,
                                                 TacoTuesdayResourceMapper mapper,
                                                 TacoEmailer emailer)
     {
         this.employeeDAO = employeeDAO;
-        this.apiKeyValidator = apiKeyValidator;
         this.mapper = mapper;
         this.emailer = emailer;
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeResource> createEmployee(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
-                                                           @RequestBody @NotEmpty EmployeeResource employeeResource)
+    public ResponseEntity<EmployeeResource> createEmployee(@RequestParam(name = "apiKey") @ApiKey String apiKey,
+                                                           @RequestBody @Valid EmployeeResource employeeResource)
     {
-        validateApiKey(apiKey);
+        log.info("POST /employees");
 
         Employee employee = mapper.map(employeeResource);
         employee = employeeDAO.createEmployee(employee);
@@ -53,8 +52,8 @@ public class TacoTuesdayApiEmployeeRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeResource>> getAllEmployees(@RequestParam(name = "apiKey") @NotEmpty String apiKey) {
-        validateApiKey(apiKey);
+    public ResponseEntity<List<EmployeeResource>> getAllEmployees(@RequestParam(name = "apiKey") @ApiKey String apiKey) {
+        log.info("GET /employees");
 
         List<Employee> employees = employeeDAO.getAllEmployees();
 
@@ -62,10 +61,10 @@ public class TacoTuesdayApiEmployeeRestController {
     }
 
     @GetMapping("/{slackId}")
-    public ResponseEntity<EmployeeResource> getEmployeeBySlackId(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
-                                                                 @PathVariable(name = "slackId") @NotEmpty String slackId)
+    public ResponseEntity<EmployeeResource> getEmployeeBySlackId(@RequestParam(name = "apiKey") @ApiKey String apiKey,
+                                                                 @PathVariable(name = "slackId") @SlackId String slackId)
     {
-        validateApiKey(apiKey);
+        log.info("GET /employees/{slackId}, Slack ID: " + slackId);
 
         Employee employee = employeeDAO.getEmployeeBySlackId(slackId);
         if (employee == null) {
@@ -76,42 +75,41 @@ public class TacoTuesdayApiEmployeeRestController {
     }
 
     @PatchMapping("/{slackId}")
-    public ResponseEntity<EmployeeResource> updateEmployee(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
-                                                           @PathVariable(name = "slackId") @NotEmpty String slackId,
-                                                           @RequestBody @NotEmpty EmployeeResource employeeResource)
+    public ResponseEntity<EmployeeResource> updateEmployee(@RequestParam(name = "apiKey") @ApiKey String apiKey,
+                                                           @PathVariable(name = "slackId") @SlackId String slackId,
+                                                           @RequestBody @Valid EmployeeResource employeeResource)
     {
-        validateApiKey(apiKey);
+        log.info("PATCH /employees/{slackId}, Slack ID: " + slackId);
 
-        if (isEmpty(employeeResource.getSlackId())) {
-            employeeResource.setSlackId(slackId);
-        }
+        employeeResource.setSlackId(slackId);
 
         Employee employee = mapper.map(employeeResource);
-        if (!employeeDAO.employeeExists(slackId)) {
-            return new TacoTuesdayExceptionResponseEntity("No employee with the Slack ID " + slackId + " exists!", HttpStatus.FORBIDDEN);
-        }
-        
-
         employee = employeeDAO.updateEmployee(employee);
 
         return new ResponseEntity<>(mapper.map(employee), HttpStatus.OK);
     }
 
     @PatchMapping
-    public ResponseEntity<List<EmployeeResource>> updateEmployees(@RequestParam(name = "apiKey") @NotEmpty String apiKey,
-                                                                  @RequestBody @NotEmpty List<EmployeeResource> employeeResources)
+    public ResponseEntity<List<EmployeeResource>> updateEmployees(@RequestParam(name = "apiKey") @ApiKey String apiKey,
+                                                                  @RequestBody @Valid List<EmployeeResource> employeeResources)
     {
-        validateApiKey(apiKey);
+        log.info("PATCH /employees");
 
-        List<Employee> employees = employeeResources.stream().map(e -> mapper.map(e)).collect(Collectors.toList());
+        List<Employee> employees = new ArrayList<>();
+        for (EmployeeResource resource : employeeResources) {
+            if (employeeDoesNotExist(resource)) {
+                throw new NoSuchResourceException(Employee.class, new String[]{"SlackId: " + resource.getSlackId()});
+            }
+
+            employeeResources.stream().map(e -> mapper.map(e)).collect(Collectors.toList());
+        }
+
         employees = employeeDAO.updateEmployees(employees);
 
         return new ResponseEntity<>(mapper.mapToEmployeeResources(employees), HttpStatus.OK);
     }
 
-    private void validateApiKey(String apiKey) {
-        if (apiKeyValidator.isInvalidApiKey(apiKey)) {
-            throw new UnrecognizedApiKeyException(apiKey);
-        }
+    boolean employeeDoesNotExist(EmployeeResource resource) {
+        return !employeeDAO.employeeExistsBySlackId(resource.getSlackId());
     }
 }

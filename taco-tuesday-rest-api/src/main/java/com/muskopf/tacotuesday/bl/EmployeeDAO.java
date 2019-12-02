@@ -24,6 +24,8 @@ public interface EmployeeDAO {
 
     List<Employee> getAllEmployees();
 
+    boolean employeeExistsBySlackId(String slackId);
+
     // API Keys
     boolean apiKeyExists(String apiKey);
 }

@@ -22,9 +22,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ComponentScan(basePackages = "com.muskopf.tacotuesday")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class TacoTuesdayBaseRestControllerTester {
-    @MockBean
-    protected TacoEmailer tacoEmailer;
-
     @Autowired
     protected TacoTuesdayPersistenceInitializer persistenceHelper;
     @Autowired

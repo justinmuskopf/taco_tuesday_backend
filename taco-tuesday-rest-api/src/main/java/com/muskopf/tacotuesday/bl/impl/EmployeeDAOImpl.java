@@ -125,6 +125,11 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
+    public boolean employeeExistsBySlackId(String slackId) {
+        return employeeRepository.existsEmployeeBySlackId(slackId);
+    }
+
+    @Override
     public boolean apiKeyExists(String apiKey) {
         return apiKeyRepository.existsByKey(apiKey);
     }

@@ -15,6 +15,8 @@ public interface OrderDAO {
 
     List<IndividualOrder> retrieveIndividualOrdersBySlackId(String slackId);
 
+    boolean individualOrderExistsById(Integer id);
+
     // Full Orders
     FullOrder updateFullOrder(FullOrder order);
 
@@ -25,4 +27,6 @@ public interface OrderDAO {
     List<FullOrder> retrieveAllFullOrders();
 
     List<FullOrder> retrieveFullOrdersBySlackId(String slackId);
+
+    boolean fullOrderExistsById(Integer id);
 }

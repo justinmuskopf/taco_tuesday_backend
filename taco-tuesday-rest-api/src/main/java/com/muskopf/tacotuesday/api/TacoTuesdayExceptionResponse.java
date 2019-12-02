@@ -4,41 +4,49 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Data
 public class TacoTuesdayExceptionResponse {
-    private String message = "An unknown server error occurred!";
+    private String[] errors = {"An unknown server error occurred!"};
 
-    private Instant occurredAt = Instant.now();
+    private String occurredAt = OffsetDateTime.now(ZoneOffset.UTC).toString();
 
-    private HttpStatus statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+    private int statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
 
     private boolean retryable = false;
 
-    private Exception cause = null;
-
     public TacoTuesdayExceptionResponse() {}
 
-    public TacoTuesdayExceptionResponse(String message) {
-        this.message = message;
+    public TacoTuesdayExceptionResponse(String[] errors) {
+        this.errors = errors;
+    }
+
+    public TacoTuesdayExceptionResponse(String error) {
+        this(new String[]{error});
     }
 
     public TacoTuesdayExceptionResponse(HttpStatus statusCode) {
-        this.statusCode = statusCode;
+        this.statusCode = statusCode.value();
     }
 
-    public TacoTuesdayExceptionResponse(String message, HttpStatus statusCode) {
-        this(message);
-        this.statusCode = statusCode;
+    public TacoTuesdayExceptionResponse(String[] errors, HttpStatus statusCode) {
+        this.errors = errors;
+        this.statusCode = statusCode.value();
     }
 
-    public TacoTuesdayExceptionResponse(String message, HttpStatus statusCode, boolean retryable) {
-        this(message, statusCode);
+    public TacoTuesdayExceptionResponse(String error, HttpStatus statusCode) {
+        this(new String[]{error}, statusCode);
+    }
+
+    public TacoTuesdayExceptionResponse(String[] errors, HttpStatus statusCode, boolean retryable) {
+        this(errors, statusCode);
         this.retryable = retryable;
     }
 
-    public TacoTuesdayExceptionResponse(String message, HttpStatus statusCode, boolean retryable, Exception cause) {
-        this(message, statusCode, retryable);
-        this.cause = cause;
+    public TacoTuesdayExceptionResponse(String error, HttpStatus statusCode, boolean retryable) {
+        this(new String[]{error}, statusCode, retryable);
     }
 }

@@ -85,6 +85,11 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
+    public boolean individualOrderExistsById(Integer id) {
+        return individualOrderRepository.existsById(id);
+    }
+
+    @Override
     public FullOrder retrieveFullOrder(Integer id) {
         return getFullOrderIfPresent(id);
     }
@@ -116,5 +121,10 @@ public class OrderDAOImpl implements OrderDAO {
                 .stream()
                 .map(o -> (FullOrder) Hibernate.unproxy(o.getFullOrder()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean fullOrderExistsById(Integer id) {
+        return fullOrderRepository.existsById(id);
     }
 }
