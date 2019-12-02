@@ -95,15 +95,13 @@ public class TacoTuesdayApiEmployeeRestController {
     {
         log.info("PATCH /employees");
 
-        List<Employee> employees = new ArrayList<>();
-        for (EmployeeResource resource : employeeResources) {
-            if (employeeDoesNotExist(resource)) {
-                throw new NoSuchResourceException(Employee.class, new String[]{"SlackId: " + resource.getSlackId()});
-            }
+//        for (EmployeeResource resource : employeeResources) {
+//            if (employeeDoesNotExist(resource)) {
+//                throw new NoSuchResourceException(Employee.class, new String[]{"SlackId: " + resource.getSlackId()});
+//            }
+//        }
 
-            employeeResources.stream().map(e -> mapper.map(e)).collect(Collectors.toList());
-        }
-
+        List<Employee> employees = employeeResources.stream().map(e -> mapper.map(e)).collect(Collectors.toList());
         employees = employeeDAO.updateEmployees(employees);
 
         return new ResponseEntity<>(mapper.mapToEmployeeResources(employees), HttpStatus.OK);

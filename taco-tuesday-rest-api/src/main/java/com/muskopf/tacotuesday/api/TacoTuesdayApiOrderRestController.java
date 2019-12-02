@@ -1,10 +1,8 @@
 package com.muskopf.tacotuesday.api;
 
-import com.muskopf.tacotuesday.api.validator.ApiKey;
-import com.muskopf.tacotuesday.api.validator.OrderId;
-import com.muskopf.tacotuesday.api.validator.OrderIdValidator;
+import com.muskopf.tacotuesday.api.validator.*;
 import com.muskopf.tacotuesday.api.validator.OrderIdValidator.OrderType;
-import com.muskopf.tacotuesday.api.validator.SlackId;
+import com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType;
 import com.muskopf.tacotuesday.bl.OrderDAO;
 import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
 import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
@@ -47,7 +45,7 @@ public class TacoTuesdayApiOrderRestController {
 
     @GetMapping(value = "/individual")
     public ResponseEntity<List<IndividualOrderResource>> getAllIndividualOrders(@RequestHeader(name = "slackId", required = false)
-                                                                                    @SlackId(required = false) String slackId)
+                                                                                    @SlackId(type = SlackIdType.Optional) String slackId)
     {
         log.info("GET /orders/individual");
 
@@ -71,7 +69,7 @@ public class TacoTuesdayApiOrderRestController {
 
     @GetMapping(value = "/full")
     public ResponseEntity<List<FullOrderResource>> getAllFullOrders(@RequestHeader(name = "slackId", required = false)
-                                                                        @SlackId(required = false) String slackId)
+                                                                        @SlackId(type = SlackIdType.Optional) String slackId)
     {
         log.info("GET /orders/full");
 
@@ -95,7 +93,9 @@ public class TacoTuesdayApiOrderRestController {
     }
 
     @GetMapping(value = "/full/{orderId}")
-    public ResponseEntity<FullOrderResource> getFullOrderByOrderId(@PathVariable @OrderId(type = OrderType.Full) Integer orderId) {
+    public ResponseEntity<FullOrderResource> getFullOrderByOrderId(@PathVariable
+                                                                       @OrderId(type = OrderType.Full) Integer orderId)
+    {
         log.info("GET /orders/full/{orderId}, Order ID: " + orderId);
 
         FullOrder order = orderDAO.retrieveFullOrder(orderId);

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -45,12 +47,22 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, WebRequest r) {
         log.info("Handling constraint violation!");
 
+        if (e.getConstraintViolations().contains("apiKey")) {
+            log.warn("Hello?");
+        }
+
         List<String> errors = new ArrayList<>();
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             errors.add(violation.getMessage());
         }
 
-        return new TacoTuesdayExceptionResponseEntity(errors, HttpStatus.BAD_REQUEST);
+        // Get the HTTP method from the request
+        HttpMethod httpMethod = ((ServletWebRequest) r).getHttpMethod();
+
+        // Return a 404 if trying to get a specific resource, and a 400 if anything else
+        HttpStatus httpStatus = httpMethod.equals(HttpMethod.GET) ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+
+        return new TacoTuesdayExceptionResponseEntity(errors, httpStatus);
     }
 
     @Override
@@ -65,11 +77,16 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
         return new TacoTuesdayExceptionResponseEntity(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnrecognizedApiKeyException.class)
+    public ResponseEntity<Object> handleUnrecognizedApiKeyException(UnrecognizedApiKeyException e, WebRequest r) {
+        tacoEmailer.sendExceptionEmail(e);
+
+        return new TacoTuesdayExceptionResponseEntity(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchResourceException.class)
     public ResponseEntity<Object> handleNoSuchResourceExistsException(NoSuchResourceException e, WebRequest r) {
-        tacoEmailer.sendExceptionEmail(e);
-
         return new TacoTuesdayExceptionResponseEntity(e, HttpStatus.NOT_FOUND);
     }
 

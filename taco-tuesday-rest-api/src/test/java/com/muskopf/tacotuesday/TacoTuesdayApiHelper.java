@@ -2,7 +2,9 @@ package com.muskopf.tacotuesday;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.muskopf.tacotuesday.api.TacoTuesdayExceptionResponseResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -12,8 +14,10 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,7 +46,10 @@ public class TacoTuesdayApiHelper {
      */
     public enum ResponseStatus {
         OK(status().isOk()),
-        CREATED(status().isCreated());
+        CREATED(status().isCreated()),
+        BAD_REQUEST(status().isBadRequest()),
+        NOT_FOUND(status().isNotFound()),
+        UNAUTHORIZED(status().isUnauthorized());
 
         ResultMatcher status;
 
@@ -62,7 +69,7 @@ public class TacoTuesdayApiHelper {
     private MvcResult performMvcOperation(MockHttpServletRequestBuilder request, ResponseStatus responseStatus, boolean useApiKey)
     {
         if (useApiKey) {
-            request.param("apiKey", API_KEY);
+            request.param("apiKey", API_KEY + "a");
         }
 
         // Perform request
@@ -156,5 +163,23 @@ public class TacoTuesdayApiHelper {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Could not write object to JSON: " + o, e);
         }
+    }
+
+    /**
+     * Assert against a failure from the API
+     */
+    public void assertExceptionResponseIsValid(TacoTuesdayExceptionResponseResource responseResource, HttpStatus status,
+                                               boolean retryable, String[] errors)
+    {
+        assertThat(responseResource.getStatusCode()).isEqualTo(status.value());
+        assertThat(responseResource.isRetryable()).isEqualTo(retryable);
+        assertThat(responseResource.getOccurredAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(responseResource.getErrors()).containsExactlyInAnyOrder(errors);
+    }
+
+    public void assertExceptionResponseIsValid(TacoTuesdayExceptionResponseResource responseResource, HttpStatus status,
+                                               boolean retryable, String error)
+    {
+        assertExceptionResponseIsValid(responseResource, status, retryable, new String[]{error});
     }
 }

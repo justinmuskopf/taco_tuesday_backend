@@ -5,14 +5,15 @@ import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.CREATED;
-import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.OK;
+import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRestControllerTester {
@@ -46,6 +47,65 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
     }
 
     /**
+     * Test a sad path of the POST /employees endpoint where the employee has no Slack ID
+     */
+    @Test
+    public void test_createEmployeeFailsWithNoSlackId() {
+        // Create new employee to persist
+        Employee employee = persistenceHelper.loadObject("POST_Employees.json", Employee.class);
+
+        // Map into resource
+        EmployeeResource resource = mapper.map(employee);
+        resource.setSlackId(null);
+
+        // Perform POST /employees
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, BAD_REQUEST, resource,
+                TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Employee must have a Slack ID!");
+    }
+
+    /**
+     * Test a sad path of the POST /employees endpoint where the employee has no full name
+     */
+    @Test
+    public void test_createEmployeeFailsWithNoFullName() {
+        // Create new employee to persist
+        Employee employee = persistenceHelper.loadObject("POST_Employees.json", Employee.class);
+
+        // Map into resource
+        EmployeeResource resource = mapper.map(employee);
+        resource.setFullName(null);
+
+        // Perform POST /employees
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, BAD_REQUEST, resource,
+                TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Employee must have a full name!");
+    }
+
+    /**
+     * Test a sad path of the POST /employees endpoint where the employee has no full name or Slack ID
+     */
+    @Test
+    public void test_createEmployeeFailsWithNoFullNameAndNoSlackId() {
+        // Create new employee to persist
+        Employee employee = persistenceHelper.loadObject("POST_Employees.json", Employee.class);
+
+        // Map into resource
+        EmployeeResource resource = mapper.map(employee);
+        resource.setSlackId(null);
+        resource.setFullName(null);
+
+        // Perform POST /employees
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, BAD_REQUEST, resource,
+                TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
+                new String[]{"Employee must have a full name!", "Employee must have a Slack ID!"});
+    }
+
+    /**
      * Test the happy path of the GET /employees endpoint
      */
     @Test
@@ -63,6 +123,23 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
 
         // Assert that every employee persisted by testHelper was returned from API
         expectedResources.forEach(e -> assertThat(responseObject).contains(e));
+    }
+
+    /**
+     * Test the sad path of the GET /employees endpoint where no API key is provided
+     */
+    @Test
+    public void test_getAllEmployeesWithNoApiKey() {
+        // Create employees in DB and map them into resources
+        persistenceHelper.initializeDatabase();
+        List<EmployeeResource> expectedResources = persistenceHelper.getPersistedEmployees()
+                .stream()
+                .map(e -> mapper.map(e))
+                .collect(Collectors.toList());
+
+        // Get employees from API, read into list
+        List<EmployeeResource> responseObject = Arrays.asList(apiHelper.GET(EMPLOYEE_ENDPOINT, UNAUTHORIZED, true,
+                EmployeeResource[].class));
     }
 
     /**

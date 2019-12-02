@@ -1,5 +1,6 @@
 package com.muskopf.tacotuesday.api.validator;
 
+import com.muskopf.tacotuesday.api.UnrecognizedApiKeyException;
 import com.muskopf.tacotuesday.bl.EmployeeDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

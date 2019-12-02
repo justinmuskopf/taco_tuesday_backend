@@ -1,5 +1,7 @@
 package com.muskopf.tacotuesday.api.validator;
 
+import com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
@@ -9,8 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface SlackId {
-    boolean required() default true;
-
+    SlackIdType type() default SlackIdType.Required;
     String message() default "Invalid Slack ID: ${validatedValue}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

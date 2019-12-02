@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @Validated
-public class EmployeeResource {
+public class NewEmployeeResource {
     @Nullable
     @JsonProperty
     private Integer id;
@@ -23,7 +23,6 @@ public class EmployeeResource {
     private String nickName;
 
     @JsonProperty
-    @SlackId
     private String slackId;
 
     @JsonProperty
