@@ -301,8 +301,8 @@
           "format" : "float"
         },
         "createdAt" : {
-          "type" : "integer",
-          "format" : "int64"
+          "type" : "string",
+          "format" : "date-time"
         },
         "barbacoa" : {
           "type" : "integer",
@@ -356,8 +356,8 @@
           "format" : "float"
         },
         "createdAt" : {
-          "type" : "integer",
-          "format" : "int64"
+          "type" : "string",
+          "format" : "date-time"
         },
         "barbacoa" : {
           "type" : "integer",
