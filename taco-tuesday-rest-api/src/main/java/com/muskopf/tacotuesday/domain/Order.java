@@ -47,6 +47,8 @@ public abstract class Order extends DomainObject {
 
         StringBuilder sb = new StringBuilder();
         sb.append("------------------------").append(sep);
+        sb.append("  ID: ").append(id).append(sep);
+        sb.append("------------------------").append(sep);
         sb.append("  Barbacoa: ").append(barbacoa).append(sep);
         sb.append("  Beef Fajita: ").append(beefFajita).append(sep);
         sb.append("  Cabeza: ").append(cabeza).append(sep);
@@ -54,7 +56,7 @@ public abstract class Order extends DomainObject {
         sb.append("  Chicken Fajita: ").append(chickenFajita).append(sep);
         sb.append("  Lengua: ").append(lengua).append(sep);
         sb.append("  Pastor/Trompo: ").append(pastor).append(sep);
-        sb.append("  Tripa: ").append(tripa).append(sep);
+        sb.append("  Tripa: ").append(tripa).append(sep).append(sep);
         sb.append("  TOTAL: $").append(total).append(sep);
         sb.append("------------------------").append(sep);
 
