@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
 @Data
-@JsonTypeName("individualOrder")
 @EqualsAndHashCode(callSuper = true)
 @Validated
 public class IndividualOrderResource extends OrderResource {

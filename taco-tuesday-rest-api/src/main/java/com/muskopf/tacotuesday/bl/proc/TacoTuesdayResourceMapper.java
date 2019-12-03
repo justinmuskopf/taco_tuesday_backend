@@ -7,6 +7,9 @@ import com.muskopf.tacotuesday.domain.Taco;
 import com.muskopf.tacotuesday.resource.*;
 import org.mapstruct.*;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -36,7 +39,6 @@ public interface TacoTuesdayResourceMapper {
     Employee mapToNewEmployee(NewEmployeeResource resource);
     NewEmployeeResource mapToNewEmployeeResource(Employee employee);
 
-
     List<EmployeeResource> mapToEmployeeResources(List<Employee> employees);
 
     @Mapping(target = "fullOrder", ignore = true)
@@ -57,7 +59,13 @@ public interface TacoTuesdayResourceMapper {
         resource.getIndividualOrders().forEach(o -> o.setFullOrderId(order.getId()));
     }
 
-
     List<FullOrderResource> mapToFullOrderResources(List<FullOrder> orders);
+
+    default OffsetDateTime mapToOffsetDateTime(Instant instant) {
+        return (isNull(instant)) ? null : OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
+    }
+    default Instant mapToInstant(OffsetDateTime offsetDateTime) {
+        return (isNull(offsetDateTime)) ? null : Instant.from(offsetDateTime);
+    }
 }
 

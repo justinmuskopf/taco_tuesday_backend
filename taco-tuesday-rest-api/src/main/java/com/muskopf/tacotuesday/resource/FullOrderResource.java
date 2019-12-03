@@ -10,7 +10,6 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Data
-@JsonTypeName("fullOrder")
 @EqualsAndHashCode(callSuper = true, exclude = "individualOrders")
 @Validated
 public class FullOrderResource extends OrderResource {
