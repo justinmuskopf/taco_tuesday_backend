@@ -11,6 +11,7 @@ import com.muskopf.tacotuesday.domain.ApiKey;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -287,6 +288,21 @@ public class TacoTuesdayPersistenceInitializer {
      */
     private <T> T randomItem(List<T> list) {
         return list.get(random.nextInt(list.size()));
+    }
+
+    /**
+     * Creates a random employee
+     */
+    public Employee createRandomEmployee() {
+        Employee employee = new Employee();
+        employee.setFullName(RandomString.make());
+        employee.setNickName(RandomString.make());
+
+        do {
+            employee.setSlackId("U" + RandomString.make(8));
+        } while (employeeRepository.findBySlackId(employee.getSlackId()) != null);
+
+        return employee;
     }
 }
 

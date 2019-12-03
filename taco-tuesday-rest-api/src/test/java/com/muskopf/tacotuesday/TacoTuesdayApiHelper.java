@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TacoTuesdayApiHelper {
     private static final String TT_API_BASE_URL = "/taco-tuesday/v1";
     private static final String API_KEY = UUID.randomUUID().toString();
+    private static final String INVALID_API_KEY = "superInvalidApiKey";
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -39,6 +40,12 @@ public class TacoTuesdayApiHelper {
         this.objectMapper = objectMapper;
 
         persistenceInitializer.persistMockApiKey(API_KEY);
+    }
+
+    public enum ApiKeyStatus {
+        VALID,
+        INVALID,
+        EMPTY
     }
 
     /**
@@ -63,13 +70,15 @@ public class TacoTuesdayApiHelper {
      *
      * @param request        The request to perform
      * @param responseStatus The status to expect from the response
-     * @param useApiKey      Whether or not the request should use an API key
+     * @param apiKeyStatus   The type of API key to use
      * @return The result of the operation
      */
-    private MvcResult performMvcOperation(MockHttpServletRequestBuilder request, ResponseStatus responseStatus, boolean useApiKey)
+    private MvcResult performMvcOperation(MockHttpServletRequestBuilder request, ResponseStatus responseStatus, ApiKeyStatus apiKeyStatus)
     {
-        if (useApiKey) {
-            request.param("apiKey", API_KEY + "a");
+        if (apiKeyStatus == ApiKeyStatus.VALID) {
+            request.param("apiKey", API_KEY);
+        } else if (apiKeyStatus == ApiKeyStatus.INVALID) {
+            request.param("apiKey", INVALID_API_KEY);
         }
 
         // Perform request
@@ -86,28 +95,32 @@ public class TacoTuesdayApiHelper {
     /**
      * Perform a GET operation on the TT API at {@code path}
      *
-     * @param path          The path to perform the GET on (e.g. "/employees")
-     * @param responseClass The status to expect from the result
+     * @param path           The path to perform the GET on (e.g. "/employees")
+     * @param responseStatus The HTTP status expected from the response
+     * @param apiKeyStatus   The type of API key to use
+     * @param responseClass  The class to deserialize the response body into
      * @return The result of the operation
      */
-    public <T> T GET(String path, ResponseStatus responseStatus, boolean useApiKey, Class<T> responseClass) {
-        return readFromResponse(performMvcOperation(get(uri(path)), responseStatus, useApiKey), responseClass);
+    public <T> T GET(String path, ResponseStatus responseStatus, ApiKeyStatus apiKeyStatus, Class<T> responseClass) {
+        return readFromResponse(performMvcOperation(get(uri(path)), responseStatus, apiKeyStatus), responseClass);
     }
 
     /**
      * Perform a POST operation on the TT API at {@code path} with content {@code content}
      *
-     * @param path          The path to perform the POST on (e.g. "/employees")
-     * @param responseClass The status to expect from the result
-     * @param content       The object that should be serialized into the request body
+     * @param path           The path to perform the POST on (e.g. "/employees")
+     * @param responseStatus The HTTP status expected from the response
+     * @param content        The object that should be serialized into the request body
+     * @param apiKeyStatus   The type of API key to use
+     * @param responseClass  The class to deserialize the response body into
      * @return The result of the operation
      */
-    public <T> T POST(String path, ResponseStatus responseStatus, Object content, Class<T> responseClass) {
+    public <T> T POST(String path, ResponseStatus responseStatus, Object content, ApiKeyStatus apiKeyStatus, Class<T> responseClass) {
         MockHttpServletRequestBuilder request = post(uri(path))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(content));
 
-        return readFromResponse(performMvcOperation(request, responseStatus, true), responseClass);
+        return readFromResponse(performMvcOperation(request, responseStatus, apiKeyStatus), responseClass);
     }
 
     /**
@@ -116,14 +129,16 @@ public class TacoTuesdayApiHelper {
      * @param path           The path to perform the PATCH on (e.g. "/employees")
      * @param responseStatus The status to expect from the result
      * @param content        The object that should be serialized into the request body
+     * @param apiKeyStatus   The type of API key to use
+     * @param responseClass  The
      * @return The result of the operation
      */
-    public <T> T PATCH(String path, ResponseStatus responseStatus, Object content, Class<T> responseClass) {
+    public <T> T PATCH(String path, ResponseStatus responseStatus, Object content, ApiKeyStatus apiKeyStatus, Class<T> responseClass) {
         MockHttpServletRequestBuilder request = patch(uri(path))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(content));
 
-        return readFromResponse(performMvcOperation(request, responseStatus, true), responseClass);
+        return readFromResponse(performMvcOperation(request, responseStatus, ApiKeyStatus.VALID), responseClass);
     }
 
     /**
@@ -181,5 +196,13 @@ public class TacoTuesdayApiHelper {
                                                boolean retryable, String error)
     {
         assertExceptionResponseIsValid(responseResource, status, retryable, new String[]{error});
+    }
+
+    public final String apiKey() {
+        return API_KEY;
+    }
+
+    public final String invalidApiKey() {
+        return INVALID_API_KEY;
     }
 }

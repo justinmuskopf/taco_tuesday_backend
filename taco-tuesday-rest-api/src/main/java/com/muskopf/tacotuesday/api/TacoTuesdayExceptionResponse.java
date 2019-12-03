@@ -2,6 +2,7 @@ package com.muskopf.tacotuesday.api;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,6 +12,8 @@ import java.time.ZoneOffset;
 @Data
 public class TacoTuesdayExceptionResponse {
     private String[] errors = {"An unknown server error occurred!"};
+
+    private FieldError[] fieldErrors = {};
 
     private String occurredAt = OffsetDateTime.now(ZoneOffset.UTC).toString();
 
@@ -44,6 +47,11 @@ public class TacoTuesdayExceptionResponse {
     public TacoTuesdayExceptionResponse(String[] errors, HttpStatus statusCode, boolean retryable) {
         this(errors, statusCode);
         this.retryable = retryable;
+    }
+
+    public TacoTuesdayExceptionResponse(String[] errors, FieldError[] fieldErrors, HttpStatus statusCode, boolean retryable) {
+        this(errors, statusCode, retryable);
+        this.fieldErrors = fieldErrors;
     }
 
     public TacoTuesdayExceptionResponse(String error, HttpStatus statusCode, boolean retryable) {

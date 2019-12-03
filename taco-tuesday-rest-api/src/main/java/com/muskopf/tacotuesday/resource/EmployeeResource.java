@@ -2,6 +2,8 @@ package com.muskopf.tacotuesday.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.muskopf.tacotuesday.api.validator.SlackId;
+import com.muskopf.tacotuesday.api.validator.SlackIdValidator;
+import com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +25,7 @@ public class EmployeeResource {
     private String nickName;
 
     @JsonProperty
-    @SlackId
+    @SlackId(type = SlackIdType.Required)
     private String slackId;
 
     @JsonProperty

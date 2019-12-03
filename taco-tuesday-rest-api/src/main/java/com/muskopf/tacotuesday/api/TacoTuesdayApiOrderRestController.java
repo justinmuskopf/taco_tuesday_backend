@@ -12,14 +12,12 @@ import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -64,7 +62,7 @@ public class TacoTuesdayApiOrderRestController {
 
         IndividualOrder order = orderDAO.retrieveIndividualOrder(orderId);
 
-        return new ResponseEntity<>(mapper.map(order), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapToIndividualOrderResource(order), HttpStatus.OK);
     }
 
     @GetMapping(value = "/full")
@@ -84,12 +82,12 @@ public class TacoTuesdayApiOrderRestController {
     {
         log.info("POST /orders/full");
 
-        FullOrder order = mapper.map(orderResource);
+        FullOrder order = mapper.mapToFullOrder(orderResource);
         order = orderDAO.createFullOrder(order);
 
         emailer.sendOrderSubmittedEmail(order);
 
-        return new ResponseEntity<>(mapper.map(order), HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.mapToFullOrderResource(order), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/full/{orderId}")
@@ -100,6 +98,6 @@ public class TacoTuesdayApiOrderRestController {
 
         FullOrder order = orderDAO.retrieveFullOrder(orderId);
 
-        return new ResponseEntity<>(mapper.map(order), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapToFullOrderResource(order), HttpStatus.OK);
     }
 }

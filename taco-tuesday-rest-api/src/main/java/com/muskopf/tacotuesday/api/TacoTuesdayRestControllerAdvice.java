@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,7 +22,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.xml.ws.Response;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -47,12 +50,14 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, WebRequest r) {
         log.info("Handling constraint violation!");
 
-        if (e.getConstraintViolations().contains("apiKey")) {
-            log.warn("Hello?");
-        }
-
         List<String> errors = new ArrayList<>();
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
+            // Find out if this violation is due to an API key
+            String[] split = violation.getPropertyPath().toString().split("\\.");
+            if (split[split.length - 1].equals("apiKey")) {
+                return handleUnrecognizedApiKeyException(new UnrecognizedApiKeyException(violation.getInvalidValue().toString()), r);
+            }
+
             errors.add(violation.getMessage());
         }
 
@@ -66,15 +71,29 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
     }
 
     @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers,
+                                                               HttpStatus status, WebRequest request)
+    {
         log.warn("Handling method argument not valid exception!");
 
         List<String> errors = new ArrayList<>();
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+        for (FieldError fieldError : fieldErrors) {
             errors.add(fieldError.getDefaultMessage());
         }
 
-        return new TacoTuesdayExceptionResponseEntity(errors, HttpStatus.BAD_REQUEST);
+        return new TacoTuesdayExceptionResponseEntity(errors, fieldErrors, HttpStatus.BAD_REQUEST, false);
+    }
+
+    @Override
+    public ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException e,
+                                                                       HttpHeaders headers, HttpStatus status, WebRequest r)
+    {
+        if (e.getParameterName().equals("apiKey")) {
+            return new TacoTuesdayExceptionResponseEntity("No API Key Provided!", HttpStatus.UNAUTHORIZED);
+        }
+
+        return new TacoTuesdayExceptionResponseEntity("Missing required parameter: " + e.getParameterName(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnrecognizedApiKeyException.class)

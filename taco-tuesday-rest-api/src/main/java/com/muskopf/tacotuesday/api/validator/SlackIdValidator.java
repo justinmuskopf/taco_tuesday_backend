@@ -32,25 +32,23 @@ public class SlackIdValidator implements ConstraintValidator<SlackId, String> {
     public boolean isValid(String slackId, ConstraintValidatorContext constraintValidatorContext) {
         log.info("Validating Slack ID: " + slackId);
 
-        boolean valid;
-        switch (type) {
-            case New:
-                valid = !employeeDAO.employeeExistsBySlackId(slackId);
-                break;
-            case Required:
-                valid = employeeDAO.employeeExistsBySlackId(slackId);
-                break;
-            case Optional:
-                if (isEmpty(slackId)) {
-                    valid = true;
-                } else {
-                    valid = employeeDAO.employeeExistsBySlackId(slackId);
-                }
-                break;
-            default:
-                throw new ValidationException("Invalid Slack ID Type: " + type);
+        boolean slackIdIsEmpty = isEmpty(slackId);
+        // The only time an empty Slack ID is valid is when it is optional
+        if (slackIdIsEmpty) {
+            if (type == SlackIdType.Optional) {
+                return true;
+            }
+
+            constraintValidatorContext.disableDefaultConstraintViolation();
+            constraintValidatorContext.buildConstraintViolationWithTemplate("Employee must have a Slack ID!")
+                    .addConstraintViolation();
+            return false;
         }
 
+        boolean employeeExistsBySlackId = employeeDAO.employeeExistsBySlackId(slackId);
+
+        // Slack ID is valid if it doesn't exist and the Employee is New, otherwise if it already exists
+        boolean valid = (type == SlackIdType.New) ? !employeeExistsBySlackId : employeeExistsBySlackId;
         if (!valid) {
             log.warn("Slack ID \"" + slackId + "\" is not valid!");
         }

@@ -1,5 +1,7 @@
 package com.muskopf.tacotuesday.api;
 
+import com.muskopf.tacotuesday.TacoTuesdayApiHelper;
+import com.muskopf.tacotuesday.TacoTuesdayApiHelper.ApiKeyStatus;
 import com.muskopf.tacotuesday.bl.OrderDAO;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
@@ -36,7 +38,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
 
         // Perform GET /orders/individual
         List<IndividualOrderResource> responseObject = Arrays.asList(apiHelper.GET(formEndpoint("individual"), OK,
-                false, IndividualOrderResource[].class));
+                ApiKeyStatus.EMPTY, IndividualOrderResource[].class));
 
         expectedResources.forEach(r -> assertThat(responseObject).contains(r));
     }
@@ -49,11 +51,11 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         // Get persisted order
         IndividualOrder persistedOrder = persistenceHelper.createIndividualOrder();
         // Map to resource
-        IndividualOrderResource expectedResource = mapper.map(persistedOrder);
+        IndividualOrderResource expectedResource = mapper.mapToIndividualOrderResource(persistedOrder);
 
         // Perform GET /orders/individual/{order.id}
         IndividualOrderResource responseObject = apiHelper.GET(formEndpoint("individual/" + persistedOrder.getId()),
-                OK, false, IndividualOrderResource.class);
+                OK, ApiKeyStatus.EMPTY, IndividualOrderResource.class);
 
         assertThat(expectedResource).usingRecursiveComparison().isEqualTo(responseObject);
     }
@@ -70,7 +72,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
 
         // Perform GET /orders/individual
         List<FullOrderResource> responseObject = Arrays.asList(apiHelper.GET(formEndpoint("full"), OK,
-                false, FullOrderResource[].class));
+                ApiKeyStatus.EMPTY, FullOrderResource[].class));
 
         expectedResources.forEach(r -> assertThat(responseObject).contains(r));
     }
@@ -88,12 +90,12 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         });
 
         // Map to resource
-        FullOrderResource expectedResource = mapper.map(order);
+        FullOrderResource expectedResource = mapper.mapToFullOrderResource(order);
         List<IndividualOrderResource> expectedIndividualOrders = expectedResource.getIndividualOrders();
 
         // Perform POST /orders/full
         FullOrderResource responseObject = apiHelper.POST(formEndpoint("full"), CREATED,
-                expectedResource, FullOrderResource.class);
+                expectedResource, ApiKeyStatus.VALID, FullOrderResource.class);
 
         // Assert responseObject is properly qualified
         assertThat(responseObject.getId()).isNotNull();
@@ -133,11 +135,11 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         // Get persisted order
         FullOrder persistedOrder = persistenceHelper.createFullOrder();
         // Map to resource
-        FullOrderResource expectedResource = mapper.map(persistedOrder);
+        FullOrderResource expectedResource = mapper.mapToFullOrderResource(persistedOrder);
 
         // Perform GET /orders/individual/{order.id}
         FullOrderResource responseObject = apiHelper.GET(formEndpoint("full/" + persistedOrder.getId()),
-                OK, false, FullOrderResource.class);
+                OK, ApiKeyStatus.EMPTY, FullOrderResource.class);
 
         assertThat(expectedResource).usingRecursiveComparison().ignoringFields("individualOrders").isEqualTo(responseObject);
         expectedResource.getIndividualOrders().forEach(o -> assertThat(responseObject.getIndividualOrders()).contains(o));

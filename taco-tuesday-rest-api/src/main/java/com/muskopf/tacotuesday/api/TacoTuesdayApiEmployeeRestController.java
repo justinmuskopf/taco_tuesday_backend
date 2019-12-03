@@ -7,6 +7,7 @@ import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
 import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
+import com.muskopf.tacotuesday.resource.NewEmployeeResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,14 +40,14 @@ public class TacoTuesdayApiEmployeeRestController {
 
     @PostMapping
     public ResponseEntity<EmployeeResource> createEmployee(@RequestParam(name = "apiKey") @ApiKey String apiKey,
-                                                           @RequestBody @Valid EmployeeResource employeeResource)
+                                                           @RequestBody @Valid NewEmployeeResource employeeResource)
     {
         log.info("POST /employees");
 
-        Employee employee = mapper.map(employeeResource);
+        Employee employee = mapper.mapToNewEmployee(employeeResource);
         employee = employeeDAO.createEmployee(employee);
 
-        return new ResponseEntity<>(mapper.map(employee), HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.mapToEmployeeResource(employee), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -71,7 +70,7 @@ public class TacoTuesdayApiEmployeeRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(mapper.map(employee), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapToEmployeeResource(employee), HttpStatus.OK);
     }
 
     @PatchMapping("/{slackId}")
@@ -83,10 +82,10 @@ public class TacoTuesdayApiEmployeeRestController {
 
         employeeResource.setSlackId(slackId);
 
-        Employee employee = mapper.map(employeeResource);
+        Employee employee = mapper.mapToEmployee(employeeResource);
         employee = employeeDAO.updateEmployee(employee);
 
-        return new ResponseEntity<>(mapper.map(employee), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapToEmployeeResource(employee), HttpStatus.OK);
     }
 
     @PatchMapping
@@ -95,13 +94,7 @@ public class TacoTuesdayApiEmployeeRestController {
     {
         log.info("PATCH /employees");
 
-//        for (EmployeeResource resource : employeeResources) {
-//            if (employeeDoesNotExist(resource)) {
-//                throw new NoSuchResourceException(Employee.class, new String[]{"SlackId: " + resource.getSlackId()});
-//            }
-//        }
-
-        List<Employee> employees = employeeResources.stream().map(e -> mapper.map(e)).collect(Collectors.toList());
+        List<Employee> employees = employeeResources.stream().map(e -> mapper.mapToEmployee(e)).collect(Collectors.toList());
         employees = employeeDAO.updateEmployees(employees);
 
         return new ResponseEntity<>(mapper.mapToEmployeeResources(employees), HttpStatus.OK);

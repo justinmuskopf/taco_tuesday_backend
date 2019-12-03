@@ -41,8 +41,8 @@ public class TacoTuesdayResourceMapperTests {
     @Test
     public void test_EmployeeMapping() {
         Employee employee = testHelper.createEmployee();
-        EmployeeResource resource = mapper.map(employee);
-        Employee mappedBack = mapper.map(resource);
+        EmployeeResource resource = mapper.mapToEmployeeResource(employee);
+        Employee mappedBack = mapper.mapToEmployee(resource);
 
         assertThat(mappedBack)
                 .usingRecursiveComparison()
@@ -57,8 +57,8 @@ public class TacoTuesdayResourceMapperTests {
     @Test
     public void test_FullOrderMapping() {
         FullOrder fullOrder = testHelper.createFullOrder();
-        FullOrderResource resource = mapper.map(fullOrder);
-        FullOrder mappedBack = mapper.map(resource);
+        FullOrderResource resource = mapper.mapToFullOrderResource(fullOrder);
+        FullOrder mappedBack = mapper.mapToFullOrder(resource);
 
         assertThat(mappedBack)
                 .usingRecursiveComparison()
@@ -73,8 +73,8 @@ public class TacoTuesdayResourceMapperTests {
     @Test
     public void test_IndividualOrderMapping() {
         IndividualOrder individualOrder = testHelper.createIndividualOrder();
-        IndividualOrderResource resource = mapper.map(individualOrder);
-        IndividualOrder mappedBack = mapper.map(resource);
+        IndividualOrderResource resource = mapper.mapToIndividualOrderResource(individualOrder);
+        IndividualOrder mappedBack = mapper.mapToIndividualOrder(resource);
 
         assertThat(mappedBack)
                 .usingRecursiveComparison()
@@ -89,7 +89,7 @@ public class TacoTuesdayResourceMapperTests {
     public void test_TacoMapping() {
         List<Taco> tacos = testHelper.loadObjects(Taco.class);
         List<TacoResource> resources = mapper.mapToTacoResources(tacos);
-        List<Taco> mappedBack = resources.stream().map(r -> mapper.map(r)).collect(Collectors.toList());
+        List<Taco> mappedBack = resources.stream().map(r -> mapper.mapToTaco(r)).collect(Collectors.toList());
 
         assertThat(tacos).containsExactlyInAnyOrderElementsOf(mappedBack);
     }
