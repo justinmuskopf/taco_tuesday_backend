@@ -1,5 +1,6 @@
 package com.muskopf.tacotuesday.api.validator;
 
+import com.muskopf.tacotuesday.bl.EmployeeDAO;
 import com.muskopf.tacotuesday.bl.OrderDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,13 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 @Slf4j
 public class OrderIdValidator implements ConstraintValidator<OrderId, Integer> {
+    @Autowired
+    private TacoTuesdayValidator validator;
+
     public enum OrderType {
         Full,
         Individual
-    };
-
-    @Autowired
-    private OrderDAO orderDAO;
+    }
 
     private OrderType type;
 
@@ -37,10 +38,10 @@ public class OrderIdValidator implements ConstraintValidator<OrderId, Integer> {
         boolean valid;
         switch (type) {
             case Full:
-                valid = orderDAO.fullOrderExistsById(orderId);
+                valid = validator.fullOrderExists(orderId);
                 break;
             case Individual:
-                valid = orderDAO.individualOrderExistsById(orderId);
+                valid = validator.individualOrderExists(orderId);
                 break;
             default:
                 throw new ValidationException("Invalid OrderType: " + type.name());

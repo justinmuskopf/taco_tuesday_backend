@@ -13,20 +13,20 @@ import static org.springframework.util.StringUtils.isEmpty;
 @Slf4j
 public class ApiKeyValidator implements ConstraintValidator<ApiKey, String> {
     @Autowired
-    private EmployeeDAO employeeDAO;
+    private TacoTuesdayValidator validator;
 
     @Override
     public void initialize(ApiKey constraintAnnotation) {}
 
     @Override
-    public boolean isValid(String apiKey, ConstraintValidatorContext constraintValidatorContext) {
-        log.info("Validating API Key: " + apiKey);
+    public boolean isValid(String apiKey, ConstraintValidatorContext context) {
+        validator.registerContext("API Key", apiKey, context);
 
         if (isEmpty(apiKey)) {
             return false;
         }
 
-        boolean valid = employeeDAO.apiKeyExists(apiKey);
+        boolean valid = validator.apiKeyExists(apiKey);
         if (!valid) {
             log.warn("API Key \"" + apiKey + "\" is not valid!");
         }

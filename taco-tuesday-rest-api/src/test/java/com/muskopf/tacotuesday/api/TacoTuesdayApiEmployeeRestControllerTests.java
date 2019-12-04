@@ -5,6 +5,7 @@ import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper.ApiKeyStatus;
 import com.muskopf.tacotuesday.resource.UpdateEmployeeBatchResource;
+import net.bytebuddy.utility.RandomString;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,26 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
                 ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Employee must have a Slack ID!");
+    }
+
+    /**
+     * Test a sad path of the POST /employees endpoint where the new employee has an existing Slack ID
+     */
+    @Test
+    public void test_POST$employees_sad_invalidSlackId() {
+        // Get an already existing employee
+        Employee employee = persistenceHelper.getPersistedEmployees().get(0);
+        employee.setNickName(RandomString.make());
+        employee.setFullName(RandomString.make());
+
+        // Map into resource
+        EmployeeResource resource = mapper.mapEmployeeToEmployeeResource(employee);
+
+        // Perform POST /employees
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, BAD_REQUEST, resource,
+                ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Employee alread!");
     }
 
     /**
