@@ -4,6 +4,7 @@ import com.muskopf.tacotuesday.bl.EmployeeDAO;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper.ApiKeyStatus;
+import com.muskopf.tacotuesday.resource.UpdateEmployeeBatchResource;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,10 +29,10 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
     @Test
     public void test_POST$employees_happy() {
         // Create new employee to persist
-        Employee employee = persistenceHelper.createRandomEmployee(); //persistenceHelper.loadObject("POST_Employees.json", Employee.class);
+        Employee employee = persistenceHelper.createRandomEmployee();
 
         // Map into resource
-        EmployeeResource resource = mapper.mapToEmployeeResource(employee);
+        EmployeeResource resource = mapper.mapEmployeeToEmployeeResource(employee);
 
         // Perform POST /employees
         EmployeeResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, CREATED, resource, ApiKeyStatus.VALID,
@@ -53,10 +54,10 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
     @Test
     public void test_POST$employees_sad_noSlackId() {
         // Create new employee to persist
-        Employee employee = persistenceHelper.createRandomEmployee();//persistenceHelper.loadObject("POST_Employees.json", Employee.class);
+        Employee employee = persistenceHelper.createRandomEmployee();
 
         // Map into resource
-        EmployeeResource resource = mapper.mapToEmployeeResource(employee);
+        EmployeeResource resource = mapper.mapEmployeeToEmployeeResource(employee);
         resource.setSlackId(null);
 
         // Perform POST /employees
@@ -72,10 +73,10 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
     @Test
     public void test_POST$employees_sad_noFullName() {
         // Create new employee to persist
-        Employee employee = persistenceHelper.createRandomEmployee();//persistenceHelper.loadObject("POST_Employees.json", Employee.class);
+        Employee employee = persistenceHelper.createRandomEmployee();
 
         // Map into resource
-        EmployeeResource resource = mapper.mapToEmployeeResource(employee);
+        EmployeeResource resource = mapper.mapEmployeeToEmployeeResource(employee);
         resource.setFullName(null);
 
         // Perform POST /employees
@@ -94,7 +95,7 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
         Employee employee = persistenceHelper.loadObject("POST_Employees.json", Employee.class);
 
         // Map into resource
-        EmployeeResource resource = mapper.mapToEmployeeResource(employee);
+        EmployeeResource resource = mapper.mapEmployeeToEmployeeResource(employee);
         resource.setSlackId(null);
         resource.setFullName(null);
 
@@ -107,16 +108,35 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
     }
 
     /**
+     * Test the sad path of the POST /employees endpoint where no API key is provided
+     */
+    @Test
+    public void test_POST$employees_sad_noApiKey() {
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, UNAUTHORIZED,
+                persistenceHelper.createRandomEmployee(), ApiKeyStatus.EMPTY, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
+                new String[]{"No API Key Provided!"});
+    }
+
+    /**
+     * Test the sad path of the GET /employees endpoint where the API key is wrong
+     */
+    @Test
+    public void test_POST$employees_sad_invalidApiKey() {
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(EMPLOYEE_ENDPOINT, UNAUTHORIZED,
+                ApiKeyStatus.INVALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
+                new String[]{"Unrecognized API Key: " + apiHelper.invalidApiKey()});
+    }
+
+    /**
      * Test the happy path of the GET /employees endpoint
      */
     @Test
     public void test_GET$employees_happy() {
-        // Create employees in DB and map them into resources
-        persistenceHelper.initializeDatabase();
-        List<EmployeeResource> expectedResources = persistenceHelper.getPersistedEmployees()
-                .stream()
-                .map(e -> mapper.mapToEmployeeResource(e))
-                .collect(Collectors.toList());
+        List<EmployeeResource> expectedResources = mapper.mapEmployeesToEmployeeResources(persistenceHelper.getPersistedEmployees());
 
         // Get employees from API, read into list
         List<EmployeeResource> responseObject = Arrays.asList(apiHelper.GET(EMPLOYEE_ENDPOINT, OK, ApiKeyStatus.VALID,
@@ -131,8 +151,8 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_GET$employees_sad_noApiKey() {
-        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(EMPLOYEE_ENDPOINT, UNAUTHORIZED, ApiKeyStatus.EMPTY,
-                TacoTuesdayExceptionResponseResource.class);
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(EMPLOYEE_ENDPOINT, UNAUTHORIZED,
+                ApiKeyStatus.EMPTY, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
                 new String[]{"No API Key Provided!"});
@@ -143,8 +163,8 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_GET$employees_sad_invalidApiKey() {
-        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(EMPLOYEE_ENDPOINT, UNAUTHORIZED, ApiKeyStatus.INVALID,
-                TacoTuesdayExceptionResponseResource.class);
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(EMPLOYEE_ENDPOINT, UNAUTHORIZED,
+                ApiKeyStatus.INVALID, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
                 new String[]{"Unrecognized API Key: " + apiHelper.invalidApiKey()});
@@ -156,11 +176,9 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_GET$employees$slackId_happy() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
         // Get a persisted employee and its resource equivalent
         Employee employee = persistenceHelper.createEmployee();
-        EmployeeResource expectedResource = mapper.mapToEmployeeResource(employee);
+        EmployeeResource expectedResource = mapper.mapEmployeeToEmployeeResource(employee);
 
         // GET the Employee from API by Slack ID
         EmployeeResource responseObject = apiHelper.GET(formEndpoint(employee.getSlackId()), OK,
@@ -172,17 +190,11 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
 
     @Test
     public void test_GET$employees$slackId_sad_invalidSlackId() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
-        // Get a persisted employee and its resource equivalent
-        Employee employee = persistenceHelper.createEmployee();
-        EmployeeResource expectedResource = mapper.mapToEmployeeResource(employee);
-
         Employee randomEmployee = persistenceHelper.createRandomEmployee();
 
         // GET the Employee from API by Slack ID
-        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint(randomEmployee.getSlackId()), NOT_FOUND,
-                ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint(randomEmployee.getSlackId()),
+                NOT_FOUND, ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.NOT_FOUND, false,
                 new String[]{"Invalid Slack ID: " + randomEmployee.getSlackId()});
@@ -193,14 +205,11 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_GET$employees$slackId_sad_noApiKey() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
         // Get a persisted employee and its resource equivalent
         Employee employee = persistenceHelper.createEmployee();
-        EmployeeResource expectedResource = mapper.mapToEmployeeResource(employee);
 
-        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint(employee.getSlackId()), UNAUTHORIZED, ApiKeyStatus.EMPTY,
-                TacoTuesdayExceptionResponseResource.class);
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint(employee.getSlackId()),
+                UNAUTHORIZED, ApiKeyStatus.EMPTY, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
                 new String[]{"No API Key Provided!"});
@@ -211,14 +220,10 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_GET$employees$slackId_sad_invalidApiKey() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
-        // Get a persisted employee and its resource equivalent
         Employee employee = persistenceHelper.createEmployee();
-        EmployeeResource expectedResource = mapper.mapToEmployeeResource(employee);
 
-        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint(employee.getSlackId()), UNAUTHORIZED, ApiKeyStatus.INVALID,
-                TacoTuesdayExceptionResponseResource.class);
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint(employee.getSlackId()),
+                UNAUTHORIZED, ApiKeyStatus.INVALID, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
                 new String[]{"Unrecognized API Key: " + apiHelper.invalidApiKey()});
@@ -229,14 +234,12 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_PATCH$employees$slackId_happy() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
         // Get a persisted employee and set a random nickName
         Employee employee = persistenceHelper.createEmployee();
         employee.setNickName(UUID.randomUUID().toString());
 
         // Map into resource
-        EmployeeResource expectedResource = mapper.mapToEmployeeResource(employee);
+        EmployeeResource expectedResource = mapper.mapEmployeeToEmployeeResource(employee);
 
         // Perform PATH on /employees/{employee.slackId}
         EmployeeResource responseObject = apiHelper.PATCH(formEndpoint(employee.getSlackId()), OK,
@@ -247,18 +250,48 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
     }
 
     /**
+     * Test the sad path of the PATCH /employees/{slackId} endpoint where no API key is provided
+     */
+    @Test
+    public void test_PATCH$employees$slackId_sad_noApiKey() {
+        // Get a persisted employee and its resource equivalent
+        Employee employee = persistenceHelper.createEmployee();
+        EmployeeResource expectedResource = mapper.mapEmployeeToEmployeeResource(employee);
+
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(formEndpoint(employee.getSlackId()),
+                UNAUTHORIZED, expectedResource, ApiKeyStatus.EMPTY, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
+                new String[]{"No API Key Provided!"});
+    }
+
+    /**
+     * Test the sad path of the PATCH /employees/{slackId} endpoint where the API key is wrong
+     */
+    @Test
+    public void test_PATCH$employees$slackId_sad_invalidApiKey() {
+        // Get a persisted employee and its resource equivalent
+        Employee employee = persistenceHelper.createEmployee();
+        EmployeeResource expectedResource = mapper.mapEmployeeToEmployeeResource(employee);
+
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(formEndpoint(employee.getSlackId()),
+                UNAUTHORIZED, expectedResource, ApiKeyStatus.INVALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
+                new String[]{"Unrecognized API Key: " + apiHelper.invalidApiKey()});
+    }
+
+    /**
      * Test the happy path of the PATCH /employees endpoint
      */
     @Test
     public void test_PATCH$employees_happy() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
         // Get persisted employees and set random nickNames
         List<Employee> employees = persistenceHelper.getPersistedEmployees();
         employees.forEach(e -> e.setNickName(UUID.randomUUID().toString()));
 
         // Convert employees to resources
-        List<EmployeeResource> expectedResources = employees.stream().map(e -> mapper.mapToEmployeeResource(e)).collect(Collectors.toList());
+        List<EmployeeResource> expectedResources = mapper.mapEmployeesToEmployeeResources(employees);
 
         // Perform PATCH on /employees
         List<EmployeeResource> responseObject = Arrays.asList(apiHelper.PATCH(EMPLOYEE_ENDPOINT, OK,
@@ -269,16 +302,17 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
 
         // Assert that all updates were properly persisted in DB
         expectedResources.forEach(r ->
-                assertThat(mapper.mapToEmployeeResource(employeeDAO.getEmployeeBySlackId(r.getSlackId())))
+                assertThat(mapper.mapEmployeeToEmployeeResource(employeeDAO.getEmployeeBySlackId(r.getSlackId())))
                         .usingRecursiveComparison()
                         .isEqualTo(r)
         );
     }
 
+    /**
+     * Test the sad path of the PATCH /employees endpoint where the set of employees contains in an invalid one
+     */
     @Test
     public void test_PATCH$employees_sad_invalidEmployeeInBatch() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
         // Get persisted employees and set random nickNames
         List<Employee> employees = persistenceHelper.getPersistedEmployees();
         employees.forEach(e -> e.setNickName(UUID.randomUUID().toString()));
@@ -288,7 +322,7 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
         // Put invalid employee into the mix!!!
         employees.set(employees.size() / 2, randomEmployee);
 
-        List<EmployeeResource> resources = employees.stream().map(e -> mapper.mapToEmployeeResource(e)).collect(Collectors.toList());
+        List<EmployeeResource> resources = mapper.mapEmployeesToEmployeeResources(employees);
 
         // Perform PATCH on /employees
         TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(EMPLOYEE_ENDPOINT, BAD_REQUEST,
@@ -304,14 +338,12 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_PATCH$employees_sad_noApiKey() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
         // Get a persisted employee and its resource equivalent
         List<Employee> employees = persistenceHelper.getPersistedEmployees();
-        List<EmployeeResource> resources = employees.stream().map(e -> mapper.mapToEmployeeResource(e)).collect(Collectors.toList());
+        List<UpdateEmployeeBatchResource> resources = mapper.mapEmployeesToUpdateEmployeeBatchResources(employees);
 
-        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(EMPLOYEE_ENDPOINT, UNAUTHORIZED, resources, ApiKeyStatus.EMPTY,
-                TacoTuesdayExceptionResponseResource.class);
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(EMPLOYEE_ENDPOINT, UNAUTHORIZED, resources,
+                ApiKeyStatus.EMPTY, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,
                 new String[]{"No API Key Provided!"});
@@ -322,13 +354,11 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      */
     @Test
     public void test_PATCH$employees_sad_invalidApiKey() {
-        // Create employees in DB
-        persistenceHelper.initializeDatabase();
         // Get a persisted employee and its resource equivalent
-        Employee employee = persistenceHelper.createEmployee();
-        EmployeeResource resource = mapper.mapToEmployeeResource(employee);
+        List<Employee> employees = persistenceHelper.getPersistedEmployees();
+        List<UpdateEmployeeBatchResource> resources = mapper.mapEmployeesToUpdateEmployeeBatchResources(employees);
 
-        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(EMPLOYEE_ENDPOINT, UNAUTHORIZED, resource, ApiKeyStatus.EMPTY,
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(EMPLOYEE_ENDPOINT, UNAUTHORIZED, resources, ApiKeyStatus.INVALID,
                 TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.UNAUTHORIZED, false,

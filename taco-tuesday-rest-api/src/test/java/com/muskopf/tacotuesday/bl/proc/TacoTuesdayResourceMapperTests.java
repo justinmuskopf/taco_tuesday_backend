@@ -6,10 +6,7 @@ import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
 import com.muskopf.tacotuesday.domain.Taco;
-import com.muskopf.tacotuesday.resource.EmployeeResource;
-import com.muskopf.tacotuesday.resource.FullOrderResource;
-import com.muskopf.tacotuesday.resource.IndividualOrderResource;
-import com.muskopf.tacotuesday.resource.TacoResource;
+import com.muskopf.tacotuesday.resource.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +38,8 @@ public class TacoTuesdayResourceMapperTests {
     @Test
     public void test_EmployeeMapping() {
         Employee employee = testHelper.createEmployee();
-        EmployeeResource resource = mapper.mapToEmployeeResource(employee);
-        Employee mappedBack = mapper.mapToEmployee(resource);
+        EmployeeResource resource = mapper.mapEmployeeToEmployeeResource(employee);
+        Employee mappedBack = mapper.mapEmployeeResourceToEmployee(resource);
 
         assertThat(mappedBack)
                 .usingRecursiveComparison()
@@ -52,13 +49,63 @@ public class TacoTuesdayResourceMapperTests {
     }
 
     /**
+     * Tests the mapping of Employee --> NewEmployeeResource --> Employee
+     */
+    @Test
+    public void test_NewEmployeeResourceMapping() {
+        Employee employee = testHelper.createEmployee();
+        NewEmployeeResource resource = mapper.mapEmployeeToNewEmployeeResource(employee);
+        Employee mappedBack = mapper.mapNewEmployeeResourceToEmployee(resource);
+
+        assertThat(mappedBack)
+                .usingRecursiveComparison()
+                .ignoringFields(
+                        "slackId"
+                ).isEqualTo(employee);
+    }
+
+    /**
+     * Tests the mapping of Employee --> UpdateEmployeeResource --> Employee
+     */
+    @Test
+    public void test_UpdateEmployeeResourceMapping() {
+        Employee employee = testHelper.createEmployee();
+        UpdateEmployeeResource resource = mapper.mapEmployeeToUpdateEmployeeResource(employee);
+        Employee mappedBack = mapper.mapUpdateEmployeeResourceToEmployee(resource);
+
+        assertThat(mappedBack)
+                .usingRecursiveComparison()
+                .ignoringFields(
+                        "id",
+                        "slackId"
+                ).isEqualTo(employee);
+    }
+
+    /**
+     * Test mapping of Employee --> UpdateEmployeeBatchResource --> Employee
+     */
+    @Test
+    public void test_UpdateEmployeeBatchResourceMapping() {
+        Employee employee = testHelper.createEmployee();
+        UpdateEmployeeBatchResource resource = mapper.mapEmployeeToUpdateEmployeeBatchResource(employee);
+        Employee mappedBack = mapper.mapUpdateEmployeeBatchResourceToEmployee(resource);
+
+        assertThat(mappedBack)
+                .usingRecursiveComparison()
+                .ignoringFields(
+                        "id",
+                        "slackId"
+                ).isEqualTo(employee);
+    }
+
+    /**
      * Test mapping of FullOrder --> FullOrderResource --> FullOrder
      */
     @Test
     public void test_FullOrderMapping() {
         FullOrder fullOrder = testHelper.createFullOrder();
-        FullOrderResource resource = mapper.mapToFullOrderResource(fullOrder);
-        FullOrder mappedBack = mapper.mapToFullOrder(resource);
+        FullOrderResource resource = mapper.mapFullOrderToFullOrderResource(fullOrder);
+        FullOrder mappedBack = mapper.mapFullOrderResourcesToFullOrder(resource);
 
         assertThat(mappedBack)
                 .usingRecursiveComparison()
@@ -73,8 +120,8 @@ public class TacoTuesdayResourceMapperTests {
     @Test
     public void test_IndividualOrderMapping() {
         IndividualOrder individualOrder = testHelper.createIndividualOrder();
-        IndividualOrderResource resource = mapper.mapToIndividualOrderResource(individualOrder);
-        IndividualOrder mappedBack = mapper.mapToIndividualOrder(resource);
+        IndividualOrderResource resource = mapper.mapIndividualOrderToIndividualOrderResource(individualOrder);
+        IndividualOrder mappedBack = mapper.mapIndividualOrderResourceToIndividualOrder(resource);
 
         assertThat(mappedBack)
                 .usingRecursiveComparison()
@@ -88,8 +135,8 @@ public class TacoTuesdayResourceMapperTests {
     @Test
     public void test_TacoMapping() {
         List<Taco> tacos = testHelper.loadObjects(Taco.class);
-        List<TacoResource> resources = mapper.mapToTacoResources(tacos);
-        List<Taco> mappedBack = resources.stream().map(r -> mapper.mapToTaco(r)).collect(Collectors.toList());
+        List<TacoResource> resources = mapper.mapTacosToTacoResources(tacos);
+        List<Taco> mappedBack = resources.stream().map(r -> mapper.mapTacoResourceToTaco(r)).collect(Collectors.toList());
 
         assertThat(tacos).containsExactlyInAnyOrderElementsOf(mappedBack);
     }

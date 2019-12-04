@@ -1,6 +1,5 @@
 package com.muskopf.tacotuesday.api;
 
-import com.muskopf.tacotuesday.TacoTuesdayApiHelper;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper.ApiKeyStatus;
 import com.muskopf.tacotuesday.bl.OrderDAO;
 import com.muskopf.tacotuesday.domain.Employee;
@@ -34,7 +33,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         // Get persisted orders
         List<IndividualOrder> persistedOrders = persistenceHelper.getPersistedIndividualOrders();
         // Map to resources
-        List<IndividualOrderResource> expectedResources = mapper.mapToIndividualOrderResources(persistedOrders);
+        List<IndividualOrderResource> expectedResources = mapper.mapIndividualOrdersToIndividualOrderResources(persistedOrders);
 
         // Perform GET /orders/individual
         List<IndividualOrderResource> responseObject = Arrays.asList(apiHelper.GET(formEndpoint("individual"), OK,
@@ -51,7 +50,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         // Get persisted order
         IndividualOrder persistedOrder = persistenceHelper.createIndividualOrder();
         // Map to resource
-        IndividualOrderResource expectedResource = mapper.mapToIndividualOrderResource(persistedOrder);
+        IndividualOrderResource expectedResource = mapper.mapIndividualOrderToIndividualOrderResource(persistedOrder);
 
         // Perform GET /orders/individual/{order.id}
         IndividualOrderResource responseObject = apiHelper.GET(formEndpoint("individual/" + persistedOrder.getId()),
@@ -68,7 +67,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         // Get persisted orders
         List<FullOrder> persistedOrders = persistenceHelper.getPersistedFullOrders();
         // Map to resources
-        List<FullOrderResource> expectedResources = mapper.mapToFullOrderResources(persistedOrders);
+        List<FullOrderResource> expectedResources = mapper.mapFullOrdersToFullOrderResources(persistedOrders);
 
         // Perform GET /orders/individual
         List<FullOrderResource> responseObject = Arrays.asList(apiHelper.GET(formEndpoint("full"), OK,
@@ -90,7 +89,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         });
 
         // Map to resource
-        FullOrderResource expectedResource = mapper.mapToFullOrderResource(order);
+        FullOrderResource expectedResource = mapper.mapFullOrderToFullOrderResource(order);
         List<IndividualOrderResource> expectedIndividualOrders = expectedResource.getIndividualOrders();
 
         // Perform POST /orders/full
@@ -135,7 +134,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         // Get persisted order
         FullOrder persistedOrder = persistenceHelper.createFullOrder();
         // Map to resource
-        FullOrderResource expectedResource = mapper.mapToFullOrderResource(persistedOrder);
+        FullOrderResource expectedResource = mapper.mapFullOrderToFullOrderResource(persistedOrder);
 
         // Perform GET /orders/individual/{order.id}
         FullOrderResource responseObject = apiHelper.GET(formEndpoint("full/" + persistedOrder.getId()),

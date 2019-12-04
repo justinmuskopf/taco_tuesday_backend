@@ -51,7 +51,7 @@ public class TacoTuesdayApiOrderRestController {
                 orderDAO.retrieveAllIndividualOrders() :
                 orderDAO.retrieveIndividualOrdersBySlackId(slackId);
 
-        return new ResponseEntity<>(mapper.mapToIndividualOrderResources(orders), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapIndividualOrdersToIndividualOrderResources(orders), HttpStatus.OK);
     }
 
     @GetMapping(value = "/individual/{orderId}")
@@ -62,7 +62,7 @@ public class TacoTuesdayApiOrderRestController {
 
         IndividualOrder order = orderDAO.retrieveIndividualOrder(orderId);
 
-        return new ResponseEntity<>(mapper.mapToIndividualOrderResource(order), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapIndividualOrderToIndividualOrderResource(order), HttpStatus.OK);
     }
 
     @GetMapping(value = "/full")
@@ -73,7 +73,7 @@ public class TacoTuesdayApiOrderRestController {
 
         List<FullOrder> orders = isEmpty(slackId) ? orderDAO.retrieveAllFullOrders() : orderDAO.retrieveFullOrdersBySlackId(slackId);
 
-        return new ResponseEntity<>(mapper.mapToFullOrderResources(orders), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapFullOrdersToFullOrderResources(orders), HttpStatus.OK);
     }
 
     @PostMapping(value = "/full")
@@ -82,12 +82,12 @@ public class TacoTuesdayApiOrderRestController {
     {
         log.info("POST /orders/full");
 
-        FullOrder order = mapper.mapToFullOrder(orderResource);
+        FullOrder order = mapper.mapFullOrderResourcesToFullOrder(orderResource);
         order = orderDAO.createFullOrder(order);
 
         emailer.sendOrderSubmittedEmail(order);
 
-        return new ResponseEntity<>(mapper.mapToFullOrderResource(order), HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.mapFullOrderToFullOrderResource(order), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/full/{orderId}")
@@ -98,6 +98,6 @@ public class TacoTuesdayApiOrderRestController {
 
         FullOrder order = orderDAO.retrieveFullOrder(orderId);
 
-        return new ResponseEntity<>(mapper.mapToFullOrderResource(order), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapFullOrderToFullOrderResource(order), HttpStatus.OK);
     }
 }

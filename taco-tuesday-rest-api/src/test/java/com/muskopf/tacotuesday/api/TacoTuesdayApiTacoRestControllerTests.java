@@ -20,7 +20,7 @@ public class TacoTuesdayApiTacoRestControllerTests extends TacoTuesdayBaseRestCo
         // Get tacos
         List<Taco> tacos = persistenceHelper.loadObjects(Taco.class);
         // Map to resources
-        List<TacoResource> expectedResources = mapper.mapToTacoResources(tacos);
+        List<TacoResource> expectedResources = mapper.mapTacosToTacoResources(tacos);
 
         // Perform GET /tacos
         List<TacoResource> responseObject = Arrays.asList(apiHelper.GET("/tacos", OK,

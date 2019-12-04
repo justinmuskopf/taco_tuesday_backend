@@ -6,8 +6,6 @@ import com.muskopf.tacotuesday.domain.Taco;
 import com.muskopf.tacotuesday.domain.TacoPriceList;
 import com.muskopf.tacotuesday.resource.TacoResource;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +36,6 @@ public class TacoTuesdayApiTacoRestController {
 
         List<Taco> tacos = tacoPriceList.getPriceList();
 
-        return new ResponseEntity<>(mapper.mapToTacoResources(tacos), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.mapTacosToTacoResources(tacos), HttpStatus.OK);
     }
 }

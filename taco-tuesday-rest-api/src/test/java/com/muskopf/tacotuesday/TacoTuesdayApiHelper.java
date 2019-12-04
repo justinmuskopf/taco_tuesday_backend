@@ -138,7 +138,7 @@ public class TacoTuesdayApiHelper {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(toJson(content));
 
-        return readFromResponse(performMvcOperation(request, responseStatus, ApiKeyStatus.VALID), responseClass);
+        return readFromResponse(performMvcOperation(request, responseStatus, apiKeyStatus), responseClass);
     }
 
     /**

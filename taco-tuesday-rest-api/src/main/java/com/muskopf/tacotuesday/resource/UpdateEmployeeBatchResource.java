@@ -5,24 +5,20 @@ import com.muskopf.tacotuesday.api.validator.SlackId;
 import com.muskopf.tacotuesday.api.validator.SlackIdValidator;
 import com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType;
 import lombok.Data;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotEmpty;
 
 @Data
 @Validated
-public class NewEmployeeResource {
+public class UpdateEmployeeBatchResource {
     @JsonProperty
-    @NotEmpty(message = "Employee must have a full name!")
+    @SlackId(type = SlackIdType.Required)
+    private String slackId;
+
+    @JsonProperty
     private String fullName;
 
     @JsonProperty
     private String nickName;
-
-    @JsonProperty
-    @SlackId(type = SlackIdType.New)
-    private String slackId;
 
     @JsonProperty
     private boolean admin = false;
