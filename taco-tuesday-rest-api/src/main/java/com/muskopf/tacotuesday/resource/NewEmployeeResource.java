@@ -11,6 +11,8 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 
+import static com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType.New;
+
 @Data
 @Validated
 public class NewEmployeeResource {
@@ -22,7 +24,7 @@ public class NewEmployeeResource {
     private String nickName;
 
     @JsonProperty
-    @SlackId(type = SlackIdType.New)
+    @SlackId(type = New)
     private String slackId;
 
     @JsonProperty

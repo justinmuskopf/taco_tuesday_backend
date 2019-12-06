@@ -350,10 +350,10 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
     }
 
     /**
-     * Test the sad path of the PATCH /employees endpoint where the set of employees contains in an invalid one
+     * Test the sad path of the PATCH /employees endpoint where the set of employees contains in an invalid Slack ID
      */
     @Test
-    public void test_PATCH$employees_sad_invalidEmployeeInBatch() {
+    public void test_PATCH$employees_sad_invalidEmployeeSlackIdInBatch() {
         // Get persisted employees and set random nickNames
         List<Employee> employees = persistenceHelper.getPersistedEmployees();
         employees.forEach(e -> e.setNickName(UUID.randomUUID().toString()));
@@ -372,6 +372,50 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
                 new String[]{"Invalid Slack ID (Employee does not exist!): " + randomEmployee.getSlackId()});
 
+    }
+
+    /**
+     * Test the sad path of the PATCH /employees endpoint where the set of employees contains in an invalid one
+     */
+    @Test
+    public void test_PATCH$employees_sad_missingEmployeeSlackIdInBatch() {
+        // Get persisted employees and set random nickNames
+        List<Employee> employees = persistenceHelper.getPersistedEmployees();
+        employees.forEach(e -> e.setNickName(UUID.randomUUID().toString()));
+
+        // Put invalid employee into the mix!!!
+        employees.get(employees.size() / 2).setSlackId(null);
+
+        List<EmployeeResource> resources = mapper.mapEmployeesToEmployeeResources(employees);
+
+        // Perform PATCH on /employees
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(EMPLOYEE_ENDPOINT, BAD_REQUEST,
+                resources, ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
+                new String[]{"Employee must have a Slack ID!"});
+    }
+
+    /**
+     * Test the sad path of the PATCH /employees endpoint where the set of employees contains in an invalid one
+     */
+    @Test
+    public void test_PATCH$employees_sad_invalidEmployeeFullNameInBatch() {
+        // Get persisted employees and set random nickNames
+        List<Employee> employees = persistenceHelper.getPersistedEmployees();
+        employees.forEach(e -> e.setNickName(UUID.randomUUID().toString()));
+
+        // Put invalid employee into the mix!!!
+        employees.get(employees.size() / 2).setFullName("");
+
+        List<EmployeeResource> resources = mapper.mapEmployeesToEmployeeResources(employees);
+
+        // Perform PATCH on /employees
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.PATCH(EMPLOYEE_ENDPOINT, BAD_REQUEST,
+                resources, ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
+                new String[]{"Employee must have a full name!"});
     }
 
     /**

@@ -11,16 +11,29 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 @Slf4j
 public class FullNameValidator implements ConstraintValidator<FullName, String> {
+    public enum FullNameType {
+        Required,
+        Optional
+    }
+
     @Autowired
     private TacoTuesdayValidationContext validator;
 
+    private FullNameType type;
+
     @Override
-    public void initialize(FullName constraintAnnotation) {}
+    public void initialize(FullName constraintAnnotation) {
+        type = constraintAnnotation.type();
+    }
 
     @Override
     public boolean isValid(String fullName, ConstraintValidatorContext context) {
         if (isEmpty(fullName)) {
-            validator.registerContext(ValidatorType.FullName, context, "Employee must have a full name!");
+            if (fullName == null && type == FullNameType.Optional) {
+                return true;
+            } else {
+                validator.registerContext(ValidatorType.FullName, context, "Employee must have a full name!");
+            }
         } else {
             validator.registerContext(ValidatorType.FullName, context);
         }

@@ -12,7 +12,6 @@ import javax.validation.ConstraintValidatorContext;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -55,12 +54,12 @@ public class TacoTuesdayValidationContext {
 
     @Autowired
     public TacoTuesdayValidationContext(EmployeeDAO employeeDAO, OrderDAO orderDAO) {
-        ValidationMethods.put(ValidatorType.ApiKey, (Object o) -> validString(o) && logValidity(employeeDAO.apiKeyExists((String) o), o));
-        ValidationMethods.put(ValidatorType.NewSlackId, (Object o) -> validString(o) && logValidity(!employeeDAO.employeeExistsBySlackId((String) o), o));
-        ValidationMethods.put(ValidatorType.RequiredSlackId, (Object o) -> validString(o) && logValidity(employeeDAO.employeeExistsBySlackId((String) o), o));
-        ValidationMethods.put(ValidatorType.IndividualOrderId, (Object o) -> isInteger(o) && logValidity(orderDAO.individualOrderExistsById((Integer) o), o));
-        ValidationMethods.put(ValidatorType.FullOrderId, (Object o) -> isInteger(o) && logValidity(orderDAO.fullOrderExistsById((Integer) o), o));
-        ValidationMethods.put(ValidatorType.FullName, this::validString);
+        ValidationMethods.put(ValidatorType.ApiKey, (Object o) -> validateString(o, employeeDAO.apiKeyExists((String) o)));
+        ValidationMethods.put(ValidatorType.NewSlackId, (Object o) -> validateString(o, !employeeDAO.employeeExistsBySlackId((String) o)));
+        ValidationMethods.put(ValidatorType.RequiredSlackId, (Object o) -> validateString(o, employeeDAO.employeeExistsBySlackId((String) o)));
+        ValidationMethods.put(ValidatorType.IndividualOrderId, (Object o) -> validateInteger(o, orderDAO.individualOrderExistsById((Integer) o)));
+        ValidationMethods.put(ValidatorType.FullOrderId, (Object o) -> validateInteger(o, orderDAO.fullOrderExistsById((Integer) o)));
+        ValidationMethods.put(ValidatorType.FullName, (Object o) -> validateString(o, !isEmpty(o)));
 
         ValidLogMethods.put(true, log::info);
         ValidLogMethods.put(false, log::warn);
@@ -112,13 +111,13 @@ public class TacoTuesdayValidationContext {
     private boolean logValidity(boolean isValid, Object validated) {
         String value = (validated == null) ? "null" : validated.toString();
 
-        // e.g. Slack ID "U12345678" is invalid!
+        // e.g. 'Slack ID "U12345678" is invalid!'
         String validityString = String.format("%s \"%s\" is %s!", validatorType.read, value, isValid ? "isValid" : "invalid");
         ValidLogMethods.get(isValid).log(validityString);
 
         return isValid;
     }
 
-    private boolean validString(Object o) { return o instanceof String && !isEmpty(o); }
-    private boolean isInteger(Object o) { return o instanceof Integer; }
+    private boolean validateString(Object o, boolean valid) { return o instanceof String && !isEmpty(o) && logValidity(valid, o); }
+    private boolean validateInteger(Object o, boolean valid) { return o instanceof Integer && logValidity(valid, o); }
 }
