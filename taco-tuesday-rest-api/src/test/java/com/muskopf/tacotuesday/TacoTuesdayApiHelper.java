@@ -88,7 +88,7 @@ public class TacoTuesdayApiHelper {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                     .andReturn();
         } catch (Exception e) {
-            throw new RuntimeException("Error performing MockMvc operation: " + request, e);
+            throw new RuntimeException("Error performing MockMvc operation: " + request.toString(), e);
         }
     }
 

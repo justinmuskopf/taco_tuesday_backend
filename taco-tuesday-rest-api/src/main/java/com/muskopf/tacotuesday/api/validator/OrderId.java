@@ -12,8 +12,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface OrderId {
     OrderType type();
-
-    String message() default "Invalid Full Order ID: ${validatedValue}";
+    String message() default "Error: ${validatedValue}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

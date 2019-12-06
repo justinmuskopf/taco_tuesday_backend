@@ -1,6 +1,7 @@
 package com.muskopf.tacotuesday.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.muskopf.tacotuesday.api.validator.FullName;
 import com.muskopf.tacotuesday.api.validator.SlackId;
 import com.muskopf.tacotuesday.api.validator.SlackIdValidator;
 import com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType;
@@ -18,7 +19,7 @@ public class EmployeeResource {
     private Integer id;
 
     @JsonProperty
-    @NotEmpty(message = "Employee must have a full name!")
+    @FullName
     private String fullName;
 
     @JsonProperty

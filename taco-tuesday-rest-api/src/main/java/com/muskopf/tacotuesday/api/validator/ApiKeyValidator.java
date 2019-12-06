@@ -1,36 +1,24 @@
 package com.muskopf.tacotuesday.api.validator;
 
-import com.muskopf.tacotuesday.api.UnrecognizedApiKeyException;
-import com.muskopf.tacotuesday.bl.EmployeeDAO;
+import com.muskopf.tacotuesday.api.validator.TacoTuesdayValidationContext.ValidatorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import static org.springframework.util.StringUtils.isEmpty;
 
 @Slf4j
 public class ApiKeyValidator implements ConstraintValidator<ApiKey, String> {
     @Autowired
-    private TacoTuesdayValidator validator;
+    private TacoTuesdayValidationContext validator;
 
     @Override
     public void initialize(ApiKey constraintAnnotation) {}
 
     @Override
     public boolean isValid(String apiKey, ConstraintValidatorContext context) {
-        validator.registerContext("API Key", apiKey, context);
-
-        if (isEmpty(apiKey)) {
-            return false;
-        }
-
-        boolean valid = validator.apiKeyExists(apiKey);
-        if (!valid) {
-            log.warn("API Key \"" + apiKey + "\" is not valid!");
-        }
-
-        return valid;
+        validator.registerContext(ValidatorType.ApiKey, context);
+        return validator.validate(apiKey);
     }
 }

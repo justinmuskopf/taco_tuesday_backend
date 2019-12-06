@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface ApiKey {
-    String message() default "Invalid API Key: ${validatedValue}";
+    String message() default "Error: ${validatedValue}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

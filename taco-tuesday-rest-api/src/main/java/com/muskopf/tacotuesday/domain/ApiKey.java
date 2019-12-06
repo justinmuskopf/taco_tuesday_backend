@@ -17,7 +17,6 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = true, exclude = "employee")
 public class ApiKey extends DomainObject{
     @OneToOne(mappedBy = "apiKey")
-    @JsonIgnore
     private Employee employee;
 
     @Column(name = "api_key")

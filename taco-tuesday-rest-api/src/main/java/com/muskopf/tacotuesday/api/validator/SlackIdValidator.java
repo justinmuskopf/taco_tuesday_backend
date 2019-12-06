@@ -1,12 +1,11 @@
 package com.muskopf.tacotuesday.api.validator;
 
+import com.muskopf.tacotuesday.api.validator.TacoTuesdayValidationContext.ValidatorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import com.muskopf.tacotuesday.api.validator.TacoTuesdayValidator.ConstraintContextHelper;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -19,10 +18,9 @@ public class SlackIdValidator implements ConstraintValidator<SlackId, String> {
     }
 
     @Autowired
-    private TacoTuesdayValidator validator;
+    private TacoTuesdayValidationContext validator;
 
     private SlackIdType type;
-
 
     @Override
     public void initialize(SlackId constraintAnnotation) {
@@ -31,40 +29,24 @@ public class SlackIdValidator implements ConstraintValidator<SlackId, String> {
 
     @Override
     public boolean isValid(String slackId, ConstraintValidatorContext context) {
-        validator.registerContext(type.name() + " Slack ID", slackId, context);
-
+        // Register the context
         if (isEmpty(slackId)) {
-            // The only time an empty Slack ID is valid is when it is optional
             if (type == SlackIdType.Optional) {
                 return true;
+            } else {
+                validator.registerContext(ValidatorType.RequiredSlackId, context, "Employee must have a Slack ID!");
             }
-
-
-            validator.setMessage("Employee must have a Slack ID!");
-
-//            context.disableDefaultConstraintViolation();
-//            context.buildConstraintViolationWithTemplate("Employee must have a Slack ID!")
-//                    .addConstraintViolation();
-            return false;
+        } else {
+            // Considers the Optional SlackIdType as Required since it is non-empty
+            if (type == SlackIdType.New) {
+                validator.registerContext(ValidatorType.NewSlackId, context,
+                        "Invalid Slack ID (Employee already exists!): ${validatedValue}");
+            } else {
+                validator.registerContext(ValidatorType.RequiredSlackId, context,
+                        "Invalid Slack ID (Employee does not exist!): ${validatedValue}");
+            }
         }
 
-        boolean employeeExists = validator.slackIdExists(slackId);
-
-        // Slack ID is valid if it doesn't exist and the Employee is New, otherwise if it already exists
-        boolean valid = (type == SlackIdType.New) ? !employeeExists : employeeExists;
-
-        if (type == SlackIdType.New && employeeExists) {
-
-        }
-
-
-
-        if (!valid) {
-            log.warn("Slack ID \"" + slackId + "\" is not valid!");
-        }
-
-        return valid;
+        return validator.validate(slackId);
     }
-
-
 }

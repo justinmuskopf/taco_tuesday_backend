@@ -1,6 +1,5 @@
 package com.muskopf.tacotuesday.api.validator;
 
-import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Min;
 import java.lang.annotation.*;
@@ -10,7 +9,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface Price {
-    String message() default "Invalid Price: ${validatedValue}";
+    String message() default "Error: ${validatedValue}";
+
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

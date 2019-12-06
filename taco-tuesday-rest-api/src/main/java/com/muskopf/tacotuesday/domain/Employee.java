@@ -31,11 +31,9 @@ public class Employee extends DomainObject {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "api_key_id", referencedColumnName = "id")
-    @JsonIgnore
     private ApiKey apiKey;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<IndividualOrder> orders;
 
     public void merge(Employee employee) {

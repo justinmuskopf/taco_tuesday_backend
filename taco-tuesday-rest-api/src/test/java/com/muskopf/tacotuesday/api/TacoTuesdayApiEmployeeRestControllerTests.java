@@ -72,7 +72,7 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
      * Test a sad path of the POST /employees endpoint where the new employee has an existing Slack ID
      */
     @Test
-    public void test_POST$employees_sad_invalidSlackId() {
+    public void test_POST$employees_sad_invalidSlackIdAlreadyExists() {
         // Get an already existing employee
         Employee employee = persistenceHelper.getPersistedEmployees().get(0);
         employee.setNickName(RandomString.make());
@@ -85,14 +85,14 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
         TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, BAD_REQUEST, resource,
                 ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
 
-        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Employee alread!");
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Invalid Slack ID (Employee already exists!): " + resource.getSlackId());
     }
 
     /**
      * Test a sad path of the POST /employees endpoint where the employee has no full name
      */
     @Test
-    public void test_POST$employees_sad_noFullName() {
+    public void test_POST$employees_sad_noFullNameNull() {
         // Create new employee to persist
         Employee employee = persistenceHelper.createRandomEmployee();
 
@@ -106,6 +106,26 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Employee must have a full name!");
     }
+
+    /**
+     * Test a sad path of the POST /employees endpoint where the employee has an invalid full name (the empty string)
+     */
+    @Test
+    public void test_POST$employees_sad_noFullNameEmpty() {
+        // Create new employee to persist
+        Employee employee = persistenceHelper.createRandomEmployee();
+
+        // Map into resource
+        EmployeeResource resource = mapper.mapEmployeeToEmployeeResource(employee);
+        resource.setFullName("");
+
+        // Perform POST /employees
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, BAD_REQUEST, resource,
+                ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false, "Employee must have a full name!");
+    }
+
 
     /**
      * Test the sad path of the POST /employees endpoint where the employee has no full name or Slack ID
@@ -218,7 +238,7 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
                 NOT_FOUND, ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.NOT_FOUND, false,
-                new String[]{"Invalid Slack ID: " + randomEmployee.getSlackId()});
+                new String[]{"Invalid Slack ID (Employee does not exist!): " + randomEmployee.getSlackId()});
     }
 
     /**
@@ -350,7 +370,7 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
                 resources, ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
-                new String[]{"Invalid Slack ID: " + randomEmployee.getSlackId()});
+                new String[]{"Invalid Slack ID (Employee does not exist!): " + randomEmployee.getSlackId()});
 
     }
 

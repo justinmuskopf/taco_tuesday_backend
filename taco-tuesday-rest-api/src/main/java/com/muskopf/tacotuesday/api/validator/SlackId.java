@@ -12,7 +12,9 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface SlackId {
     SlackIdType type() default SlackIdType.Required;
-    String message() default "Invalid Slack ID: ${validatedValue}";
+
+    String message() default "Error: ${validatedValue}";
+
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
