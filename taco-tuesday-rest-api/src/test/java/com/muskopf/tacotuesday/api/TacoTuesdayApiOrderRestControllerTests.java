@@ -29,7 +29,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
      * Test happy path of GET /orders/individual
      */
     @Test
-    public void test_getAllIndividualOrders() {
+    public void test_getAllIndividualOrders_happy() {
         // Get persisted orders
         List<IndividualOrder> persistedOrders = persistenceHelper.getPersistedIndividualOrders();
         // Map to resources
@@ -46,7 +46,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
      * Test happy path of GET /orders/individual/{order.id}
      */
     @Test
-    public void test_getIndividualOrderById() {
+    public void test_getIndividualOrderById_happy() {
         // Get persisted order
         IndividualOrder persistedOrder = persistenceHelper.createIndividualOrder();
         // Map to resource
@@ -63,7 +63,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
      * Test happy path of GET /orders/full
      */
     @Test
-    public void test_getAllFullOrders() {
+    public void test_getAllFullOrders_happy() {
         // Get persisted orders
         List<FullOrder> persistedOrders = persistenceHelper.getPersistedFullOrders();
         // Map to resources
@@ -80,7 +80,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
      * Test happy path of POST /orders/full
      */
     @Test
-    public void test_createFullOrder() {
+    public void test_createFullOrder_happy() {
         // Create a full order
         FullOrder order = persistenceHelper.loadObject("POST_FullOrder.json", FullOrder.class);
         order.getIndividualOrders().forEach(io -> {
@@ -130,7 +130,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
      * Test happy path of GET /orders/full/{order.id}
      */
     @Test
-    public void test_getFullOrderById() {
+    public void test_getFullOrderById_happy() {
         // Get persisted order
         FullOrder persistedOrder = persistenceHelper.createFullOrder();
         // Map to resource
