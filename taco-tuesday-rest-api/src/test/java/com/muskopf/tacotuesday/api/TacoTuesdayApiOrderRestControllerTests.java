@@ -1,20 +1,27 @@
 package com.muskopf.tacotuesday.api;
 
+import com.muskopf.tacotuesday.TacoTuesdayApiHelper;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper.ApiKeyStatus;
 import com.muskopf.tacotuesday.bl.OrderDAO;
+import com.muskopf.tacotuesday.domain.DomainObject;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
+import com.muskopf.tacotuesday.resource.EmployeeResource;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.CREATED;
-import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.OK;
+import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestControllerTester {
@@ -24,6 +31,8 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
 
     @Autowired
     private OrderDAO orderDAO;
+    @Autowired
+    private MockMvc mockMvc;
 
     /**
      * Test happy path of GET /orders/individual
@@ -40,6 +49,30 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
                 ApiKeyStatus.EMPTY, IndividualOrderResource[].class));
 
         expectedResources.forEach(r -> assertThat(responseObject).contains(r));
+    }
+
+    /**
+     * Test happy path of GET /orders/individual where slackId header is provided
+     */
+    @Test
+    public void test_getAllIndividualOrdersIncludingSlackId_happy() {
+        Employee employee = persistenceHelper.getPersistedEmployees().get(0);
+        String slackId = employee.getSlackId();
+
+        MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
+        headerMap.put("slackId", Collections.singletonList(slackId));
+
+        List<Integer> individualOrderIdsInWhichEmployeeParticipated = persistenceHelper.getPersistedIndividualOrders()
+                .stream()
+                .filter(o -> o.getEmployee().getSlackId().equals(slackId))
+                .map(DomainObject::getId)
+                .collect(Collectors.toList());
+
+        List<IndividualOrderResource> individualOrderResources = Arrays.asList(apiHelper.GET(formEndpoint("individual"), new HttpHeaders(headerMap), OK,
+                ApiKeyStatus.EMPTY, IndividualOrderResource[].class));
+
+        assertThat(individualOrderResources.size()).isEqualTo(individualOrderIdsInWhichEmployeeParticipated.size());
+        individualOrderResources.forEach(o -> assertThat(individualOrderIdsInWhichEmployeeParticipated.contains(o.getId())));
     }
 
     /**
@@ -60,6 +93,20 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
     }
 
     /**
+     * Test sad path of GET /orders/individual/{orderId} where orderId is invalid
+     */
+    @Test
+    public void test_getIndividualOrderById_sad() {
+        Integer invalidId = 1313131313;
+
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint("individual/" + invalidId),
+                NOT_FOUND, ApiKeyStatus.EMPTY, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.NOT_FOUND, false,
+                new String[]{"Invalid IndividualOrder ID: " + invalidId});
+    }
+
+    /**
      * Test happy path of GET /orders/full
      */
     @Test
@@ -74,6 +121,46 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
                 ApiKeyStatus.EMPTY, FullOrderResource[].class));
 
         expectedResources.forEach(r -> assertThat(responseObject).contains(r));
+    }
+
+    /**
+     * Test happy path of GET /orders/full where slackId header is provided
+     */
+    @Test
+    public void test_getAllFullOrdersIncludingSlackId_happy() {
+        Employee employee = persistenceHelper.getPersistedEmployees().get(0);
+        String slackId = employee.getSlackId();
+
+        MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
+        headerMap.put("slackId", Collections.singletonList(slackId));
+
+        List<Integer> fullOrderIdsInWhichEmployeeParticipated = persistenceHelper.getPersistedIndividualOrders()
+                .stream()
+                .filter(o -> o.getEmployee().getSlackId().equals(slackId))
+                .map(o -> o.getFullOrder().getId())
+                .collect(Collectors.toList());
+
+        List<FullOrderResource> fullOrderResources = Arrays.asList(apiHelper.GET(formEndpoint("full"), new HttpHeaders(headerMap), OK,
+                ApiKeyStatus.EMPTY, FullOrderResource[].class));
+
+
+        assertThat(fullOrderResources.size()).isEqualTo(fullOrderIdsInWhichEmployeeParticipated.size());
+        fullOrderResources.forEach(o -> assertThat(fullOrderIdsInWhichEmployeeParticipated.contains(o.getId())));
+    }
+
+    /**
+     * Test sad path of GET /orders/full/{orderId} where orderId is invalid
+     */
+    @Test
+    public void test_getFullOrderById_sad() {
+        Integer invalidId = 1313131313;
+
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.GET(formEndpoint("full/" + invalidId),
+                NOT_FOUND, ApiKeyStatus.EMPTY, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.NOT_FOUND, false,
+                new String[]{"Invalid FullOrder ID: " + invalidId});
+
     }
 
     /**
@@ -124,6 +211,57 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
                 "updatedAt",
                 "individualOrders"
         ).isEqualTo(persisted);
+    }
+
+    /**
+     * Test sad path of POST /orders/full where individualOrders is empty
+     */
+    @Test
+    public void test_postFullOrders_sad_noIndividualOrders() {
+        FullOrder fullOrder = persistenceHelper.createFullOrder();
+        fullOrder.setIndividualOrders(new HashSet<>());
+
+        FullOrderResource resource = mapper.mapFullOrderToFullOrderResource(fullOrder);
+
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(formEndpoint("full"), BAD_REQUEST, resource,
+                ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
+                new String[] {"A full order must have individual orders!"});
+    }
+
+    /**
+     * Test sad path of POST /orders/full where a taco count is negative
+     */
+    @Test
+    public void test_postFullOrders_sad_negativeTacoCount() {
+        FullOrder fullOrder = persistenceHelper.createFullOrder();
+        fullOrder.setBarbacoa(-42);
+
+        FullOrderResource resource = mapper.mapFullOrderToFullOrderResource(fullOrder);
+
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(formEndpoint("full"), BAD_REQUEST, resource,
+                ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
+                new String[] {"Invalid Taco Count: " + -42});
+    }
+
+    /**
+     * Test sad path of POST /orders/full where a taco count is negative
+     */
+    @Test
+    public void test_postFullOrders_sad_negativePrice() {
+        FullOrder fullOrder = persistenceHelper.createFullOrder();
+        fullOrder.setTotal((float) -1);
+
+        FullOrderResource resource = mapper.mapFullOrderToFullOrderResource(fullOrder);
+
+        TacoTuesdayExceptionResponseResource responseObject = apiHelper.POST(formEndpoint("full"), BAD_REQUEST, resource,
+                ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
+
+        apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
+                new String[] {"Invalid Price: -1.0"});
     }
 
     /**

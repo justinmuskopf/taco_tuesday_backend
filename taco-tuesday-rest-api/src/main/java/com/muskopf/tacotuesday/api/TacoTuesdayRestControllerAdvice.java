@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolation;
@@ -47,22 +48,22 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, WebRequest r) {
-        log.info("Handling constraint violation!");
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, WebRequest request) {
+        log.info(endpoint(request) + "Handling constraint violation!");
 
         List<String> errors = new ArrayList<>();
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             // Find out if this violation is due to an API key
             String[] split = violation.getPropertyPath().toString().split("\\.");
             if (split[split.length - 1].equals("apiKey")) {
-                return handleUnrecognizedApiKeyException(new UnrecognizedApiKeyException(violation.getInvalidValue().toString()), r);
+                return handleUnrecognizedApiKeyException(new UnrecognizedApiKeyException(violation.getInvalidValue().toString()), request);
             }
 
             errors.add(violation.getMessage());
         }
 
         // Get the HTTP method from the request
-        HttpMethod httpMethod = ((ServletWebRequest) r).getHttpMethod();
+        HttpMethod httpMethod = ((ServletWebRequest) request).getHttpMethod();
 
         // Return a 404 if trying to get a specific resource, and a 400 if anything else
         HttpStatus httpStatus = httpMethod.equals(HttpMethod.GET) ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
@@ -72,9 +73,9 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers,
-                                                               HttpStatus status, WebRequest request)
+                                                               HttpStatus status, WebRequest r)
     {
-        log.warn("Handling method argument not valid exception!");
+        log.warn(endpoint(r) + "Method Argument Not Valid: " + e.getParameter().toString());
 
         List<String> errors = new ArrayList<>();
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
@@ -85,11 +86,23 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
         return new TacoTuesdayExceptionResponseEntity(errors, fieldErrors, HttpStatus.BAD_REQUEST, false);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, WebRequest r) {
+        log.warn(endpoint(r) + "Invalid Method Argument Type: " + e.getMessage());
+
+        String errorString = String.format("%s must be of type %s!", e.getName(), e.getRequiredType().getSimpleName());
+
+        return new TacoTuesdayExceptionResponseEntity(errorString, HttpStatus.BAD_REQUEST);
+    }
+
     @Override
     public ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException e,
                                                                        HttpHeaders headers, HttpStatus status, WebRequest r)
     {
-        if (e.getParameterName().equals("apiKey")) {
+        String parameterName = e.getParameterName();
+        log.warn(endpoint(r) + "Missing " + parameterName);
+
+        if (parameterName.equals("apiKey")) {
             return new TacoTuesdayExceptionResponseEntity("No API Key Provided!", HttpStatus.UNAUTHORIZED);
         }
 
@@ -98,6 +111,8 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
 
     @ExceptionHandler(UnrecognizedApiKeyException.class)
     public ResponseEntity<Object> handleUnrecognizedApiKeyException(UnrecognizedApiKeyException e, WebRequest r) {
+        log.warn(endpoint(r) + e.getMessage());
+
         tacoEmailer.sendExceptionEmail(e);
 
         return new TacoTuesdayExceptionResponseEntity(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -106,13 +121,21 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchResourceException.class)
     public ResponseEntity<Object> handleNoSuchResourceExistsException(NoSuchResourceException e, WebRequest r) {
+        log.warn(endpoint(r) + "No Such Resource: " + e.getMessage());
+
         return new TacoTuesdayExceptionResponseEntity(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllExceptions(Exception e, WebRequest r) throws Exception {
+    public ResponseEntity<Object> handleAllUnrecognizedExceptions(Exception e, WebRequest r) throws Exception {
+        log.warn(endpoint(r) + "Handling unrecognized exception (" + e.getClass().getSimpleName() + "): " + e.getMessage());
+
         tacoEmailer.sendExceptionEmail(e);
 
         return handleException(e, r);
+    }
+
+    private String endpoint(WebRequest r) {
+        return "[" + ((ServletWebRequest) r).getRequest().getRequestURI() + "] ";
     }
 }

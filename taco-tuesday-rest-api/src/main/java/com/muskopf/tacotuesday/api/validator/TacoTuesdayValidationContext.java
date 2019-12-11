@@ -44,7 +44,9 @@ public class TacoTuesdayValidationContext {
         RequiredSlackId("Slack ID"),
         IndividualOrderId("IndividualOrder ID"),
         FullOrderId("FullOrder ID"),
-        FullName("Full Name");
+        FullName("Full Name"),
+        TacoCount("Taco Count"),
+        Price("Price");
 
         String read;
         ValidatorType(String read) { this.read = read; };
@@ -60,6 +62,8 @@ public class TacoTuesdayValidationContext {
         ValidationMethods.put(ValidatorType.IndividualOrderId, (Object o) -> validateInteger(o, orderDAO.individualOrderExistsById((Integer) o)));
         ValidationMethods.put(ValidatorType.FullOrderId, (Object o) -> validateInteger(o, orderDAO.fullOrderExistsById((Integer) o)));
         ValidationMethods.put(ValidatorType.FullName, (Object o) -> validateString(o, !isEmpty(o)));
+        ValidationMethods.put(ValidatorType.TacoCount, (Object o) -> validateInteger(o, ((Integer) o) >= 0));
+        ValidationMethods.put(ValidatorType.Price, (Object o) -> validateFloat(o, ((Float) o) > 0));
 
         ValidLogMethods.put(true, log::info);
         ValidLogMethods.put(false, log::warn);
@@ -120,4 +124,5 @@ public class TacoTuesdayValidationContext {
 
     private boolean validateString(Object o, boolean valid) { return o instanceof String && !isEmpty(o) && logValidity(valid, o); }
     private boolean validateInteger(Object o, boolean valid) { return o instanceof Integer && logValidity(valid, o); }
+    private boolean validateFloat(Object o, boolean valid) { return (o instanceof Float || o instanceof Double) && logValidity(valid, o); }
 }

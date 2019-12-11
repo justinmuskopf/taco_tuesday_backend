@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.muskopf.tacotuesday.api.TacoTuesdayExceptionResponseResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -103,6 +104,10 @@ public class TacoTuesdayApiHelper {
      */
     public <T> T GET(String path, ResponseStatus responseStatus, ApiKeyStatus apiKeyStatus, Class<T> responseClass) {
         return readFromResponse(performMvcOperation(get(uri(path)), responseStatus, apiKeyStatus), responseClass);
+    }
+
+    public <T> T GET(String path, HttpHeaders headers, ResponseStatus responseStatus, ApiKeyStatus apiKeyStatus, Class<T> responseClass) {
+        return readFromResponse(performMvcOperation(get(uri(path)).headers(headers), responseStatus, apiKeyStatus), responseClass);
     }
 
     /**

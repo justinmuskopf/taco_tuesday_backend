@@ -72,7 +72,7 @@
           "schema" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/definitions/EmployeeResource"
+              "$ref" : "#/definitions/UpdateEmployeeBatchResource"
             }
           }
         } ],
@@ -129,7 +129,7 @@
           "name" : "body",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/EmployeeResource"
+            "$ref" : "#/definitions/UpdateEmployeeResource"
           }
         } ],
         "responses" : {
@@ -403,10 +403,6 @@
     "NewEmployeeResource" : {
       "type" : "object",
       "properties" : {
-        "id" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
         "fullName" : {
           "type" : "string"
         },
@@ -433,6 +429,37 @@
         "price" : {
           "type" : "number",
           "format" : "float"
+        }
+      }
+    },
+    "UpdateEmployeeBatchResource" : {
+      "type" : "object",
+      "properties" : {
+        "slackId" : {
+          "type" : "string"
+        },
+        "fullName" : {
+          "type" : "string"
+        },
+        "nickName" : {
+          "type" : "string"
+        },
+        "admin" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "UpdateEmployeeResource" : {
+      "type" : "object",
+      "properties" : {
+        "fullName" : {
+          "type" : "string"
+        },
+        "nickName" : {
+          "type" : "string"
+        },
+        "admin" : {
+          "type" : "boolean"
         }
       }
     }
