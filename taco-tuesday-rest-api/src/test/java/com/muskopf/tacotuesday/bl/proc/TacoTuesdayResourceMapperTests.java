@@ -105,7 +105,7 @@ public class TacoTuesdayResourceMapperTests {
     public void test_FullOrderMapping() {
         FullOrder fullOrder = testHelper.createFullOrder();
         FullOrderResource resource = mapper.mapFullOrderToFullOrderResource(fullOrder);
-        FullOrder mappedBack = mapper.mapFullOrderResourcesToFullOrder(resource);
+        FullOrder mappedBack = mapper.mapFullOrderResourceToFullOrder(resource);
 
         assertThat(mappedBack)
                 .usingRecursiveComparison()

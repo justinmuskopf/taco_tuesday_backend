@@ -39,8 +39,6 @@ public class TacoTuesdayApiEmployeeRestControllerTests extends TacoTuesdayBaseRe
         EmployeeResource responseObject = apiHelper.POST(EMPLOYEE_ENDPOINT, CREATED, resource, ApiKeyStatus.VALID,
                 EmployeeResource.class);
 
-        // ID was set
-        assertThat(responseObject.getId()).isNotNull();
         // Assert Employee matches original
         assertThat(responseObject).usingRecursiveComparison().ignoringFields("id").isEqualTo(resource);
 

@@ -1,5 +1,7 @@
 package com.muskopf.tacotuesday.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper.ApiKeyStatus;
 import com.muskopf.tacotuesday.bl.OrderDAO;
@@ -234,7 +236,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
      * Test sad path of POST /orders/full where a taco count is negative
      */
     @Test
-    public void test_postFullOrders_sad_negativeTacoCount() {
+    public void test_postFullOrders_sad_negativeTacoCount() throws JsonProcessingException {
         FullOrder fullOrder = persistenceHelper.createFullOrder();
         fullOrder.setBarbacoa(-42);
 
@@ -244,7 +246,7 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
                 ApiKeyStatus.VALID, TacoTuesdayExceptionResponseResource.class);
 
         apiHelper.assertExceptionResponseIsValid(responseObject, HttpStatus.BAD_REQUEST, false,
-                new String[] {"Invalid Taco Count: " + -42});
+                new String[] {"Invalid Taco Order: " + resource.getTacos().toString()});
     }
 
     /**

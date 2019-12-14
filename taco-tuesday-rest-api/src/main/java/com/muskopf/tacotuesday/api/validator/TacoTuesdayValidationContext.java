@@ -3,6 +3,7 @@ package com.muskopf.tacotuesday.api.validator;
 import com.muskopf.tacotuesday.bl.EmployeeDAO;
 import com.muskopf.tacotuesday.bl.OrderDAO;
 
+import com.muskopf.tacotuesday.domain.TacoType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -46,6 +47,7 @@ public class TacoTuesdayValidationContext {
         FullOrderId("FullOrder ID"),
         FullName("Full Name"),
         TacoCount("Taco Count"),
+        TacoMap("Taco Order"),
         Price("Price");
 
         String read;
@@ -61,15 +63,21 @@ public class TacoTuesdayValidationContext {
         ValidationMethods.put(ValidatorType.RequiredSlackId, (Object o) -> validateString(o, employeeDAO.employeeExistsBySlackId((String) o)));
         ValidationMethods.put(ValidatorType.IndividualOrderId, (Object o) -> validateInteger(o, orderDAO.individualOrderExistsById((Integer) o)));
         ValidationMethods.put(ValidatorType.FullOrderId, (Object o) -> validateInteger(o, orderDAO.fullOrderExistsById((Integer) o)));
-        ValidationMethods.put(ValidatorType.FullName, (Object o) -> validateString(o, !isEmpty(o)));
+        ValidationMethods.put(ValidatorType.FullName, (Object o) -> validateString(o, !isEmpty(o) && ((String) o).trim().length() > 0));
         ValidationMethods.put(ValidatorType.TacoCount, (Object o) -> validateInteger(o, ((Integer) o) >= 0));
         ValidationMethods.put(ValidatorType.Price, (Object o) -> validateFloat(o, ((Float) o) > 0));
+        ValidationMethods.put(ValidatorType.TacoMap, (Object o) -> validateMap(o,
+                ((Map<TacoType, Integer>) o).values().stream().allMatch(i -> validate(ValidatorType.TacoCount, i)))
+        );
 
         ValidLogMethods.put(true, log::info);
         ValidLogMethods.put(false, log::warn);
     }
 
-    public boolean validate(Object o) { return ValidationMethods.get(validatorType).validate(o); }
+    public boolean validate(Object o) { return validate(validatorType, o); }
+    private boolean validate(ValidatorType validator, Object o) {
+        return ValidationMethods.get(validator).validate(o);
+    }
 
     /**
      * Initialize this Validator
@@ -116,7 +124,7 @@ public class TacoTuesdayValidationContext {
         String value = (validated == null) ? "null" : validated.toString();
 
         // e.g. 'Slack ID "U12345678" is invalid!'
-        String validityString = String.format("%s \"%s\" is %s!", validatorType.read, value, isValid ? "isValid" : "invalid");
+        String validityString = String.format("%s \"%s\" is %s!", validatorType.read, value, isValid ? "is valid" : "invalid");
         ValidLogMethods.get(isValid).log(validityString);
 
         return isValid;
@@ -125,4 +133,5 @@ public class TacoTuesdayValidationContext {
     private boolean validateString(Object o, boolean valid) { return o instanceof String && !isEmpty(o) && logValidity(valid, o); }
     private boolean validateInteger(Object o, boolean valid) { return o instanceof Integer && logValidity(valid, o); }
     private boolean validateFloat(Object o, boolean valid) { return (o instanceof Float || o instanceof Double) && logValidity(valid, o); }
+    private boolean validateMap(Object o, boolean valid) { return o instanceof Map && logValidity(valid, o); }
 }

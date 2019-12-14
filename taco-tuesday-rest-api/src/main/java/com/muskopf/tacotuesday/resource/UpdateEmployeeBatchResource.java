@@ -5,10 +5,12 @@ import com.muskopf.tacotuesday.api.validator.FullName;
 import com.muskopf.tacotuesday.api.validator.SlackId;
 import com.muskopf.tacotuesday.api.validator.SlackIdValidator;
 import com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 @Data
+@ApiModel
 @Validated
 public class UpdateEmployeeBatchResource {
     @JsonProperty

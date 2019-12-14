@@ -1,16 +1,16 @@
 package com.muskopf.tacotuesday.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.muskopf.mailgun.emailsender.config.EmailSenderConfiguration;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.validation.beanvalidation.SpringConstraintValidatorFactory;
@@ -21,8 +21,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 @Configuration
-@EnableWebMvc
-@EnableJpaRepositories(basePackages = "com.muskopf.tacotuesday.bl.repository")
 @ComponentScan(basePackages = "com.muskopf.tacotuesday")
 @EnableConfigurationProperties(TacoTuesdayApiProperties.class)
 @Import(EmailSenderConfiguration.class)
@@ -36,7 +34,7 @@ public class TacoTuesdayApiConfiguration {
      */
     @Bean
     public Validator validator() {
-        return new LocalValidatorFactoryBean();//.getValidator();
+        return new LocalValidatorFactoryBean();
     }
 
     /**

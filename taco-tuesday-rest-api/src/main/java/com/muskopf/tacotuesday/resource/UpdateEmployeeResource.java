@@ -6,6 +6,7 @@ import com.muskopf.tacotuesday.api.validator.FullNameValidator;
 import com.muskopf.tacotuesday.api.validator.FullNameValidator.FullNameType;
 import com.muskopf.tacotuesday.api.validator.SlackId;
 import com.muskopf.tacotuesday.api.validator.SlackIdValidator;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotEmpty;
 import static com.muskopf.tacotuesday.api.validator.FullNameValidator.FullNameType.Optional;
 
 @Data
+@ApiModel
 @Validated
 public class UpdateEmployeeResource {
     @JsonProperty

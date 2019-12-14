@@ -1,16 +1,20 @@
 package com.muskopf.tacotuesday.bl.impl;
 
 import com.muskopf.tacotuesday.bl.OrderDAO;
+import com.muskopf.tacotuesday.bl.repository.EmployeeRepository;
 import com.muskopf.tacotuesday.bl.repository.FullOrderRepository;
 import com.muskopf.tacotuesday.bl.repository.IndividualOrderRepository;
+import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
+import com.muskopf.tacotuesday.resource.EmployeeResource;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,13 +24,16 @@ import java.util.stream.Collectors;
 public class OrderDAOImpl implements OrderDAO {
     private FullOrderRepository fullOrderRepository;
     private IndividualOrderRepository individualOrderRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     public OrderDAOImpl(FullOrderRepository fullOrderRepository,
-                        IndividualOrderRepository individualOrderRepository)
+                        IndividualOrderRepository individualOrderRepository,
+                        EmployeeRepository employeeRepository)
     {
         this.fullOrderRepository = fullOrderRepository;
         this.individualOrderRepository = individualOrderRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     private FullOrder getFullOrderIfPresent(Integer id) {
@@ -96,13 +103,29 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public FullOrder createFullOrder(FullOrder order) {
+        // Persist all individual orders' employees
+        Set<IndividualOrder> individualOrders = order.getIndividualOrders();
+        for (IndividualOrder individualOrder : individualOrders) {
+            Employee employee = individualOrder.getEmployee();
+            String slackId = employee.getSlackId();
+
+            if (employeeRepository.existsEmployeeBySlackId(slackId)) {
+                employee.setId(employeeRepository.findBySlackId(slackId).getId());
+            }
+
+            individualOrder.setEmployee(employeeRepository.save(employee));
+        }
+
+        // Persist individual orders
+        Set<IndividualOrder> persistedIndividualOrders = new HashSet<>(individualOrderRepository.saveAll(individualOrders));
+        order.setIndividualOrders(persistedIndividualOrders);
+
+        // Persist full order and set the individual orders' reference to it
         FullOrder savedOrder = fullOrderRepository.save(order);
-        individualOrderRepository.saveAll(order.getIndividualOrders());
+        persistedIndividualOrders.forEach(o -> o.setFullOrder(savedOrder));
 
-        Set<IndividualOrder> individualOrders = savedOrder.getIndividualOrders();
-        individualOrders.forEach(o -> o.setFullOrder(savedOrder));
-
-        individualOrderRepository.saveAll(individualOrders);
+        // Persist all individual orders
+        individualOrderRepository.saveAll(persistedIndividualOrders);
 
         return savedOrder;
     }
