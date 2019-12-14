@@ -10,6 +10,9 @@ import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +44,12 @@ public class TacoTuesdayApiOrderRestController {
         this.emailer = emailer;
     }
 
+    @ApiOperation(value = "Retrieve all Individual Orders")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retrieved Successfully", response = IndividualOrderResource[].class),
+            @ApiResponse(code = 400, message = "Invalid Slack ID Provided", response = TacoTuesdayExceptionResponse.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
+    })
     @GetMapping(value = "/individual")
     public ResponseEntity<List<IndividualOrderResource>> getAllIndividualOrders(@RequestHeader(name = "slackId", required = false)
                                                                                     @SlackId(type = SlackIdType.Optional) String slackId)
@@ -54,6 +63,12 @@ public class TacoTuesdayApiOrderRestController {
         return new ResponseEntity<>(mapper.mapIndividualOrdersToIndividualOrderResources(orders), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Retrieve an Individual Order by ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retrieved Successfully", response = IndividualOrder.class),
+            @ApiResponse(code = 404, message = "No Such Order Exists", response = IndividualOrder.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
+    })
     @GetMapping(value = "/individual/{orderId}")
     public ResponseEntity<IndividualOrderResource> getIndividualOrderByOrderId(@PathVariable
                                                                                    @OrderId(type = OrderType.Individual) Integer orderId)
@@ -65,6 +80,12 @@ public class TacoTuesdayApiOrderRestController {
         return new ResponseEntity<>(mapper.mapIndividualOrderToIndividualOrderResource(order), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Retrieve all Full Orders")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retrieved Successfully", response = IndividualOrderResource[].class),
+            @ApiResponse(code = 400, message = "Invalid Slack ID Provided", response = TacoTuesdayExceptionResponse.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
+    })
     @GetMapping(value = "/full")
     public ResponseEntity<List<FullOrderResource>> getAllFullOrders(@RequestHeader(name = "slackId", required = false)
                                                                         @SlackId(type = SlackIdType.Optional) String slackId)
@@ -76,13 +97,20 @@ public class TacoTuesdayApiOrderRestController {
         return new ResponseEntity<>(mapper.mapFullOrdersToFullOrderResources(orders), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Create a new Full Order")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Full Order Created", response = FullOrderResource.class),
+            @ApiResponse(code = 400, message = "Invalid Request Body", response = TacoTuesdayExceptionResponse.class),
+            @ApiResponse(code = 401, message = "Invalid API Key", response = TacoTuesdayExceptionResponse.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
+    })
     @PostMapping(value = "/full")
     public ResponseEntity<FullOrderResource> createFullOrder(@RequestParam(name = "apiKey") @ApiKey String apiKey,
                                                              @RequestBody @Valid FullOrderResource orderResource)
     {
         log.info("POST /orders/full");
 
-        FullOrder order = mapper.mapFullOrderResourcesToFullOrder(orderResource);
+        FullOrder order = mapper.mapFullOrderResourceToFullOrder(orderResource);
         order = orderDAO.createFullOrder(order);
 
         emailer.sendOrderSubmittedEmail(order);
@@ -90,6 +118,12 @@ public class TacoTuesdayApiOrderRestController {
         return new ResponseEntity<>(mapper.mapFullOrderToFullOrderResource(order), HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Retrieve a Full Order by ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retrieved Successfully", response = FullOrderResource.class),
+            @ApiResponse(code = 404, message = "No Such Full Order Exists", response = TacoTuesdayExceptionResponse.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
+    })
     @GetMapping(value = "/full/{orderId}")
     public ResponseEntity<FullOrderResource> getFullOrderByOrderId(@PathVariable
                                                                        @OrderId(type = OrderType.Full) Integer orderId)

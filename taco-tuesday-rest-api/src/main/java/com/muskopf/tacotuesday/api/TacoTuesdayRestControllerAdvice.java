@@ -118,7 +118,6 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
         return new TacoTuesdayExceptionResponseEntity(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchResourceException.class)
     public ResponseEntity<Object> handleNoSuchResourceExistsException(NoSuchResourceException e, WebRequest r) {
         log.warn(endpoint(r) + "No Such Resource: " + e.getMessage());
@@ -132,7 +131,7 @@ public class TacoTuesdayRestControllerAdvice extends ResponseEntityExceptionHand
 
         tacoEmailer.sendExceptionEmail(e);
 
-        return handleException(e, r);
+        return new TacoTuesdayExceptionResponseEntity("An unknown Exception occurred!", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private String endpoint(WebRequest r) {
