@@ -11,6 +11,7 @@ import com.muskopf.tacotuesday.domain.ApiKey;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -35,11 +36,6 @@ public class TacoTuesdayPersistenceInitializer {
     private IndividualOrderRepository individualOrderRepository;
     private EmployeeRepository employeeRepository;
     private ApiKeyRepository apiKeyRepository;
-
-    private List<Employee> persistedEmployees;
-    private Map<String, Employee> persistedEmployeesBySlackId = new HashMap<>();
-    private List<IndividualOrder> persistedIndividualOrders;
-    private List<FullOrder> persistedFullOrders;
 
     private boolean databaseInitialized = false;
 
@@ -68,10 +64,12 @@ public class TacoTuesdayPersistenceInitializer {
 
         // Load all employees from JSON and persist
         List<Employee> employees = loadObjects(Employee.class);
-        persistedEmployees = employeeRepository.saveAll(employees);
+        List<Employee> persistedEmployees = employeeRepository.saveAll(employees);
         if (persistedEmployees.size() == 0) {
             throw new RuntimeException("No Employee objects persisted!");
         }
+
+        Map<String, Employee> persistedEmployeesBySlackId = new HashMap<>();
 
         // Slack ID --> Employee
         persistedEmployees.forEach(e -> persistedEmployeesBySlackId.put(e.getSlackId(), e));
@@ -100,14 +98,12 @@ public class TacoTuesdayPersistenceInitializer {
         }
 
         // Save all full orders
-        persistedFullOrders = fullOrderRepository.findAll();
-        if (persistedFullOrders.size() == 0) {
+        if (fullOrderRepository.findAll().size() == 0) {
             throw new RuntimeException("No FullOrder objects persisted!");
         }
 
         // Get individual orders from DB
-        persistedIndividualOrders = individualOrderRepository.findAll();
-        if (persistedIndividualOrders.size() == 0) {
+        if (individualOrderRepository.findAll().size() == 0) {
             throw new RuntimeException("No IndividualOrder objects persisted!");
         }
 
@@ -135,7 +131,7 @@ public class TacoTuesdayPersistenceInitializer {
      */
     public Employee createEmployee() {
         if (databaseInitialized) {
-            return randomItem(persistedEmployees);
+            return randomItem(employeeRepository.findAll());
         }
 
         return loadObject(Employee.class);
@@ -151,7 +147,7 @@ public class TacoTuesdayPersistenceInitializer {
             throw new RuntimeException("Database is not initialized!");
         }
 
-        return persistedEmployees;
+        return employeeRepository.findAll();
     }
 
     /**
@@ -164,7 +160,7 @@ public class TacoTuesdayPersistenceInitializer {
             throw new RuntimeException("Database is not initialized!");
         }
 
-        return persistedIndividualOrders;
+        return individualOrderRepository.findAll();
     }
 
     /**
@@ -177,7 +173,7 @@ public class TacoTuesdayPersistenceInitializer {
             throw new RuntimeException("Database is not initialized!");
         }
 
-        return persistedFullOrders;
+        return fullOrderRepository.findAll();
     }
 
     /**
@@ -187,7 +183,7 @@ public class TacoTuesdayPersistenceInitializer {
      * @return The persisted employee
      */
     public Employee getPersistedEmployeeBySlackId(String slackId) {
-        return persistedEmployeesBySlackId.get(slackId);
+        return employeeRepository.findBySlackId(slackId);
     }
 
     /**
@@ -199,7 +195,7 @@ public class TacoTuesdayPersistenceInitializer {
      */
     public IndividualOrder createIndividualOrder() {
         if (databaseInitialized) {
-            return randomItem(persistedIndividualOrders);
+            return randomItem(individualOrderRepository.findAll());
         }
 
         return loadObject(IndividualOrder.class);
@@ -214,7 +210,7 @@ public class TacoTuesdayPersistenceInitializer {
      */
     public FullOrder createFullOrder() {
         if (databaseInitialized) {
-            return randomItem(persistedFullOrders);
+            return randomItem(fullOrderRepository.findAll());
         }
 
         return loadObject(FullOrder.class);
@@ -292,6 +288,21 @@ public class TacoTuesdayPersistenceInitializer {
      */
     private <T> T randomItem(List<T> list) {
         return list.get(random.nextInt(list.size()));
+    }
+
+    /**
+     * Creates a random employee
+     */
+    public Employee createRandomEmployee() {
+        Employee employee = new Employee();
+        employee.setFullName(RandomString.make());
+        employee.setNickName(RandomString.make());
+
+        do {
+            employee.setSlackId("U" + RandomString.make(8));
+        } while (employeeRepository.findBySlackId(employee.getSlackId()) != null);
+
+        return employee;
     }
 }
 

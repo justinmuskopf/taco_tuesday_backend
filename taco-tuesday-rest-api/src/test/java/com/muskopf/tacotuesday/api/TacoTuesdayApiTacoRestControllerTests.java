@@ -1,5 +1,6 @@
 package com.muskopf.tacotuesday.api;
 
+import com.muskopf.tacotuesday.TacoTuesdayApiHelper;
 import com.muskopf.tacotuesday.domain.Taco;
 import com.muskopf.tacotuesday.resource.TacoResource;
 import org.junit.Test;
@@ -19,10 +20,11 @@ public class TacoTuesdayApiTacoRestControllerTests extends TacoTuesdayBaseRestCo
         // Get tacos
         List<Taco> tacos = persistenceHelper.loadObjects(Taco.class);
         // Map to resources
-        List<TacoResource> expectedResources = mapper.mapToTacoResources(tacos);
+        List<TacoResource> expectedResources = mapper.mapTacosToTacoResources(tacos);
 
         // Perform GET /tacos
-        List<TacoResource> responseObject = Arrays.asList(apiHelper.GET("/tacos", OK, false, TacoResource[].class));
+        List<TacoResource> responseObject = Arrays.asList(apiHelper.GET("/tacos", OK,
+                TacoTuesdayApiHelper.ApiKeyStatus.EMPTY, TacoResource[].class));
 
         expectedResources.forEach(r -> assertThat(responseObject).contains(r));
     }

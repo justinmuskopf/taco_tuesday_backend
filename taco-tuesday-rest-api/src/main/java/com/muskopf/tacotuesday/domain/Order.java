@@ -41,11 +41,71 @@ public abstract class Order extends DomainObject {
         this.tripa = newOrder.tripa != null ? newOrder.tripa : tripa;
     }
 
+    public void setTacoCount(TacoType tacoType, int count) {
+        if (count < 0) {
+            throw new RuntimeException("Invalid " + tacoType.getPrettyName() + " Count: " + count + "!");
+        }
+
+        switch (tacoType) {
+            case chickenFajita:
+                this.chickenFajita = count;
+                break;
+            case beefFajita:
+                this.beefFajita = count;
+                break;
+            case carnitas:
+                this.carnitas = count;
+                break;
+            case cabeza:
+                this.cabeza = count;
+                break;
+            case barbacoa:
+                this.barbacoa = count;
+                break;
+            case pastor:
+                this.pastor = count;
+                break;
+            case lengua:
+                this.lengua = count;
+                break;
+            case tripa:
+                this.tripa = count;
+                break;
+            default:
+                throw new RuntimeException("Invalid Taco Type: " + tacoType.getPrettyName() + "!");
+        }
+    }
+
+    public Integer getTacoCount(TacoType tacoType) {
+        switch (tacoType) {
+            case chickenFajita:
+                return chickenFajita;
+            case beefFajita:
+                return beefFajita;
+            case carnitas:
+                return carnitas;
+            case cabeza:
+                return cabeza;
+            case barbacoa:
+                return barbacoa;
+            case pastor:
+                return pastor;
+            case lengua:
+                return lengua;
+            case tripa:
+                return tripa;
+            default:
+                throw new RuntimeException("Invalid Taco Type: " + tacoType.getPrettyName() + "!");
+        }
+    }
+
     @Override
     public String toString() {
         String sep = System.lineSeparator();
 
         StringBuilder sb = new StringBuilder();
+        sb.append("------------------------").append(sep);
+        sb.append("  ID: ").append(id).append(sep);
         sb.append("------------------------").append(sep);
         sb.append("  Barbacoa: ").append(barbacoa).append(sep);
         sb.append("  Beef Fajita: ").append(beefFajita).append(sep);
@@ -54,7 +114,7 @@ public abstract class Order extends DomainObject {
         sb.append("  Chicken Fajita: ").append(chickenFajita).append(sep);
         sb.append("  Lengua: ").append(lengua).append(sep);
         sb.append("  Pastor/Trompo: ").append(pastor).append(sep);
-        sb.append("  Tripa: ").append(tripa).append(sep);
+        sb.append("  Tripa: ").append(tripa).append(sep).append(sep);
         sb.append("  TOTAL: $").append(total).append(sep);
         sb.append("------------------------").append(sep);
 

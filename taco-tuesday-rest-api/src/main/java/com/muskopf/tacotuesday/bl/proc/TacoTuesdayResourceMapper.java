@@ -1,57 +1,116 @@
 package com.muskopf.tacotuesday.bl.proc;
 
-import com.muskopf.tacotuesday.domain.Employee;
-import com.muskopf.tacotuesday.domain.FullOrder;
-import com.muskopf.tacotuesday.domain.IndividualOrder;
-import com.muskopf.tacotuesday.domain.Taco;
-import com.muskopf.tacotuesday.resource.EmployeeResource;
-import com.muskopf.tacotuesday.resource.FullOrderResource;
-import com.muskopf.tacotuesday.resource.IndividualOrderResource;
-import com.muskopf.tacotuesday.resource.TacoResource;
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import org.aspectj.lang.annotation.After;
+import com.muskopf.tacotuesday.domain.*;
+import com.muskopf.tacotuesday.resource.*;
+import io.swagger.models.auth.In;
+import org.hibernate.sql.Update;
 import org.mapstruct.*;
 
-import java.util.List;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR, collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED)
 public interface TacoTuesdayResourceMapper {
-    Taco map(TacoResource resource);
-    TacoResource map(Taco taco);
+    Taco mapTacoResourceToTaco(TacoResource resource);
+    TacoResource mapTacoToTacoResource(Taco taco);
 
-    List<TacoResource> mapToTacoResources(List<Taco> tacos);
+    List<TacoResource> mapTacosToTacoResources(List<Taco> tacos);
 
-    @Mappings({
-        @Mapping(target = "createdAt", ignore = true),
-        @Mapping(target = "updatedAt", ignore = true),
-        @Mapping(target = "apiKey", ignore = true),
-        @Mapping(target = "orders", ignore = true)
-    })
-    Employee map(EmployeeResource resource);
-    EmployeeResource map(Employee employee);
+    Employee mapEmployeeResourceToEmployee(EmployeeResource resource);
+    EmployeeResource mapEmployeeToEmployeeResource(Employee employee);
 
-    List<EmployeeResource> mapToEmployeeResources(List<Employee> employees);
+    List<EmployeeResource> mapEmployeesToEmployeeResources(List<Employee> employees);
 
-    @Mapping(target = "fullOrder", ignore = true)
-    IndividualOrder map(IndividualOrderResource resource);
-    @Mapping(target = "fullOrderId", source = "order.fullOrder.id")
-    IndividualOrderResource map(IndividualOrder order);
+    Employee mapNewEmployeeResourceToEmployee(NewEmployeeResource resource);
+    NewEmployeeResource mapEmployeeToNewEmployeeResource(Employee employee);
 
-    List<IndividualOrderResource> mapToIndividualOrderResources(List<IndividualOrder> orders);
+    Employee mapUpdateEmployeeResourceToEmployee(UpdateEmployeeResource resource);
+    UpdateEmployeeResource mapEmployeeToUpdateEmployeeResource(Employee employee);
 
-    FullOrder map(FullOrderResource resource);
-    FullOrderResource map(FullOrder order);
-    @AfterMapping
-    default void afterMapping(@MappingTarget FullOrderResource resource, FullOrder order) {
-        if (isNull(order.getId())) {
-            return;
-        }
+    Employee mapUpdateEmployeeBatchResourceToEmployee(UpdateEmployeeBatchResource resources);
+    UpdateEmployeeBatchResource mapEmployeeToUpdateEmployeeBatchResource(Employee employees);
 
-        resource.getIndividualOrders().forEach(o -> o.setFullOrderId(order.getId()));
+    List<Employee> mapUpdateEmployeeBatchResourcesToEmployees(List<UpdateEmployeeBatchResource> resources);
+    List<UpdateEmployeeBatchResource> mapEmployeesToUpdateEmployeeBatchResources(List<Employee> employees);
+
+    List<IndividualOrderResource> mapIndividualOrdersToIndividualOrderResources(List<IndividualOrder> orders);
+    List<IndividualOrderResource> mapIndividualOrdersToIndividualOrderResources(Set<IndividualOrder> orders);
+    Set<IndividualOrder> mapIndividualOrderResourcesToIndividualOrders(List<IndividualOrderResource> resources);
+
+    List<FullOrderResource> mapFullOrdersToFullOrderResources(List<FullOrder> orders);
+
+    default IndividualOrder mapIndividualOrderResourceToIndividualOrder(IndividualOrderResource resource) {
+        IndividualOrder order = new IndividualOrder();
+        mapOrderResourceOntoOrder(resource, order);
+
+        order.setEmployee(mapEmployeeResourceToEmployee(resource.getEmployee()));
+
+        return order;
     }
 
-    List<FullOrderResource> mapToFullOrderResources(List<FullOrder> orders);
+    default IndividualOrderResource mapIndividualOrderToIndividualOrderResource(IndividualOrder order) {
+        IndividualOrderResource resource = new IndividualOrderResource();
+        mapOrderOntoOrderResource(order, resource);
+
+        resource.setEmployee(mapEmployeeToEmployeeResource(order.getEmployee()));
+
+        return resource;
+    }
+
+    default FullOrder mapFullOrderResourceToFullOrder(FullOrderResource resource) {
+        FullOrder fullOrder = new FullOrder();
+        mapOrderResourceOntoOrder(resource, fullOrder);
+
+        fullOrder.setIndividualOrders(mapIndividualOrderResourcesToIndividualOrders(resource.getIndividualOrders()));
+
+        return fullOrder;
+    }
+
+    default FullOrderResource mapFullOrderToFullOrderResource(FullOrder order) {
+        FullOrderResource resource = new FullOrderResource();
+        mapOrderOntoOrderResource(order, resource);
+
+        resource.setIndividualOrders(mapIndividualOrdersToIndividualOrderResources(order.getIndividualOrders()));
+        resource.getIndividualOrders().forEach(o -> o.setFullOrderId(order.getId()));
+
+        return resource;
+    }
+
+    default void mapOrderOntoOrderResource(Order order, OrderResource resource) {
+        Map<TacoType, Integer> tacoMap = new HashMap<>();
+        for (TacoType tacoType : TacoType.values()) {
+            tacoMap.put(tacoType, order.getTacoCount(tacoType));
+        }
+
+        resource.setId(order.getId());
+        resource.setTacos(tacoMap);
+        resource.setTotal(order.getTotal());
+        resource.setCreatedAt(order.getCreatedAt());//mapInstantToOffsetDateTime(order.getCreatedAt()));
+    }
+
+    default void mapOrderResourceOntoOrder(OrderResource resource, Order order) {
+        for (Map.Entry<TacoType, Integer> tacoCount : resource.getTacos().entrySet()) {
+            order.setTacoCount(tacoCount.getKey(), tacoCount.getValue());
+        }
+
+        if (resource.getId() != null)
+            order.setId(resource.getId());
+        if (resource.getCreatedAt() != null)
+            order.setCreatedAt(resource.getCreatedAt());//mapOffsetDateTimeToInstant(resource.getCreatedAt()));
+
+        order.setTotal(resource.getTotal());
+    }
+
+    default OffsetDateTime mapInstantToOffsetDateTime(Instant instant) {
+        return (isNull(instant)) ? null : OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
+    }
+    default Instant mapOffsetDateTimeToInstant(OffsetDateTime offsetDateTime) {
+        return (isNull(offsetDateTime)) ? null : Instant.from(offsetDateTime);
+    }
 }
 
