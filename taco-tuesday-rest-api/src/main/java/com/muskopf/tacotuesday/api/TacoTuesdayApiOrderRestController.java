@@ -44,6 +44,7 @@ public class TacoTuesdayApiOrderRestController {
         this.emailer = emailer;
     }
 
+    @CrossOrigin
     @ApiOperation(value = "Retrieve all Individual Orders")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retrieved Successfully", response = IndividualOrderResource[].class),
@@ -63,6 +64,7 @@ public class TacoTuesdayApiOrderRestController {
         return new ResponseEntity<>(mapper.mapIndividualOrdersToIndividualOrderResources(orders), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @ApiOperation(value = "Retrieve an Individual Order by ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retrieved Successfully", response = IndividualOrder.class),
@@ -80,6 +82,7 @@ public class TacoTuesdayApiOrderRestController {
         return new ResponseEntity<>(mapper.mapIndividualOrderToIndividualOrderResource(order), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @ApiOperation(value = "Retrieve all Full Orders")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retrieved Successfully", response = IndividualOrderResource[].class),
@@ -118,6 +121,7 @@ public class TacoTuesdayApiOrderRestController {
         return new ResponseEntity<>(mapper.mapFullOrderToFullOrderResource(order), HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @ApiOperation(value = "Retrieve a Full Order by ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retrieved Successfully", response = FullOrderResource.class),
