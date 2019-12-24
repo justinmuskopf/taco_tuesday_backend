@@ -61,6 +61,7 @@ public class TacoTuesdayApiEmployeeRestController {
         return new ResponseEntity<>(mapper.mapEmployeeToEmployeeResource(employee), HttpStatus.CREATED);
     }
 
+    @CrossOrigin
     @ApiOperation(value = "Retrieve all Existing Employees")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retrieved Successfully", response = EmployeeResource[].class),
@@ -76,6 +77,7 @@ public class TacoTuesdayApiEmployeeRestController {
         return new ResponseEntity<>(mapper.mapEmployeesToEmployeeResources(employees), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @ApiOperation(value = "Retrieve an Employee by Slack ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retrieved Successfully", response = EmployeeResource.class),

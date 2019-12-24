@@ -2,3 +2,4 @@
 .idea/
 .mvn/
 *.iml
+docs/dist/swagger.json
