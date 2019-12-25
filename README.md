@@ -27,3 +27,6 @@ Feel free to check out the project's progression on its [Kanban](https://github.
 
 ### Building & Deploying
 Maybe one day!
+
+#### Dependency
+ * [Mailgun Email Sender](https://github.com/justinmuskopf/spring_mailgun_email_sender)
