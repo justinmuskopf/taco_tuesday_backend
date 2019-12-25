@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,11 +23,14 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@CacheConfig(cacheNames = "tacos")
 @RequestMapping(value = "/taco-tuesday/v1/tacos")
 public class TacoTuesdayApiTacoRestController {
     private TacoPriceList tacoPriceList;
     private TacoTuesdayResourceMapper mapper;
     private TacoEmailer emailer;
+
+    private List<Taco> tacos;
 
     @Autowired
     public TacoTuesdayApiTacoRestController(TacoPriceList tacoPriceList, TacoTuesdayResourceMapper mapper, TacoEmailer emailer) {
@@ -40,6 +45,7 @@ public class TacoTuesdayApiTacoRestController {
             @ApiResponse(code = 200, message = "Retrieved Successfully", response = TacoResource[].class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
+    @Cacheable
     @GetMapping
     public ResponseEntity<List<TacoResource>> getTacoPrices() {
         log.info("GET /tacos");
