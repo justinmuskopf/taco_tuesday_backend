@@ -15,6 +15,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +31,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 @Slf4j
 @Validated
 @RestController
+@CacheConfig(cacheNames = "orders")
 @RequestMapping(value = "/taco-tuesday/v1/orders")
 public class TacoTuesdayApiOrderRestController {
     private OrderDAO orderDAO;
@@ -71,6 +75,7 @@ public class TacoTuesdayApiOrderRestController {
             @ApiResponse(code = 404, message = "No Such Order Exists", response = IndividualOrder.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
+    @Cacheable
     @GetMapping(value = "/individual/{orderId}")
     public ResponseEntity<IndividualOrderResource> getIndividualOrderByOrderId(@PathVariable
                                                                                    @OrderId(type = OrderType.Individual) Integer orderId)
@@ -89,6 +94,7 @@ public class TacoTuesdayApiOrderRestController {
             @ApiResponse(code = 400, message = "Invalid Slack ID Provided", response = TacoTuesdayExceptionResponse.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
+    @Cacheable
     @GetMapping(value = "/full")
     public ResponseEntity<List<FullOrderResource>> getAllFullOrders(@RequestHeader(name = "slackId", required = false)
                                                                         @SlackId(type = SlackIdType.Optional) String slackId)
@@ -107,6 +113,7 @@ public class TacoTuesdayApiOrderRestController {
             @ApiResponse(code = 401, message = "Invalid API Key", response = TacoTuesdayExceptionResponse.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
+    @CachePut
     @PostMapping(value = "/full")
     public ResponseEntity<FullOrderResource> createFullOrder(@RequestParam(name = "apiKey") @ApiKey String apiKey,
                                                              @RequestBody @Valid FullOrderResource orderResource)
@@ -128,6 +135,7 @@ public class TacoTuesdayApiOrderRestController {
             @ApiResponse(code = 404, message = "No Such Full Order Exists", response = TacoTuesdayExceptionResponse.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
+    @Cacheable
     @GetMapping(value = "/full/{orderId}")
     public ResponseEntity<FullOrderResource> getFullOrderByOrderId(@PathVariable
                                                                        @OrderId(type = OrderType.Full) Integer orderId)
