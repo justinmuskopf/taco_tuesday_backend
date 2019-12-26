@@ -12,7 +12,8 @@ jobs:
     # a collection of executable commands
     steps: 
       # check out source code to working directory
-      - checkout 
+      - checkout: 
+          path: ~/taco_tuesday_backend
       # restore the saved cache after the first run or if `pom.xml` has changed
       - restore_cache: 
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
