@@ -12,6 +12,7 @@ import com.muskopf.tacotuesday.domain.IndividualOrder;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
+import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -51,6 +52,37 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
                 ApiKeyStatus.EMPTY, IndividualOrderResource[].class));
 
         expectedResources.forEach(r -> assertThat(responseObject).contains(r));
+    }
+
+    /**
+     * Test happy path of GET /orders/individual with the sort header as true
+     */
+    @Test
+    public void test_getAllIndividualOrdersSorted_happy() {
+        // Get persisted orders
+        List<IndividualOrder> persistedOrders = persistenceHelper.getPersistedIndividualOrders();
+        // Map to resources
+        List<IndividualOrderResource> expectedResources = mapper.mapIndividualOrdersToIndividualOrderResources(persistedOrders);
+
+        MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
+        headerMap.put("sortByDate", Collections.singletonList(Boolean.toString(true)));
+
+        // Perform GET /orders/individual
+        List<IndividualOrderResource> responseObject = Arrays.asList(apiHelper.GET(formEndpoint("individual"), new HttpHeaders(headerMap), OK,
+                ApiKeyStatus.EMPTY, IndividualOrderResource[].class));
+
+        expectedResources.forEach(r -> assertThat(responseObject).contains(r));
+
+        // Assert sorted
+        ListIterator<IndividualOrderResource> resourceListIterator = responseObject.listIterator();
+        IndividualOrderResource currentResource = resourceListIterator.next();
+        while (resourceListIterator.hasNext()) {
+            IndividualOrderResource next = resourceListIterator.next();
+            assertThat(next.getCreatedAt()).isAfterOrEqualTo(currentResource.getCreatedAt());
+
+            currentResource = next;
+        }
+
     }
 
     /**
@@ -123,6 +155,36 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
                 ApiKeyStatus.EMPTY, FullOrderResource[].class));
 
         expectedResources.forEach(r -> assertThat(responseObject).contains(r));
+    }
+
+    /**
+     * Test happy path of GET /orders/full with the sort header as true
+     */
+    @Test
+    public void test_getAllFullOrdersSortedByDate_happy() {
+        // Get persisted orders
+        List<FullOrder> persistedOrders = persistenceHelper.getPersistedFullOrders();
+        // Map to resources
+        List<FullOrderResource> expectedResources = mapper.mapFullOrdersToFullOrderResources(persistedOrders);
+
+        MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
+        headerMap.put("sortByDate", Collections.singletonList(Boolean.toString(true)));
+
+        // Perform GET /orders/individual
+        List<FullOrderResource> responseObject = Arrays.asList(apiHelper.GET(formEndpoint("full"), new HttpHeaders(headerMap), OK,
+                ApiKeyStatus.EMPTY, FullOrderResource[].class));
+
+        expectedResources.forEach(r -> assertThat(responseObject).contains(r));
+
+        // Assert sorted
+        ListIterator<FullOrderResource> resourceListIterator = responseObject.listIterator();
+        FullOrderResource currentResource = resourceListIterator.next();
+        while (resourceListIterator.hasNext()) {
+            FullOrderResource next = resourceListIterator.next();
+            assertThat(next.getCreatedAt()).isAfterOrEqualTo(currentResource.getCreatedAt());
+
+            currentResource = next;
+        }
     }
 
     /**

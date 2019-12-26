@@ -243,6 +243,11 @@
           "in" : "header",
           "required" : false,
           "type" : "string"
+        }, {
+          "name" : "sortByDate",
+          "in" : "header",
+          "required" : false,
+          "type" : "boolean"
         } ],
         "responses" : {
           "200" : {
@@ -363,6 +368,11 @@
           "in" : "header",
           "required" : false,
           "type" : "string"
+        }, {
+          "name" : "sortByDate",
+          "in" : "header",
+          "required" : false,
+          "type" : "boolean"
         } ],
         "responses" : {
           "200" : {

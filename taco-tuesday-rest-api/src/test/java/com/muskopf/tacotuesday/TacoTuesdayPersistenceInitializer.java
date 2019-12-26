@@ -257,7 +257,10 @@ public class TacoTuesdayPersistenceInitializer {
      * @return A list of the loaded objects
      */
     public <T> List<T> loadObjects(Class<T> objectClass) {
-        return Arrays.asList(loadObjects(objectClass.getSimpleName() + "s.json", objectClass));
+        List<T> items = Arrays.asList(loadObjects(objectClass.getSimpleName() + "s.json", objectClass));
+        Collections.shuffle(items);
+
+        return items;
     }
 
     /**
