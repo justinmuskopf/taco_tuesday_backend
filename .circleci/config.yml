@@ -47,12 +47,15 @@ jobs:
       - restore_cache: 
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           key: taco-tuesday-rest-api-{{ checksum "pom.xml" }}
-      - run: echo 'deploy world'
       - run: mvn dependency:go-offline 
       - run: mvn package -DbuildNumber=${CIRCLE_BUILD_NUM}
       # Copy jar and docs to artifacts directory
-      - run: cp target/taco-tuesday-rest-api-0.0.${CIRCLE_BUILD_NUM}-SNAPSHOT.jar ../artifacts/ 
-      - run: cp ../docs ../artifacts/
+      - run: 
+          name: Copy Artifacts
+          command: |
+            mkdir ../artifacts
+            cp target/taco-tuesday-rest-api-0.0.${CIRCLE_BUILD_NUM}-SNAPSHOT.jar ../artifacts/ 
+            cp ../docs ../artifacts/
       # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
       - store_test_results: 
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
