@@ -53,6 +53,9 @@ jobs:
       # ...with this image as the primary container; this is where all `steps` will run
       - image: circleci/openjdk:8-jdk-stretch 
     steps: 
+      # check out source code to working directory
+      - checkout: 
+          path: ~/taco_tuesday_backend
       - run: echo 'publish_swagger world'
       - run: mvn install 
               io.swagger:swaggerhub-maven-plugin:1.0.7:upload 
