@@ -21,14 +21,14 @@
         <ttapi.swaggerdir>${project.basedir}\..\docs\dist</ttapi.swaggerdir>
         <ttapi.swaggerfile>swagger</ttapi.swaggerfile>
     </properties>
-
-    <repositories>
-    	<repository>
-	    	<id>github</id>
-	    	<name>Github Spring Mailgun Email Sender</name>
-	    	<url>https://maven.pkg.github.com/justinmuskopf/spring_mailgun_email_sender</url>
-	   </repository>
-    </repositories>
+    
+	<repositories>
+	    <repository>
+	        <id>project.local</id>
+	        <name>project</name>
+	        <url>file:${project.basedir}\lib</url>
+	    </repository>
+	</repositories>
 
     <dependencies>
         <dependency>
@@ -64,6 +64,8 @@
             <version>2.0.2</version>
         </dependency>
 		<dependency>
+		  <!-- Added manually until we can find the package repo's permanent home (github requires auth) -->
+		  <!-- https://github.com/justinmuskopf/spring_mailgun_email_sender/packages/93520 -->
 		  <groupId>com.muskopf.mailgun</groupId>
 		  <artifactId>email-sender</artifactId>
 		  <version>1.0.0-release</version>
