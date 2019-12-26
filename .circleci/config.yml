@@ -44,7 +44,15 @@ jobs:
       # ...with this image as the primary container; this is where all `steps` will run
       - image: circleci/openjdk:8-jdk-stretch 
     steps: 
+      # check out source code to working directory
+      - checkout: 
+          path: ~/taco_tuesday_backend
+      # restore the saved cache after the first run or if `pom.xml` has changed
+      - restore_cache: 
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: taco-tuesday-rest-api-{{ checksum "pom.xml" }}
       - run: echo 'deploy world'
+      - run: mvn package -DbuildNumber=${CIRCLE_BUILD_NUM}
   publish_swagger:
     # directory where steps will run
     working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
@@ -56,7 +64,6 @@ jobs:
       # check out source code to working directory
       - checkout: 
           path: ~/taco_tuesday_backend
-      - run: echo 'publish_swagger world'
       - run: mvn compile swaggerhub:upload 
 
 workflows:
@@ -68,7 +75,7 @@ workflows:
             branches:
               ignore:
                 - issue/57/circleci-deploy-branch-publish-swaggerhub
-      - publish_swagger:
+      - deploy:
           filters:
             branches:
               ignore:
