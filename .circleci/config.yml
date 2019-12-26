@@ -39,9 +39,13 @@ jobs:
   deploy:
     # directory where steps will run
     working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
+    steps: 
+      - run: echo 'deploy world'
   publish_swagger:
     # directory where steps will run
     working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
+    steps: 
+      - run: echo 'publish_swagger world'
 
 workflows:
   version: 2
