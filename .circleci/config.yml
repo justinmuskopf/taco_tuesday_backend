@@ -39,11 +39,19 @@ jobs:
   deploy:
     # directory where steps will run
     working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
+    # run the steps with Docker
+    docker: 
+      # ...with this image as the primary container; this is where all `steps` will run
+      - image: circleci/openjdk:8-jdk-stretch 
     steps: 
       - run: echo 'deploy world'
   publish_swagger:
     # directory where steps will run
     working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
+    # run the steps with Docker
+    docker: 
+      # ...with this image as the primary container; this is where all `steps` will run
+      - image: circleci/openjdk:8-jdk-stretch 
     steps: 
       - run: echo 'publish_swagger world'
 
