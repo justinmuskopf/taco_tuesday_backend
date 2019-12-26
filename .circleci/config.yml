@@ -55,7 +55,7 @@ jobs:
           command: |
             mkdir ../artifacts
             cp target/taco-tuesday-rest-api-0.0.${CIRCLE_BUILD_NUM}-SNAPSHOT.jar ../artifacts/ 
-            cp ../docs ../artifacts/
+            cp -r ../docs ../artifacts/
       # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
       - store_test_results: 
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
