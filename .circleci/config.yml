@@ -52,21 +52,21 @@ workflows:
   deploy_production_workflow:
     jobs:
       - build_and_test:
-        filters:
-          branches:
-            only:
-              - deploy-production
+          filters:
+            branches:
+              only:
+                - deploy-production
       - deploy:
           requires:
             - build_and_test:
-              filters:
-                branches:
-                  only:
-                    - deploy-production
+                filters:
+                  branches:
+                    only:
+                      - deploy-production
       - publish_swagger:
           requires:
             - deploy:
-              filters:
-                branches:
-                  only:
-                    - deploy-production
+                filters:
+                  branches:
+                    only:
+                      - deploy-production
