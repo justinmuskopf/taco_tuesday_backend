@@ -186,12 +186,11 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swaggerhub-maven-plugin</artifactId>
                 <version>1.0.7</version>
+                <!-- Change this to command line, not on install
+                	only for deploy-production -->
                 <executions>
                     <execution>
                         <phase>install</phase>
-                        <goals>
-                            <goal>upload</goal>
-                        </goals>
                         <configuration>
                             <api>TacoTuesdayAPI</api>
                             <owner>Taco-Tuesday</owner>
