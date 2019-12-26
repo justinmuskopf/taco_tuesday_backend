@@ -57,7 +57,7 @@ jobs:
       - checkout: 
           path: ~/taco_tuesday_backend
       - run: echo 'publish_swagger world'
-      - run: mvn swaggerhub:upload 
+      - run: mvn compile swaggerhub:upload 
 
 workflows:
   version: 2
