@@ -69,6 +69,8 @@ workflows:
               ignore:
                 - deploy-production
       - publish_swagger:
+          requires:
+            - build_and_test
           filters:
             branches:
               ignore:
