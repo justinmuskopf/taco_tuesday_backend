@@ -44,20 +44,29 @@ workflows:
   build_and_test_workflow:
     jobs:
       - build_and_test
-      branches:
-        ignore:
-        - deploy-production
+       filters:
+          branches:
+            ignore:
+              - deploy-production
 
   deploy_production_workflow:
     jobs:
       - build_and_test
+        filters:
+          branches:
+            only:
+              - deploy-production
       - deploy:
           requires:
             - build_and_test
+            filters:
+              branches:
+                only:
+                  - deploy-production
       - publish_swagger:
           requires:
             - deploy
-      branches:
-        # only branches matching the below regex filters will run
-        only:
-          - deploy-production
+            filters:
+              branches:
+                only:
+                  - deploy-production
