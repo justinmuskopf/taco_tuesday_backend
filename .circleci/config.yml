@@ -70,10 +70,8 @@ workflows:
           filters:
             branches:
               ignore:
-                - deploy-production
+                - issue/57/circleci-deploy-branch-publish-swaggerhub
       - publish_swagger:
-          requires:
-            - build_and_test
           filters:
             branches:
               ignore:
