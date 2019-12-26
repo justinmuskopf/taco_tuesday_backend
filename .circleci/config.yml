@@ -59,8 +59,8 @@ jobs:
       - run: echo 'publish_swagger world'
       - run: mvn install 
               io.swagger:swaggerhub-maven-plugin:1.0.7:upload 
-              owner:Taco-Tuesday 
-              uploadType:inputFile
+              io.swagger:swaggerhub-maven-plugin:1.0.7:owner:Taco-Tuesday 
+              io.swagger:swaggerhub-maven-plugin:1.0.7:uploadType:inputFile
 
 workflows:
   version: 2
