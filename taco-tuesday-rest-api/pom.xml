@@ -198,20 +198,18 @@
                 <version>1.0.7</version>
                 <!-- Change this to command line, not on install
                      only for deploy-production -->
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <configuration>
-                            <api>TacoTuesdayAPI</api>
-                            <owner>Taco-Tuesday</owner>
-                            <version>${api.version}</version>
-                            <uploadType>inputFile</uploadType>
-                            <inputFile>${ttapi.swaggerdir}\${ttapi.swaggerfile}.json</inputFile>
-                            <format>json</format>
-                            <token>${env.SWAGGERHUB_TOKEN}</token>
-                        </configuration>
-                    </execution>
-                </executions>
+                <goals>
+                    <goal>upload</goal>
+                </goals>
+                <configuration>
+                    <api>TacoTuesdayAPI</api>
+                    <owner>Taco-Tuesday</owner>
+                    <version>${api.version}</version>
+                    <uploadType>inputFile</uploadType>
+                    <inputFile>${ttapi.swaggerdir}\${ttapi.swaggerfile}.json</inputFile>
+                    <format>json</format>
+                    <token>${env.SWAGGERHUB_TOKEN}</token>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
