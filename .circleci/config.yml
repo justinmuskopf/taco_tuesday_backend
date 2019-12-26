@@ -54,11 +54,10 @@ jobs:
       - image: circleci/openjdk:8-jdk-stretch 
     steps: 
       - run: echo 'publish_swagger world'
-      - run: mvn install \
-              io.swagger:swaggerhub-maven-plugin:1.0.7:upload \
-              owner:Taco-Tuesday
+      - run: mvn install 
+              io.swagger:swaggerhub-maven-plugin:1.0.7:upload 
+              owner:Taco-Tuesday 
               uploadType:inputFile
-              token:${env.SWAGGERHUB_TOKEN}
 
 workflows:
   version: 2
