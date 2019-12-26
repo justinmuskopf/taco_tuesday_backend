@@ -4,7 +4,7 @@ jobs:
   # runs not using Workflows must have a `build` job as entry point
   build: 
     # directory where steps will run
-    working_directory: ~/taco-tuesday-rest-api 
+    working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
     # run the steps with Docker
     docker: 
       # ...with this image as the primary container; this is where all `steps` will run
@@ -13,8 +13,6 @@ jobs:
     steps: 
       # check out source code to working directory
       - checkout 
-      # Move to mvn/java project folder
-      - run: cd taco-tuesday-rest-api
       # restore the saved cache after the first run or if `pom.xml` has changed
       - restore_cache: 
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
