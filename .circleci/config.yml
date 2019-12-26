@@ -52,6 +52,7 @@ jobs:
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           key: taco-tuesday-rest-api-{{ checksum "pom.xml" }}
       - run: echo 'deploy world'
+      - run: mvn dependency:go-offline 
       - run: mvn package -DbuildNumber=${CIRCLE_BUILD_NUM}
   publish_swagger:
     # directory where steps will run

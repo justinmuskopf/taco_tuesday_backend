@@ -10,13 +10,14 @@
     </parent>
     <groupId>com.muskopf.tacotuesday</groupId>
     <artifactId>taco-tuesday-rest-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.${buildNumber}-SNAPSHOT</version>
     <name>Taco Tuesday REST API</name>
     <description>A REST API that provides statistics about tacos ordered on Tuesdays.</description>
 
     <properties>
         <java.version>1.8</java.version>
-        <api.version>0.0.1</api.version>
+        <buildNumber>0</buildNumber>
+        <api.version>0.0.${buildNumber}</api.version>
         <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
         <ttapi.swaggerdir>${project.basedir}${file.separator}..${file.separator}docs${file.separator}dist</ttapi.swaggerdir>
         <ttapi.swaggerfile>swagger</ttapi.swaggerfile>
