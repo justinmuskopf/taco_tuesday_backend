@@ -47,7 +47,7 @@ jobs:
       - restore_cache: 
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           key: taco-tuesday-rest-api-{{ checksum "pom.xml" }}
-      - run: mvn dependency:go-offline 
+      - run: mvn dependency:go-offline -DbuildNumber=${CIRCLE_BUILD_NUM}
       - run: mvn package -DbuildNumber=${CIRCLE_BUILD_NUM}
       # Copy jar and docs to artifacts directory
       - run: 
@@ -63,7 +63,7 @@ jobs:
       - store_artifacts: # store the uberjar as an artifact
           # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: ../artifacts/
-      - run: mvn swaggerhub:upload 
+      - run: mvn swaggerhub:upload -DbuildNumber=${CIRCLE_BUILD_NUM}
 
 workflows:
   version: 2
