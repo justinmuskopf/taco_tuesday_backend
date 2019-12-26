@@ -57,10 +57,7 @@ jobs:
       - checkout: 
           path: ~/taco_tuesday_backend
       - run: echo 'publish_swagger world'
-      - run: mvn install 
-              io.swagger:swaggerhub-maven-plugin:1.0.7:upload 
-              io.swagger:swaggerhub-maven-plugin:1.0.7:owner:Taco-Tuesday 
-              io.swagger:swaggerhub-maven-plugin:1.0.7:uploadType:inputFile
+      - run: mvn swaggerhub:upload 
 
 workflows:
   version: 2
