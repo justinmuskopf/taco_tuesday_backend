@@ -32,10 +32,6 @@ jobs:
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: target/surefire-reports
       
-      - store_artifacts: # store the uberjar as an artifact
-          # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: target/taco-tuesday-rest-api-0.0.${CIRCLE_BUILD_NUM}-SNAPSHOT.jar
-      # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples 
   deploy:
     # directory where steps will run
     working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
@@ -54,6 +50,14 @@ jobs:
       - run: echo 'deploy world'
       - run: mvn dependency:go-offline 
       - run: mvn package -DbuildNumber=${CIRCLE_BUILD_NUM}
+      # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
+      - store_test_results: 
+          # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: target/surefire-reports
+      - store_artifacts: # store the uberjar as an artifact
+          # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: target/taco-tuesday-rest-api-0.0.${CIRCLE_BUILD_NUM}-SNAPSHOT.jar
+  
   publish_swagger:
     # directory where steps will run
     working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
