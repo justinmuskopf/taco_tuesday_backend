@@ -206,7 +206,7 @@
                     <owner>Taco-Tuesday</owner>
                     <version>${api.version}</version>
                     <uploadType>inputFile</uploadType>
-                    <inputFile>${ttapi.swaggerdir}\${ttapi.swaggerfile}.json</inputFile>
+                    <inputFile>${ttapi.swaggerdir}${file.separator}${ttapi.swaggerfile}.json</inputFile>
                     <format>json</format>
                     <token>${env.SWAGGERHUB_TOKEN}</token>
                 </configuration>
