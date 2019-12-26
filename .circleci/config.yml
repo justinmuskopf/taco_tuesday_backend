@@ -44,10 +44,10 @@ workflows:
   build_and_test_workflow:
     jobs:
       - build_and_test:
-        filters:
-          branches:
-            ignore:
-              - deploy-production
+          filters:
+            branches:
+              ignore:
+                - deploy-production
 
   deploy_production_workflow:
     jobs:
