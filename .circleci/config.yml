@@ -62,15 +62,15 @@ workflows:
                 - deploy-production
       - deploy:
           requires:
-            - build_and_test:
-                filters:
-                  branches:
-                    only:
-                      - deploy-production
+            - build_and_test
+          filters:
+            branches:
+              only:
+                - deploy-production
       - publish_swagger:
           requires:
-            - deploy:
-                filters:
-                  branches:
-                    only:
-                      - deploy-production
+            - deploy
+          filters:
+            branches:
+              only:
+                - deploy-production
