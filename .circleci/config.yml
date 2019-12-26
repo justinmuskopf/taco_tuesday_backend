@@ -65,8 +65,8 @@ workflows:
                     - deploy-production
       - publish_swagger:
           requires:
-            - deploy
-            filters:
-              branches:
-                only:
-                  - deploy-production
+            - deploy:
+              filters:
+                branches:
+                  only:
+                    - deploy-production
