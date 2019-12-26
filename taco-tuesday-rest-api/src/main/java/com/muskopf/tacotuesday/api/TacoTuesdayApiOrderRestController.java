@@ -6,6 +6,7 @@ import com.muskopf.tacotuesday.api.validator.SlackIdValidator.SlackIdType;
 import com.muskopf.tacotuesday.bl.OrderDAO;
 import com.muskopf.tacotuesday.bl.proc.TacoEmailer;
 import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
+import com.muskopf.tacotuesday.domain.DomainObject;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
@@ -24,6 +25,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -57,13 +60,18 @@ public class TacoTuesdayApiOrderRestController {
     })
     @GetMapping(value = "/individual")
     public ResponseEntity<List<IndividualOrderResource>> getAllIndividualOrders(@RequestHeader(name = "slackId", required = false)
-                                                                                    @SlackId(type = SlackIdType.Optional) String slackId)
+                                                                                    @SlackId(type = SlackIdType.Optional) String slackId,
+                                                                                @RequestHeader(name = "sortByDate", required = false)
+                                                                                    boolean sortByDate)
     {
         log.info("GET /orders/individual");
 
         List<IndividualOrder> orders = isEmpty(slackId) ?
                 orderDAO.retrieveAllIndividualOrders() :
                 orderDAO.retrieveIndividualOrdersBySlackId(slackId);
+
+        if (sortByDate)
+            orders.sort(Comparator.comparing(DomainObject::getCreatedAt));
 
         return new ResponseEntity<>(mapper.mapIndividualOrdersToIndividualOrderResources(orders), HttpStatus.OK);
     }
@@ -97,11 +105,16 @@ public class TacoTuesdayApiOrderRestController {
     @Cacheable
     @GetMapping(value = "/full")
     public ResponseEntity<List<FullOrderResource>> getAllFullOrders(@RequestHeader(name = "slackId", required = false)
-                                                                        @SlackId(type = SlackIdType.Optional) String slackId)
+                                                                        @SlackId(type = SlackIdType.Optional) String slackId,
+                                                                    @RequestHeader(name = "sortByDate", required = false)
+                                                                        boolean sortByDate)
     {
         log.info("GET /orders/full");
 
         List<FullOrder> orders = isEmpty(slackId) ? orderDAO.retrieveAllFullOrders() : orderDAO.retrieveFullOrdersBySlackId(slackId);
+
+        if (sortByDate)
+            orders.sort(Comparator.comparing(DomainObject::getCreatedAt));
 
         return new ResponseEntity<>(mapper.mapFullOrdersToFullOrderResources(orders), HttpStatus.OK);
     }
