@@ -22,6 +22,14 @@
         <ttapi.swaggerfile>swagger</ttapi.swaggerfile>
     </properties>
 
+    <repositories>
+    	<repository>
+	    	<id>github</id>
+	    	<name>Github Spring Mailgun Email Sender</name>
+	    	<url>https://maven.pkg.github.com/justinmuskopf/spring_mailgun_email_sender</url>
+	   </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -55,11 +63,11 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.muskopf.mailgun</groupId>
-            <artifactId>email-sender</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+		<dependency>
+		  <groupId>com.muskopf.mailgun</groupId>
+		  <artifactId>email-sender</artifactId>
+		  <version>1.0.0-release</version>
+		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
