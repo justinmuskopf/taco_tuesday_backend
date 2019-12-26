@@ -63,13 +63,13 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.0.2</version>
         </dependency>
-		<dependency>
-		  <!-- Added manually until we can find the package repo's permanent home (github requires auth) -->
-		  <!-- https://github.com/justinmuskopf/spring_mailgun_email_sender/packages/93520 -->
-		  <groupId>com.muskopf.mailgun</groupId>
-		  <artifactId>email-sender</artifactId>
-		  <version>1.0.0-release</version>
-		</dependency>
+        <dependency>
+            <!-- Added manually until we can find the package repo's permanent home (github requires auth) -->
+            <!-- https://github.com/justinmuskopf/spring_mailgun_email_sender/packages/93520 -->
+            <groupId>com.muskopf.mailgun</groupId>
+            <artifactId>email-sender</artifactId>
+            <version>1.0.0-release</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -197,7 +197,7 @@
                 <artifactId>swaggerhub-maven-plugin</artifactId>
                 <version>1.0.7</version>
                 <!-- Change this to command line, not on install
-                	only for deploy-production -->
+                     only for deploy-production -->
                 <executions>
                     <execution>
                         <phase>install</phase>
