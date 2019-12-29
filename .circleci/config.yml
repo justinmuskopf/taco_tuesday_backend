@@ -32,28 +32,39 @@ jobs:
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: target/surefire-reports
       
+  deploy_and_publish_swagger:
+    # directory where steps will run
+    working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
+    # run the steps with Docker
+    docker: 
+      # ...with this image as the primary container; this is where all `steps` will run
+      - image: circleci/openjdk:8-jdk-stretch 
+    steps: 
+      # check out source code to working directory
+      - checkout: 
+          path: ~/taco_tuesday_backend
+      # restore the saved cache after the first run or if `pom.xml` has changed
+      - restore_cache: 
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: taco-tuesday-rest-api-{{ checksum "pom.xml" }}
+      - run: mvn dependency:go-offline -DbuildNumber=${CIRCLE_BUILD_NUM}
+      - run: mvn package -DbuildNumber=${CIRCLE_BUILD_NUM}
+      # Copy jar and docs to artifacts directory
+      - run: 
+          name: Copy Artifacts
+          command: |
+            mkdir ../artifacts
+            cp target/taco-tuesday-rest-api-0.0.${CIRCLE_BUILD_NUM}-SNAPSHOT.jar ../artifacts/ 
+            cp -r ../docs ../artifacts/
+      # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard. 
+      - store_test_results: 
+          # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: target/surefire-reports
       - store_artifacts: # store the uberjar as an artifact
           # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: target/taco-tuesday-rest-api-0.0.${CIRCLE_BUILD_NUM}-SNAPSHOT.jar
-      # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples 
-  deploy:
-    # directory where steps will run
-    working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
-    # run the steps with Docker
-    docker: 
-      # ...with this image as the primary container; this is where all `steps` will run
-      - image: circleci/openjdk:8-jdk-stretch 
-    steps: 
-      - run: echo 'deploy world'
-  publish_swagger:
-    # directory where steps will run
-    working_directory: ~/taco_tuesday_backend/taco-tuesday-rest-api
-    # run the steps with Docker
-    docker: 
-      # ...with this image as the primary container; this is where all `steps` will run
-      - image: circleci/openjdk:8-jdk-stretch 
-    steps: 
-      - run: echo 'publish_swagger world'
+          path: ../artifacts/
+      - run: mvn swaggerhub:upload -DbuildNumber=${CIRCLE_BUILD_NUM}
+      # TODO: FTP/SCP files to Host
 
 workflows:
   version: 2
@@ -67,21 +78,7 @@ workflows:
 
   deploy_production_workflow:
     jobs:
-      - build_and_test:
-          filters:
-            branches:
-              only:
-                - deploy-production
-      - deploy:
-          requires:
-            - build_and_test
-          filters:
-            branches:
-              only:
-                - deploy-production
-      - publish_swagger:
-          requires:
-            - deploy
+      - deploy_and_publish_swagger:
           filters:
             branches:
               only:

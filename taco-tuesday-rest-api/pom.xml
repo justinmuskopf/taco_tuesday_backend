@@ -10,15 +10,16 @@
     </parent>
     <groupId>com.muskopf.tacotuesday</groupId>
     <artifactId>taco-tuesday-rest-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.${buildNumber}-SNAPSHOT</version>
     <name>Taco Tuesday REST API</name>
     <description>A REST API that provides statistics about tacos ordered on Tuesdays.</description>
 
     <properties>
         <java.version>1.8</java.version>
-        <api.version>0.0.1</api.version>
+        <buildNumber>0</buildNumber>
+        <api.version>0.0.${buildNumber}</api.version>
         <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
-        <ttapi.swaggerdir>${project.basedir}\..\docs\dist</ttapi.swaggerdir>
+        <ttapi.swaggerdir>${project.basedir}${file.separator}..${file.separator}docs${file.separator}dist</ttapi.swaggerdir>
         <ttapi.swaggerfile>swagger</ttapi.swaggerfile>
     </properties>
     
@@ -198,20 +199,18 @@
                 <version>1.0.7</version>
                 <!-- Change this to command line, not on install
                      only for deploy-production -->
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <configuration>
-                            <api>TacoTuesdayAPI</api>
-                            <owner>Taco-Tuesday</owner>
-                            <version>${api.version}</version>
-                            <uploadType>inputFile</uploadType>
-                            <inputFile>${ttapi.swaggerdir}\${ttapi.swaggerfile}.json</inputFile>
-                            <format>json</format>
-                            <token>${env.SWAGGERHUB_TOKEN}</token>
-                        </configuration>
-                    </execution>
-                </executions>
+                <goals>
+                    <goal>upload</goal>
+                </goals>
+                <configuration>
+                    <api>TacoTuesdayAPI</api>
+                    <owner>Taco-Tuesday</owner>
+                    <version>${api.version}</version>
+                    <uploadType>inputFile</uploadType>
+                    <inputFile>${ttapi.swaggerdir}${file.separator}${ttapi.swaggerfile}.json</inputFile>
+                    <format>json</format>
+                    <token>${env.SWAGGERHUB_TOKEN}</token>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
