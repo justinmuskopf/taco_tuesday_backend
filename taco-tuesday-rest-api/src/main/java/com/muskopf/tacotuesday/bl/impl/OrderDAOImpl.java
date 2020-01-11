@@ -7,43 +7,44 @@ import com.muskopf.tacotuesday.bl.repository.IndividualOrderRepository;
 import com.muskopf.tacotuesday.domain.Employee;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
-import com.muskopf.tacotuesday.resource.EmployeeResource;
+import com.muskopf.tacotuesday.domain.TacoType;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.math.BigInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class OrderDAOImpl implements OrderDAO {
     private FullOrderRepository fullOrderRepository;
     private IndividualOrderRepository individualOrderRepository;
     private EmployeeRepository employeeRepository;
+    private EntityManager entityManager;
 
     @Autowired
     public OrderDAOImpl(FullOrderRepository fullOrderRepository,
                         IndividualOrderRepository individualOrderRepository,
-                        EmployeeRepository employeeRepository)
+                        EmployeeRepository employeeRepository,
+                        EntityManager entityManager)
     {
         this.fullOrderRepository = fullOrderRepository;
         this.individualOrderRepository = individualOrderRepository;
         this.employeeRepository = employeeRepository;
+        this.entityManager = entityManager;
     }
 
     private FullOrder getFullOrderIfPresent(Integer id) {
-        Optional<FullOrder> optionallyExistingOrder = fullOrderRepository.findById(id);
-        return optionallyExistingOrder.orElse(null);
+        return fullOrderRepository.findById(id).orElse(null);
     }
 
     private IndividualOrder getIndividualOrderIfPresent(Integer id) {
-        Optional<IndividualOrder> optionallyExistingOrder = individualOrderRepository.findById(id);
-        return optionallyExistingOrder.orElse(null);
+        return individualOrderRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -144,6 +145,42 @@ public class OrderDAOImpl implements OrderDAO {
                 .stream()
                 .map(o -> (FullOrder) Hibernate.unproxy(o.getFullOrder()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> retrieveOrderStatistics() {
+        List<TacoType> tacoTypes = Arrays.asList(TacoType.values());
+        int numTacoTypes = tacoTypes.size();
+
+        // Create a list of strings e.g. {"SUM(barbacoa)", "SUM(lengua)"}
+        List<String> sumStrings = tacoTypes.stream().map(tt -> "SUM(" + tt.columnName() + ")").collect(Collectors.toList());
+
+        // Form SQL query
+        String sumString = String.join(", ", sumStrings);
+        String sql = String.format("SELECT %s, SUM(total), COUNT(*) from %s", sumString, FullOrder.TABLE_NAME);
+
+        List<Object> result = Arrays.asList((Object[]) entityManager.createNativeQuery(sql).getSingleResult());
+        assert result.size() == numTacoTypes + 2; // Length should be #TacoType + 2 for total/count
+
+        // Place all taco counts into a map
+        BigInteger totalNumberOfTacos = BigInteger.ZERO;
+        Map<TacoType, BigInteger> tacoMap = new HashMap<>();
+        for (int i = 0; i < numTacoTypes; i++) {
+            BigInteger tacoCount = (BigInteger) result.get(i);
+            totalNumberOfTacos = totalNumberOfTacos.add(tacoCount);
+
+            tacoMap.put(tacoTypes.get(i), tacoCount);
+        }
+
+        Map<String, Object> orderStatistics = new HashMap<>();
+        orderStatistics.put("tacos", tacoMap);
+        orderStatistics.put("tacoCount", totalNumberOfTacos);
+        orderStatistics.put("total", result.get(numTacoTypes));
+        orderStatistics.put("fullOrderCount", result.get(numTacoTypes + 1));
+        orderStatistics.put("individualOrderCount", BigInteger.valueOf(individualOrderRepository.count()));
+
+        return orderStatistics;
     }
 
     @Override

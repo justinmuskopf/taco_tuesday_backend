@@ -4,6 +4,7 @@ import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderDAO {
     // Individual Orders
@@ -27,6 +28,8 @@ public interface OrderDAO {
     List<FullOrder> retrieveAllFullOrders();
 
     List<FullOrder> retrieveFullOrdersBySlackId(String slackId);
+
+    Map<String, Object> retrieveOrderStatistics();
 
     boolean fullOrderExistsById(Integer id);
 }

@@ -14,6 +14,8 @@ import java.util.Set;
 @Entity
 @EqualsAndHashCode(callSuper = true)
 public class FullOrder extends Order {
+    public static final String TABLE_NAME = "full_order";
+
     @OneToMany(mappedBy = "fullOrder", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JsonManagedReference
     private Set<IndividualOrder> individualOrders;

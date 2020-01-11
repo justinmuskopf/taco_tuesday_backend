@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.time.Instant;
 
 @Data
 @MappedSuperclass
@@ -13,21 +12,21 @@ public abstract class Order extends DomainObject {
     @Column
     private Float total;
 
-    @Column
+    @Column(name = "barbacoa")
     private Integer barbacoa = 0;
-    @Column
+    @Column(name = "beef_fajita")
     private Integer beefFajita = 0;
-    @Column
+    @Column(name = "cabeza")
     private Integer cabeza = 0;
-    @Column
+    @Column(name = "carnitas")
     private Integer carnitas = 0;
-    @Column
+    @Column(name = "chicken_fajita")
     private Integer chickenFajita = 0;
-    @Column
+    @Column(name = "lengua")
     private Integer lengua = 0;
-    @Column
+    @Column(name = "pastor")
     private Integer pastor = 0;
-    @Column
+    @Column(name = "tripa")
     private Integer tripa = 0;
 
     public void merge(Order newOrder) {
@@ -43,7 +42,7 @@ public abstract class Order extends DomainObject {
 
     public void setTacoCount(TacoType tacoType, int count) {
         if (count < 0) {
-            throw new RuntimeException("Invalid " + tacoType.getPrettyName() + " Count: " + count + "!");
+            throw new RuntimeException("Invalid " + tacoType.prettyName() + " Count: " + count + "!");
         }
 
         switch (tacoType) {
@@ -72,7 +71,7 @@ public abstract class Order extends DomainObject {
                 this.tripa = count;
                 break;
             default:
-                throw new RuntimeException("Invalid Taco Type: " + tacoType.getPrettyName() + "!");
+                throw new RuntimeException("Invalid Taco Type: " + tacoType.prettyName() + "!");
         }
     }
 
@@ -95,7 +94,7 @@ public abstract class Order extends DomainObject {
             case tripa:
                 return tripa;
             default:
-                throw new RuntimeException("Invalid Taco Type: " + tacoType.getPrettyName() + "!");
+                throw new RuntimeException("Invalid Taco Type: " + tacoType.prettyName() + "!");
         }
     }
 
