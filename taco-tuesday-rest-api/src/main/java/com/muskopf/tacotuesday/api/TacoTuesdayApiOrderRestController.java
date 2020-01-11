@@ -9,8 +9,10 @@ import com.muskopf.tacotuesday.bl.proc.TacoTuesdayResourceMapper;
 import com.muskopf.tacotuesday.domain.DomainObject;
 import com.muskopf.tacotuesday.domain.FullOrder;
 import com.muskopf.tacotuesday.domain.IndividualOrder;
+import com.muskopf.tacotuesday.domain.TacoType;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
+import com.muskopf.tacotuesday.resource.OrderSummaryResource;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -25,9 +27,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.Instant;
+import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -49,6 +52,27 @@ public class TacoTuesdayApiOrderRestController {
         this.orderDAO = orderDAO;
         this.mapper = mapper;
         this.emailer = emailer;
+    }
+
+    @CrossOrigin
+    @ApiOperation(value = "Retrieve statistics about orders")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retrieved Successfully", response = OrderSummaryResource.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
+    })
+    @Cacheable
+    @GetMapping(value = "/summary")
+    public ResponseEntity<OrderSummaryResource> getOrderSummary() {
+        OrderSummaryResource summaryResource = new OrderSummaryResource();
+
+        Map<String, Object> orderStatistics = orderDAO.retrieveOrderStatistics();
+        summaryResource.setFullOrderCount((BigInteger) orderStatistics.get("fullOrderCount"));
+        summaryResource.setIndividualOrderCount((BigInteger) orderStatistics.get("individualOrderCount"));
+        summaryResource.setTacoCount((BigInteger) orderStatistics.get("tacoCount"));
+        summaryResource.setTacos((Map<TacoType, BigInteger>) orderStatistics.get("tacos"));
+        summaryResource.setTotal((Double) orderStatistics.get("total"));
+
+        return new ResponseEntity<>(summaryResource, HttpStatus.OK);
     }
 
     @CrossOrigin

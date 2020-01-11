@@ -5,13 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper;
 import com.muskopf.tacotuesday.TacoTuesdayApiHelper.ApiKeyStatus;
 import com.muskopf.tacotuesday.bl.OrderDAO;
-import com.muskopf.tacotuesday.domain.DomainObject;
-import com.muskopf.tacotuesday.domain.Employee;
-import com.muskopf.tacotuesday.domain.FullOrder;
-import com.muskopf.tacotuesday.domain.IndividualOrder;
+import com.muskopf.tacotuesday.domain.*;
 import com.muskopf.tacotuesday.resource.EmployeeResource;
 import com.muskopf.tacotuesday.resource.FullOrderResource;
 import com.muskopf.tacotuesday.resource.IndividualOrderResource;
+import com.muskopf.tacotuesday.resource.OrderSummaryResource;
 import net.bytebuddy.dynamic.scaffold.MethodGraph;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,24 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
     private OrderDAO orderDAO;
     @Autowired
     private MockMvc mockMvc;
+
+    /**
+     * Test happy path of GET /orders/summary
+     */
+    @Test
+    public void test_getOrderSummary() {
+        List<FullOrder> persistedFullOrders = persistenceHelper.getPersistedFullOrders();
+        List<IndividualOrder> persistedIndividualOrders = persistenceHelper.getPersistedIndividualOrders();
+
+        Integer expectedTotalNumberOfTacos = persistedFullOrders.stream().mapToInt(this::tacoCountFromOrder).sum();
+        Double expectedTotal = persistedFullOrders.stream().mapToDouble(FullOrder::getTotal).sum();
+
+        OrderSummaryResource summaryResource = apiHelper.GET(formEndpoint("summary"), OK, ApiKeyStatus.EMPTY, OrderSummaryResource.class);
+        assertThat(summaryResource.getFullOrderCount()).isEqualTo(persistedFullOrders.size());
+        assertThat(summaryResource.getIndividualOrderCount()).isEqualTo(persistedIndividualOrders.size());
+        assertThat(summaryResource.getTacoCount().toString()).isEqualTo(expectedTotalNumberOfTacos.toString());
+        assertThat(summaryResource.getTotal()).isEqualTo(expectedTotal);
+    }
 
     /**
      * Test happy path of GET /orders/individual
@@ -344,5 +360,14 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
 
         assertThat(expectedResource).usingRecursiveComparison().ignoringFields("individualOrders").isEqualTo(responseObject);
         expectedResource.getIndividualOrders().forEach(o -> assertThat(responseObject.getIndividualOrders()).contains(o));
+    }
+
+    private Integer tacoCountFromOrder(Order order) {
+        Integer tacoCount = 0;
+        for (TacoType tacoType : TacoType.values()) {
+            tacoCount += order.getTacoCount(tacoType);
+        }
+
+        return tacoCount;
     }
 }

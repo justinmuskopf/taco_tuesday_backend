@@ -1,22 +1,23 @@
 package com.muskopf.tacotuesday.domain;
 
 public enum TacoType {
-    barbacoa("Barbacoa"),
-    beefFajita("Beef Fajita"),
-    cabeza("Cabeza"),
-    carnitas("Carnitas"),
-    chickenFajita("Chicken Fajita"),
-    lengua("Lengua"),
-    pastor("Pastor"),
-    tripa("Tripa");
+    barbacoa("Barbacoa", "barbacoa"),
+    beefFajita("Beef Fajita", "beef_fajita"),
+    cabeza("Cabeza", "cabeza"),
+    carnitas("Carnitas", "carnitas"),
+    chickenFajita("Chicken Fajita", "chicken_fajita"),
+    lengua("Lengua", "lengua"),
+    pastor("Pastor", "pastor"),
+    tripa("Tripa", "tripa");
 
     private String prettyName;
+    private String columnName;
 
-    TacoType(String prettyName) {
+    TacoType(String prettyName, String columnName) {
         this.prettyName = prettyName;
+        this.columnName = columnName;
     }
 
-    public String getPrettyName() {
-        return prettyName;
-    }
+    public String prettyName() { return prettyName; }
+    public String columnName() { return columnName; }
 }

@@ -15,6 +15,6 @@ public class Taco {
     public Taco(TacoType type, Float price) {
         this.type = type;
         this.price = price;
-        this.name = type.getPrettyName();
+        this.name = type.prettyName();
     }
 }
