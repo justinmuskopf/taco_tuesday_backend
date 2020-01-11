@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -167,7 +168,10 @@ public class OrderDAOImpl implements OrderDAO {
         BigInteger totalNumberOfTacos = BigInteger.ZERO;
         Map<TacoType, BigInteger> tacoMap = new HashMap<>();
         for (int i = 0; i < numTacoTypes; i++) {
-            BigInteger tacoCount = (BigInteger) result.get(i);
+            // For cases where the DB decides to return a BigDecimal instead
+            // of a BigInteger /shrug
+            BigInteger tacoCount = BigInteger.valueOf(((Number) result.get(i)).longValue());
+
             totalNumberOfTacos = totalNumberOfTacos.add(tacoCount);
 
             tacoMap.put(tacoTypes.get(i), tacoCount);
