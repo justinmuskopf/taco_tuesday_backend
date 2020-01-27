@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +54,7 @@ public class TacoTuesdayApiEmployeeRestController {
             @ApiResponse(code = 400, message = "Request Body is Invalid", response = TacoTuesdayExceptionResponse.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
-    @CachePut
+    @CacheEvict(allEntries = true)
     @PostMapping
     public ResponseEntity<EmployeeResource> createEmployee(@RequestParam(name = "apiKey") @ApiKey String apiKey,
                                                            @RequestBody @Valid NewEmployeeResource employeeResource)
@@ -111,7 +111,7 @@ public class TacoTuesdayApiEmployeeRestController {
             @ApiResponse(code = 401, message = "Invalid API Key", response = TacoTuesdayExceptionResponse.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
-    @CachePut
+    @CacheEvict(allEntries = true)
     @PatchMapping("/{slackId}")
     public ResponseEntity<EmployeeResource> updateEmployee(@RequestParam(name = "apiKey") @ApiKey String apiKey,
                                                            @PathVariable(name = "slackId") @SlackId String slackId,
@@ -134,7 +134,7 @@ public class TacoTuesdayApiEmployeeRestController {
             @ApiResponse(code = 401, message = "Invalid API Key", response = TacoTuesdayExceptionResponse.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
-    @CachePut
+    @CacheEvict(allEntries = true)
     @PatchMapping
     public ResponseEntity<List<EmployeeResource>> updateEmployees(@RequestParam(name = "apiKey") @ApiKey String apiKey,
                                                                   @RequestBody @Valid List<UpdateEmployeeBatchResource> employeeResources)
