@@ -19,11 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.muskopf.tacotuesday.TacoTuesdayApiHelper.ResponseStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 
 public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestControllerTester {
     private static String formEndpoint(String path) {
@@ -51,6 +53,33 @@ public class TacoTuesdayApiOrderRestControllerTests extends TacoTuesdayBaseRestC
         assertThat(summaryResource.getIndividualOrderCount()).isEqualTo(persistedIndividualOrders.size());
         assertThat(summaryResource.getTacoCount().toString()).isEqualTo(expectedTotalNumberOfTacos.toString());
         assertThat(summaryResource.getTotal()).isEqualTo(expectedTotal);
+    }
+
+    /**
+     * Test happy path of GET /orders/summary
+     */
+    @Test
+    public void test_getOrderSummary_afterExtraSubmit() {
+        List<FullOrder> fullOrders = persistenceHelper.getPersistedFullOrders();
+
+        test_getOrderSummary();
+        FullOrder order = new FullOrder();
+        IndividualOrder individualOrder = new IndividualOrder();
+
+        Employee employee = persistenceHelper.getPersistedEmployees().get(0);
+        individualOrder.setEmployee(employee);
+        individualOrder.setBarbacoa(2);
+        individualOrder.setTotal((float) 10.0);
+
+        order.setIndividualOrders(Collections.singleton(individualOrder));
+        order.setTotal((float) 10.0);
+
+
+        FullOrderResource createdResource = apiHelper.POST(formEndpoint("full"), CREATED, mapper.mapFullOrderToFullOrderResource(order), ApiKeyStatus.VALID, FullOrderResource.class);
+        OrderSummaryResource summaryResource = apiHelper.GET(formEndpoint("summary"), OK, ApiKeyStatus.EMPTY, OrderSummaryResource.class);
+
+
+        assertThat(summaryResource.getFullOrderCount()).isEqualTo(fullOrders.size() + 1);
     }
 
     /**

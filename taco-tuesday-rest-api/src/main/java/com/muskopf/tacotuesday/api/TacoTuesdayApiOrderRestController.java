@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -150,7 +151,7 @@ public class TacoTuesdayApiOrderRestController {
             @ApiResponse(code = 401, message = "Invalid API Key", response = TacoTuesdayExceptionResponse.class),
             @ApiResponse(code = 500, message = "Internal Server Error", response = TacoTuesdayExceptionResponse.class)
     })
-    @CachePut
+    @CacheEvict(allEntries = true)
     @PostMapping(value = "/full")
     public ResponseEntity<FullOrderResource> createFullOrder(@RequestParam(name = "apiKey") @ApiKey String apiKey,
                                                              @RequestBody @Valid FullOrderResource orderResource)
