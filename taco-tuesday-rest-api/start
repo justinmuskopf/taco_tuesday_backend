@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ ! -f .env ]]; then
+    echo "No .env file found!"
+    exit 1
+fi
+
+docker run -d --publish 9009:9009 --env-file .env -t respec-bot:0.0.1-SNAPSHOT 

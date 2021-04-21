@@ -1,0 +1,3 @@
+#!/bin/bash
+
+vim src/main/resources/application.properties
